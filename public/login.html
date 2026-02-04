@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>تسجيل الدخول - لوحة تحكم King STORE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #1a1a2e;
+      --secondary: #ff7a00;
+      --accent: #00b4d8;
+      --dark: #16213e;
+      --light: #f8f9fa;
+      --success: #25D366;
+      --danger: #ff4d4f;
+      --warning: #ffc107;
+      --gray: #6c757d;
+      --border-radius: 12px;
+      --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      --transition: all 0.3s ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background-color: #0f0f1a;
+      background-image: radial-gradient(circle at 25% 25%, rgba(22, 33, 62, 0.8) 0%, rgba(10, 10, 20, 1) 100%);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    .login-container {
+      background: rgba(26, 26, 46, 0.8);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: var(--border-radius);
+      padding: 40px;
+      width: 100%;
+      max-width: 450px;
+      box-shadow: var(--box-shadow);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transform: translateY(0);
+      transition: var(--transition);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(to left, var(--secondary), var(--accent));
+    }
+
+    .login-container:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .logo { margin-bottom: 30px; display: flex; flex-direction: column; align-items: center; }
+
+    .logo img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid rgba(255, 122, 0, 0.3);
+      box-shadow: 0 4px 15px rgba(255, 122, 0, 0.2);
+      margin-bottom: 15px;
+      transition: var(--transition);
+    }
+
+    .logo img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(255, 122, 0, 0.3);
+    }
+
+    .login-container h2 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      color: #fff;
+      font-weight: 800;
+      background: linear-gradient(to right, var(--secondary), #ff9e00);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .login-container p {
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 30px;
+      font-size: 0.95rem;
+    }
+
+    .form-group { margin-bottom: 25px; text-align: right; }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 10px;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+
+    .input-group { position: relative; margin-bottom: 5px; }
+
+    .input-group i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255, 255, 255, 0.7);
+      transition: var(--transition);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 14px 15px 14px 45px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: var(--border-radius);
+      color: #fff;
+      font-family: 'Tajawal', sans-serif;
+      transition: var(--transition);
+      font-size: 1rem;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.2);
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .form-control::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.95rem;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(to left, var(--secondary), #ff5e00);
+      color: #000;
+      border: none;
+      border-radius: var(--border-radius);
+      font-family: 'Tajawal', sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-top: 15px;
+      box-shadow: 0 4px 15px rgba(255, 122, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(to left, #ff5e00, var(--secondary));
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(255, 122, 0, 0.4);
+    }
+
+    .btn:hover::before { opacity: 1; }
+    .btn:active { transform: translateY(0); }
+    .btn i { margin-left: 8px; }
+
+    .forgot-password {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .forgot-password::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; right: 0;
+      width: 0;
+      height: 1px;
+      background: var(--accent);
+      transition: var(--transition);
+    }
+
+    .forgot-password:hover { color: var(--accent); }
+    .forgot-password:hover::after { width: 100%; }
+
+    .alert {
+      padding: 15px;
+      border-radius: var(--border-radius);
+      margin-bottom: 25px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      animation: fadeIn 0.5s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .alert::before { content: ''; position: absolute; top: 0; right: 0; width: 4px; height: 100%; }
+
+    .alert-danger {
+      background-color: rgba(255, 77, 79, 0.15);
+      color: #ff6b6b;
+      border: 1px solid rgba(255, 77, 79, 0.3);
+    }
+    .alert-danger::before { background-color: var(--danger); }
+
+    .alert-success {
+      background-color: rgba(37, 211, 102, 0.15);
+      color: #69f0ae;
+      border: 1px solid rgba(37, 211, 102, 0.3);
+    }
+    .alert-success::before { background-color: var(--success); }
+
+    .close-alert {
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      font-size: 1.2rem;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+
+    .close-alert:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+
+    .login-container { animation: fadeIn 0.6s ease-out; }
+
+    @media (max-width: 480px) {
+      .login-container { padding: 30px 20px; }
+      .login-container h2 { font-size: 1.6rem; }
+      .form-control { padding: 12px 15px 12px 40px; }
+    }
+
+    .form-control:focus + i { color: var(--accent) !important; transform: translateY(-50%) scale(1.1); }
+
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="logo">
+      <img src="https://i.postimg.cc/W15J2BTn/Whats.jpg" alt="King STORE Logo">
+      <h2>تسجيل الدخول</h2>
+    </div>
+    <p>الرجاء إدخال بيانات الاعتماد الخاصة بك للوصول إلى لوحة التحكم</p>
+    
+    <div id="alertBox" class="alert alert-danger" style="display: none;">
+      <span id="alertMessage"></span>
+      <button class="close-alert" onclick="closeAlert()">&times;</button>
+    </div>
+    
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="username">اسم المستخدم</label>
+        <div class="input-group">
+          <i class="fas fa-user"></i>
+          <input type="text" id="username" class="form-control" placeholder="أدخل اسم المستخدم" required />
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="password">كلمة المرور</label>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="password" class="form-control" placeholder="أدخل كلمة المرور" required />
+        </div>
+      </div>
+      
+      <button type="submit" class="btn">
+        <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+      </button>
+      
+      <a href="#" class="forgot-password">نسيت كلمة المرور؟</a>
+    </form>
+  </div>
+
+  <script>
+    function showAlert(type, message) {
+      const alertBox = document.getElementById('alertBox');
+      const alertMessage = document.getElementById('alertMessage');
+      alertBox.className = `alert alert-${type}`;
+      alertMessage.textContent = message;
+      alertBox.style.display = 'flex';
+      setTimeout(() => { if (alertBox.style.display === 'flex') closeAlert(); }, 5000);
+    }
+
+    function closeAlert() {
+      const alertBox = document.getElementById('alertBox');
+      alertBox.style.animation = 'fadeIn 0.3s reverse';
+      setTimeout(() => {
+        alertBox.style.display = 'none';
+        alertBox.style.animation = 'fadeIn 0.5s ease-out';
+      }, 300);
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      if (!username || !password) {
+        showAlert('danger', 'الرجاء إدخال جميع الحقول المطلوبة');
+        return;
+      }
+
+      const btn = e.target.querySelector('button[type="submit"]');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<span class="spinner"></span> جاري التحقق...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch("/api/admin/login", { // ✅ تعديل هنا
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          showAlert('success', 'تم تسجيل الدخول بنجاح، جاري التوجيه...');
+          setTimeout(() => { window.location.href = "dashboard.html"; }, 1500);
+        } else {
+          throw new Error(data.message || "بيانات الاعتماد غير صحيحة");
+        }
+      } catch (error) {
+        console.error("Login error:", error);
+        showAlert('danger', "فشل تسجيل الدخول: " + error.message);
+      } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = document.querySelectorAll('.form-control');
+      inputs.forEach(input => {
+        input.addEventListener('focus', () => {
+          input.parentElement.querySelector('i').style.color = 'var(--accent)';
+          input.parentElement.querySelector('i').style.transform = 'translateY(-50%) scale(1.1)';
+        });
+
+        input.addEventListener('blur', () => {
+          input.parentElement.querySelector('i').style.color = 'rgba(255, 255, 255, 0.7)';
+          input.parentElement.querySelector('i').style.transform = 'translateY(-50%) scale(1)';
+        });
+      });
+
+      document.querySelector('.login-container').style.animation = 'pulse 1.5s ease-in-out';
+    });
+  </script>
+</body>
+</html>

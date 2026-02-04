@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>إتمام الدفع - King STORE个ESPORTSツ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #1a1a2e;
+      --secondary: #ff7a00;
+      --accent: #00b4d8;
+      --dark: #16213e;
+      --light: #f8f9fa;
+      --success: #25D366;
+      --danger: #ff4d4f;
+      --warning: #ffc107;
+      --gray: #6c757d;
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background-color: #0f0f1a;
+      background-image: radial-gradient(circle at 25% 25%, rgba(22, 33, 62, 0.8) 0%, rgba(10, 10, 20, 1) 100%);
+      color: #fff;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      width: 100%;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--dark));
+      padding: 20px 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 122, 0, 0.2);
+    }
+    
+    .logo-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+    
+    .logo-container img {
+      width: 60px;
+      height: 60px;
+      border-radius: 15px;
+      object-fit: cover;
+      border: 2px solid var(--secondary);
+      box-shadow: 0 4px 15px rgba(255, 122, 0, 0.3);
+    }
+    
+    .logo-title { font-size: 24px; font-weight: bold; color: var(--secondary); }
+    
+    .payment-container {
+      background: rgba(26, 26, 46, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 30px;
+      margin: 30px auto;
+      max-width: 800px;
+      width: 100%;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .payment-header { text-align: center; margin-bottom: 30px; position: relative; }
+    .payment-header h2 { font-size: 1.8rem; color: var(--secondary); margin-bottom: 15px; }
+    .payment-header p { color: rgba(255,255,255,0.8); }
+    
+    .payment-info {
+      background: rgba(255, 122, 0, 0.1);
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      border-right: 4px solid var(--secondary);
+    }
+    
+    .info-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+    .info-label { color: rgba(255,255,255,0.8); }
+    .info-value { font-weight: 700; color: var(--secondary); }
+    
+    .payment-steps { margin: 30px 0; }
+    .step { display: flex; align-items: flex-start; margin-bottom: 25px; position: relative; }
+    
+    .step-number {
+      background: var(--secondary);
+      color: #000;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-left: 15px;
+      flex-shrink: 0;
+    }
+    
+    .step-content { flex: 1; }
+    .step-title { font-weight: 700; margin-bottom: 8px; color: #fff; }
+    .step-details { color: rgba(255,255,255,0.8); line-height: 1.6; }
+    
+    .payment-methods { margin: 30px 0; }
+    
+    .method-card {
+      background: rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 15px;
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: all 0.3s;
+    }
+    
+    .method-card:hover { background: rgba(255,255,255,0.12); border-color: var(--secondary); }
+    .method-header { display: flex; align-items: center; margin-bottom: 15px; }
+    .method-icon { font-size: 1.5rem; margin-left: 15px; color: var(--secondary); }
+    .method-name { font-weight: 700; color: #fff; }
+    .method-details { color: rgba(255,255,255,0.8); margin-bottom: 15px; }
+    
+    .method-number {
+      background: rgba(255,255,255,0.1);
+      padding: 12px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 1.1rem;
+      color: var(--secondary);
+      text-align: center;
+      margin-bottom: 15px;
+      direction: ltr;
+      display: block;
+    }
+    
+    .upload-section { margin: 30px 0; }
+    .file-upload { position: relative; margin: 20px 0; }
+    .file-upload input { position: absolute; opacity: 0; width: 100%; height: 100%; top: 0; left: 0; cursor: pointer; }
+    
+    .file-upload-label {
+      display: block;
+      padding: 20px;
+      background: rgba(255,255,255,0.08);
+      border: 2px dashed rgba(255,255,255,0.3);
+      border-radius: 10px;
+      text-align: center;
+      color: rgba(255,255,255,0.6);
+      transition: all 0.3s;
+    }
+    
+    .file-upload-label:hover { border-color: var(--secondary); color: #fff; background: rgba(255,255,255,0.12); }
+    .file-upload-label i { display: block; font-size: 2.2rem; margin-bottom: 12px; color: var(--secondary); }
+    
+    .preview-container { display: none; margin-top: 15px; text-align: center; animation: fadeIn 0.5s ease-out; }
+    .preview-image { max-width: 100%; max-height: 200px; border-radius: 8px; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    
+    .btn {
+      display: inline-block;
+      background: var(--secondary);
+      color: #000;
+      padding: 15px 30px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+      font-size: 1.1rem;
+      margin-top: 20px;
+    }
+    
+    .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255, 122, 0, 0.3); }
+    
+    .btn-whatsapp {
+      background: var(--success);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    footer {
+      background: var(--primary);
+      padding: 20px 0;
+      text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .copyright { color: rgba(255,255,255,0.6); font-size: 0.9rem; }
+    
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    @media (max-width: 768px) {
+      .payment-container { padding: 20px; }
+      .payment-header h2 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="logo-container">
+        <img src="https://i.postimg.cc/W15J2BTn/Whats.jpg" alt="King STORE个ESPORTSツ Logo">
+        <span class="logo-title">King STORE个ESPORTSツ</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="payment-container">
+      <div class="payment-header">
+        <h2><i class="fas fa-credit-card"></i> إتمام عملية الدفع</h2>
+        <p>الرجاء إتمام عملية التحويل ثم رفع صورة الإثبات</p>
+      </div>
+
+      <div class="payment-info">
+        <div class="info-row">
+          <span class="info-label">رقم الطلب:</span>
+          <span class="info-value" id="orderId">-</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">المبلغ الإجمالي:</span>
+          <span class="info-value" id="orderAmount">-</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">حالة الدفع:</span>
+          <span class="info-value" id="paymentStatus">بانتظار الدفع</span>
+        </div>
+      </div>
+
+      <div class="payment-steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <div class="step-title">قم بالتحويل إلى أحد الأرقام التالية</div>
+            <div class="step-details">
+              <div class="payment-methods">
+                <div class="method-card">
+                  <div class="method-header">
+                    <i class="method-icon fab fa-apple"></i>
+                    <div class="method-name">فودافون كاش</div>
+                  </div>
+                  <div class="method-details">قم بالتحويل إلى الرقم التالي عبر تطبيق فودافون كاش</div>
+                  <span class="method-number">01274445091</span>
+                </div>
+
+                <div class="method-card">
+                  <div class="method-header">
+                    <i class="method-icon fas fa-mobile-alt"></i>
+                    <div class="method-name">اورانج ماني</div>
+                  </div>
+                  <div class="method-details">قم بالتحويل إلى الرقم التالي عبر تطبيق اورانج ماني</div>
+                  <span class="method-number">01274445091</span>
+                </div>
+
+                <div class="method-card">
+                  <div class="method-header">
+                    <i class="method-icon fas fa-money-bill-wave"></i>
+                    <div class="method-name">اتصالات كاش</div>
+                  </div>
+                  <div class="method-details">قم بالتحويل إلى الرقم التالي عبر تطبيق اتصالات كاش</div>
+                  <span class="method-number">01274445091</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <div class="step-title">احفظ صورة إثبات التحويل</div>
+            <div class="step-details">
+              بعد إتمام التحويل، احفظ صورة إثبات التحويل من التطبيق لتقوم برفعها في الخطوة التالية.
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <div class="step-title">قم برفع صورة إثبات التحويل</div>
+            <div class="step-details">
+              <div class="upload-section">
+                <div class="file-upload">
+                  <input type="file" id="paymentProof" accept="image/*" required>
+                  <label for="paymentProof" class="file-upload-label">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span>انقر لرفع صورة إثبات الدفع</span>
+                  </label>
+                </div>
+                <div class="preview-container" id="previewContainer">
+                  <img src="" class="preview-image" id="previewImage">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align: center;">
+        <button id="submitPayment" class="btn">
+          <i class="fas fa-check-circle"></i> تأكيد إتمام الدفع
+        </button>
+
+        <p style="color: rgba(255,255,255,0.7); margin: 20px 0;">
+          في حالة وجود أي مشكلة، يمكنك التواصل معنا عبر الواتساب
+        </p>
+        <a href="https://wa.me/201274445091" class="btn btn-whatsapp">
+          <i class="fab fa-whatsapp"></i> تواصل مع الدعم
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p class="copyright">© 2025 King Esports. جميع الحقوق محفوظة</p>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const orderId = urlParams.get('orderId');
+
+      if (!orderId) {
+        alert('لم يتم العثور على معرّف الطلب');
+        window.location.href = '/';
+        return;
+      }
+
+      document.getElementById('orderId').textContent = orderId;
+      document.getElementById('orderAmount').textContent = 'جاري التحميل...';
+
+      const paymentProofInput = document.getElementById('paymentProof');
+      const previewContainer = document.getElementById('previewContainer');
+      const previewImage = document.getElementById('previewImage');
+
+      paymentProofInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            previewImage.src = e.target.result;
+            previewContainer.style.display = 'block';
+          }
+          reader.readAsDataURL(file);
+        }
+      });
+
+      document.getElementById('submitPayment').addEventListener('click', async function() {
+        const fileInput = document.getElementById('paymentProof');
+        if (!fileInput.files.length) {
+          alert('يرجى رفع صورة إثبات الدفع أولاً');
+          return;
+        }
+
+        const btn = this;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري المعالجة...';
+
+        setTimeout(() => {
+          document.getElementById('paymentStatus').textContent = 'تم الدفع';
+          document.getElementById('paymentStatus').style.color = 'var(--success)';
+
+          btn.innerHTML = '<i class="fas fa-check-circle"></i> تم تأكيد الدفع بنجاح';
+          btn.style.background = 'var(--success)';
+
+          alert('تم استلام إثبات الدفع بنجاح! سيتم مراجعة طلبك وتنفيذه في أقرب وقت ممكن.');
+        }, 2000);
+      });
+
+      setTimeout(() => {
+        const randomAmount = Math.floor(Math.random() * 1000) + 500;
+        document.getElementById('orderAmount').textContent = `${randomAmount} ج.م`;
+      }, 1000);
+    });
+  </script>
+</body>
+</html>
