@@ -236,6 +236,59 @@ app.post("/api/order", upload.single("screenshot"), async (req, res) => {
   }
 });
 
+// جلب طلب معين بواسطة ID
+app.get("/api/order/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const doc = await firestore().collection("orders").doc(id).get();
+    
+    if (!doc.exists) {
+      return res.status(404).json({ success: false, message: "الطلب غير موجود" });
+    }
+    
+    res.json({ success: true, data: { id: doc.id, ...doc.data() } });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "خطأ في جلب الطلب" });
+  }
+});
+
+// تأكيد الدفع (رفع الصورة وإضافة transactionId)
+app.post("/api/order/confirm-payment", upload.single("screenshot"), async (req, res) => {
+  try {
+    const { orderId, transactionId } = req.body;
+    
+    if (!orderId || !transactionId) {
+      return res.status(400).json({ success: false, message: "رقم الطلب ورقم المعاملة مطلوبان" });
+    }
+    
+    let screenshotUrl = null;
+    if (req.file) {
+      screenshotUrl = await uploadScreenshotToStorage(req.file);
+    }
+    
+    const updateData = {
+      transactionId: transactionId,
+      status: "تم الدفع - قيد المراجعة",
+      payment_confirmed_at: admin.firestore.FieldValue.serverTimestamp()
+    };
+    
+    if (screenshotUrl) {
+      updateData.screenshotUrl = screenshotUrl;
+    }
+    
+    await firestore().collection("orders").doc(orderId).update(updateData);
+    
+    // إشعار تليجرام بتأكيد الدفع
+    await telegramNotify(`💰 تم تأكيد الدفع\nرقم الطلب: ${orderId}\nرقم المعاملة: ${transactionId}`);
+    
+    res.json({ success: true, message: "تم تأكيد الدفع بنجاح" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "حدث خطأ أثناء تأكيد الدفع" });
+  }
+});
+
 app.post("/api/inquiry", async (req, res) => {
   try {
     const { email, message } = req.body;
