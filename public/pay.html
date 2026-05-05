@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>إتمام الدفع - King STORE个ESPORTSツ</title>
+  <title>إتمام الدفع - tripSTORE</title>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -186,15 +186,7 @@
     }
     
     .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255, 122, 0, 0.3); }
-    
-    .btn-whatsapp {
-      background: var(--success);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
+    .btn-whatsapp { background: var(--success); color: #fff; display: flex; align-items: center; justify-content: center; gap: 10px; }
     
     footer {
       background: var(--primary);
@@ -211,14 +203,25 @@
       .payment-container { padding: 20px; }
       .payment-header h2 { font-size: 1.5rem; }
     }
+    
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(0,0,0,0.3);
+      border-radius: 50%;
+      border-top-color: #000;
+      animation: spin 1s ease-in-out infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
   <header>
     <div class="container">
       <div class="logo-container">
-        <img src="https://i.postimg.cc/W15J2BTn/Whats.jpg" alt="King STORE个ESPORTSツ Logo">
-        <span class="logo-title">King STORE个ESPORTSツ</span>
+        <img src="https://i.postimg.cc/W15J2BTn/Whats.jpg" alt="tripSTORE Logo">
+        <span class="logo-title">tripSTORE</span>
       </div>
     </div>
   </header>
@@ -240,8 +243,8 @@
           <span class="info-value" id="orderAmount">-</span>
         </div>
         <div class="info-row">
-          <span class="info-label">حالة الدفع:</span>
-          <span class="info-value" id="paymentStatus">بانتظار الدفع</span>
+          <span class="info-label">النوع:</span>
+          <span class="info-value" id="orderType">-</span>
         </div>
       </div>
 
@@ -254,7 +257,7 @@
               <div class="payment-methods">
                 <div class="method-card">
                   <div class="method-header">
-                    <i class="method-icon fab fa-apple"></i>
+                    <i class="method-icon fas fa-mobile-alt"></i>
                     <div class="method-name">فودافون كاش</div>
                   </div>
                   <div class="method-details">قم بالتحويل إلى الرقم التالي عبر تطبيق فودافون كاش</div>
@@ -272,7 +275,7 @@
 
                 <div class="method-card">
                   <div class="method-header">
-                    <i class="method-icon fas fa-money-bill-wave"></i>
+                    <i class="method-icon fas fa-mobile-alt"></i>
                     <div class="method-name">اتصالات كاش</div>
                   </div>
                   <div class="method-details">قم بالتحويل إلى الرقم التالي عبر تطبيق اتصالات كاش</div>
@@ -286,9 +289,11 @@
         <div class="step">
           <div class="step-number">2</div>
           <div class="step-content">
-            <div class="step-title">احفظ صورة إثبات التحويل</div>
+            <div class="step-title">أدخل رقم المعاملة (Transaction ID)</div>
             <div class="step-details">
-              بعد إتمام التحويل، احفظ صورة إثبات التحويل من التطبيق لتقوم برفعها في الخطوة التالية.
+              <div class="form-group">
+                <input type="text" id="transactionId" class="form-control" placeholder="أدخل رقم التحويل من التطبيق" style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-family: 'Tajawal', sans-serif;">
+              </div>
             </div>
           </div>
         </div>
@@ -332,12 +337,31 @@
 
   <footer>
     <div class="container">
-      <p class="copyright">© 2025 King Esports. جميع الحقوق محفوظة</p>
+      <p class="copyright">© 2025 tripSTORE. جميع الحقوق محفوظة</p>
     </div>
   </footer>
 
+  <style>
+    .form-control {
+      width: 100%;
+      padding: 12px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      color: #fff;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 1rem;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--secondary);
+    }
+  </style>
+
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    let orderData = null;
+
+    document.addEventListener('DOMContentLoaded', async function() {
       const urlParams = new URLSearchParams(window.location.search);
       const orderId = urlParams.get('orderId');
 
@@ -348,7 +372,29 @@
       }
 
       document.getElementById('orderId').textContent = orderId;
-      document.getElementById('orderAmount').textContent = 'جاري التحميل...';
+
+      // جلب بيانات الطلب من السيرفر
+      try {
+        const response = await fetch(`/api/order/${orderId}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include'
+        });
+
+        const result = await response.json();
+
+        if (result.success && result.data) {
+          orderData = result.data;
+          document.getElementById('orderAmount').textContent = orderData.totalAmount + ' ج.م';
+          document.getElementById('orderType').textContent = orderData.type === 'UC' ? orderData.ucAmount + ' UC' : orderData.bundle;
+        } else {
+          throw new Error('فشل جلب بيانات الطلب');
+        }
+      } catch (error) {
+        console.error('Error fetching order:', error);
+        alert('حدث خطأ في جلب بيانات الطلب. سيتم استخدام القيم الافتراضية.');
+        document.getElementById('orderAmount').textContent = 'غير معروف';
+      }
 
       const paymentProofInput = document.getElementById('paymentProof');
       const previewContainer = document.getElementById('previewContainer');
@@ -365,33 +411,66 @@
           reader.readAsDataURL(file);
         }
       });
+    });
 
-      document.getElementById('submitPayment').addEventListener('click', async function() {
-        const fileInput = document.getElementById('paymentProof');
-        if (!fileInput.files.length) {
-          alert('يرجى رفع صورة إثبات الدفع أولاً');
-          return;
+    document.getElementById('submitPayment').addEventListener('click', async function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const orderId = urlParams.get('orderId');
+      
+      const transactionId = document.getElementById('transactionId').value.trim();
+      const fileInput = document.getElementById('paymentProof');
+      
+      if (!transactionId) {
+        alert('يرجى إدخال رقم المعاملة (Transaction ID)');
+        return;
+      }
+      
+      if (!fileInput.files.length) {
+        alert('يرجى رفع صورة إثبات الدفع أولاً');
+        return;
+      }
+
+      const btn = this;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> جاري المعالجة...';
+
+      try {
+        // إنشاء FormData لإرسال الصورة والبيانات
+        const formData = new FormData();
+        formData.append('orderId', orderId);
+        formData.append('transactionId', transactionId);
+        formData.append('screenshot', fileInput.files[0]);
+
+        const response = await fetch('/api/order/confirm-payment', {
+          method: 'POST',
+          body: formData,
+          credentials: 'include'
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.message || 'حدث خطأ أثناء تأكيد الدفع');
         }
 
-        const btn = this;
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري المعالجة...';
-
-        setTimeout(() => {
-          document.getElementById('paymentStatus').textContent = 'تم الدفع';
-          document.getElementById('paymentStatus').style.color = 'var(--success)';
-
+        if (result.success) {
           btn.innerHTML = '<i class="fas fa-check-circle"></i> تم تأكيد الدفع بنجاح';
           btn.style.background = 'var(--success)';
-
+          
           alert('تم استلام إثبات الدفع بنجاح! سيتم مراجعة طلبك وتنفيذه في أقرب وقت ممكن.');
-        }, 2000);
-      });
-
-      setTimeout(() => {
-        const randomAmount = Math.floor(Math.random() * 1000) + 500;
-        document.getElementById('orderAmount').textContent = `${randomAmount} ج.م`;
-      }, 1000);
+          
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 3000);
+        } else {
+          throw new Error(result.message || 'حدث خطأ غير معروف');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert(error.message || 'فشل تأكيد الدفع، يرجى المحاولة مرة أخرى');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check-circle"></i> تأكيد إتمام الدفع';
+      }
     });
   </script>
 </body>
