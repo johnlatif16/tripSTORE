@@ -147,7 +147,6 @@ app.get("/api/health", (req, res) => {
 
 // ====== Public APIs ======
 app.post("/api/order", upload.single("screenshot"), async (req, res) => {
-app.post("/api/order", upload.single("screenshot"), async (req, res) => {
   try {
     console.log("=== NEW ORDER REQUEST ===");
     console.log("Body:", req.body);
