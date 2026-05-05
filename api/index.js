@@ -150,8 +150,9 @@ app.post("/api/order", upload.single("screenshot"), async (req, res) => {
   try {
     const { name, playerId, email, ucAmount, bundle, totalAmount, transactionId } = req.body;
 
-    if (!name || !playerId || !email || !transactionId || !totalAmount || (!ucAmount && !bundle)) {
-      return res.status(400).json({ success: false, message: "جميع الحقول مطلوبة" });
+    // التحقق من الحقول المطلوبة (transactionId أصبح غير مطلوب هنا)
+    if (!name || !playerId || !email || !totalAmount || (!ucAmount && !bundle)) {
+      return res.status(400).json({ success: false, message: "جميع الحقول الأساسية مطلوبة" });
     }
 
     const type = ucAmount ? "UC" : "Bundle";
@@ -165,16 +166,17 @@ app.post("/api/order", upload.single("screenshot"), async (req, res) => {
       ucAmount: ucAmount || null,
       bundle: bundle || null,
       totalAmount,
-      transactionId,
+      transactionId: transactionId || null, // إذا لم يتم إرساله يصبح null
       screenshotUrl: screenshotUrl || null,
       status: "لم يتم الدفع",
       created_at: admin.firestore.FieldValue.serverTimestamp()
     });
 
-    // إشعارات
+    // إشعار تليجرام
     const note = `🧾 طلب جديد\nالاسم: ${name}\nالبريد: ${email}\nالنوع: ${type}\nالإجمالي: ${totalAmount}\nID: ${ref.id}`;
     await telegramNotify(note);
 
+    // إشعار إيميل
     const notifyTo = process.env.NOTIFICATION_EMAIL || process.env.SMTP_USER || process.env.EMAIL_USER;
     if (notifyTo) {
       await transporter.sendMail({
@@ -187,7 +189,6 @@ app.post("/api/order", upload.single("screenshot"), async (req, res) => {
           <p><b>البريد:</b> ${email}</p>
           <p><b>النوع:</b> ${type}</p>
           <p><b>الإجمالي:</b> ${totalAmount}</p>
-          <p><b>Transaction:</b> ${transactionId}</p>
           ${screenshotUrl ? `<p><a href="${screenshotUrl}">صورة التحويل</a></p>` : ""}
           <p style="color:#999;font-size:12px;">ID: ${ref.id}</p>
         </div>`
