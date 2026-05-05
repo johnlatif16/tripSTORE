@@ -1004,63 +1004,81 @@
       });
     });
 
-    document.getElementById('orderForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
+document.getElementById('orderForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
 
-      if (selectedUC && selectedBundle) {
-        showAlert("لا يمكن اختيار شدات وحزمة ازدهار معاً", "يرجى اختيار نوع واحد فقط", "error");
-        return;
-      }
+  if (selectedUC && selectedBundle) {
+    showAlert("لا يمكن اختيار شدات وحزمة ازدهار معاً", "يرجى اختيار نوع واحد فقط", "error");
+    return;
+  }
 
-      if (!selectedUC && !selectedBundle) {
-        showAlert("خطأ في الاختيار", "يجب اختيار شدات أو حزمة ازدهار واحدة على الأقل", "error");
-        return;
-      }
+  if (!selectedUC && !selectedBundle) {
+    showAlert("خطأ في الاختيار", "يجب اختيار شدات أو حزمة ازدهار واحدة على الأقل", "error");
+    return;
+  }
 
-      const orderData = {
-        name: document.getElementById('name').value,
-        playerId: document.getElementById('playerId').value,
-        email: document.getElementById('email').value,
-        ucAmount: selectedUC ? selectedUC.dataset.value : "",
-        bundle: selectedBundle ? selectedBundle.dataset.value : "",
-        totalAmount: document.getElementById('totalAmount').value.replace(" ج.م", "")
-      };
+  // التحقق من الحقول الأساسية
+  const name = document.getElementById('name').value;
+  const playerId = document.getElementById('playerId').value;
+  const email = document.getElementById('email').value;
+  const totalAmount = document.getElementById('totalAmount').value.replace(" ج.م", "");
 
-      const btn = e.target.querySelector('button');
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span> جاري إنشاء الطلب...';
+  if (!name || !playerId || !email || !totalAmount) {
+    showAlert("خطأ", "الرجاء تعبئة جميع الحقول", "error");
+    return;
+  }
 
-      try {
-        const response = await fetch("/api/order", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify(orderData)
-        });
+  const orderData = {
+    name: name,
+    playerId: playerId,
+    email: email,
+    ucAmount: selectedUC ? selectedUC.dataset.value : "",
+    bundle: selectedBundle ? selectedBundle.dataset.value : "",
+    totalAmount: totalAmount
+  };
 
-        const result = await response.json();
+  console.log("Sending order data:", orderData); // للتتبع
 
-        if (!response.ok) throw new Error(result.message || "حدث خطأ في الخادم");
+  const btn = e.target.querySelector('button');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> جاري إنشاء الطلب...';
 
-        if (result.success) {
-          currentOrderId = result.id;
-          showAlert("تم إنشاء الطلب بنجاح", "جاري توجيهك لصفحة الدفع...", "success");
-
-          setTimeout(() => {
-            window.location.href = `pay.html?orderId=${encodeURIComponent(currentOrderId)}`;
-          }, 1500);
-        } else {
-          throw new Error(result.message || "حدث خطأ غير معروف");
-        }
-      } catch (error) {
-        console.error("Error:", error);
-        showAlert("حدث خطأ", error.message || "فشل إرسال الطلب", "error");
-      } finally {
-        btn.innerHTML = '';
-        btn.classList.add('type1');
-        btn.disabled = false;
-      }
+  try {
+    const response = await fetch("/api/order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(orderData)
     });
+
+    console.log("Response status:", response.status); // للتتبع
+    
+    const result = await response.json();
+    console.log("Response result:", result); // للتتبع
+
+    if (!response.ok) {
+      throw new Error(result.message || "حدث خطأ في الخادم");
+    }
+
+    if (result.success) {
+      currentOrderId = result.id;
+      showAlert("تم إنشاء الطلب بنجاح", "جاري توجيهك لصفحة الدفع...", "success");
+
+      setTimeout(() => {
+        window.location.href = `pay.html?orderId=${encodeURIComponent(currentOrderId)}`;
+      }, 1500);
+    } else {
+      throw new Error(result.message || "حدث خطأ غير معروف");
+    }
+  } catch (error) {
+    console.error("Error details:", error);
+    showAlert("حدث خطأ", error.message || "فشل إرسال الطلب", "error");
+  } finally {
+    btn.innerHTML = '';
+    btn.classList.add('type1');
+    btn.disabled = false;
+  }
+});
 
     const contactToggleBtn = document.getElementById('contactToggleBtn');
     const contactOptionsModal = document.getElementById('contactOptionsModal');
