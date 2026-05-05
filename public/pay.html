@@ -38,8 +38,6 @@
       padding: 20px;
       width: 100%;
       flex: 1;
-      display: flex;
-      flex-direction: column;
     }
     
     header {
@@ -71,7 +69,6 @@
     .payment-container {
       background: rgba(26, 26, 46, 0.7);
       backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
       border-radius: 15px;
       padding: 30px;
       margin: 30px auto;
@@ -81,9 +78,8 @@
       border: 1px solid rgba(255,255,255,0.1);
     }
     
-    .payment-header { text-align: center; margin-bottom: 30px; position: relative; }
+    .payment-header { text-align: center; margin-bottom: 30px; }
     .payment-header h2 { font-size: 1.8rem; color: var(--secondary); margin-bottom: 15px; }
-    .payment-header p { color: rgba(255,255,255,0.8); }
     
     .payment-info {
       background: rgba(255, 122, 0, 0.1);
@@ -97,8 +93,14 @@
     .info-label { color: rgba(255,255,255,0.8); }
     .info-value { font-weight: 700; color: var(--secondary); }
     
-    .payment-steps { margin: 30px 0; }
-    .step { display: flex; align-items: flex-start; margin-bottom: 25px; position: relative; }
+    .step {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 25px;
+      background: rgba(255,255,255,0.05);
+      padding: 15px;
+      border-radius: 10px;
+    }
     
     .step-number {
       background: var(--secondary);
@@ -115,42 +117,42 @@
     }
     
     .step-content { flex: 1; }
-    .step-title { font-weight: 700; margin-bottom: 8px; color: #fff; }
-    .step-details { color: rgba(255,255,255,0.8); line-height: 1.6; }
-    
-    .payment-methods { margin: 30px 0; }
+    .step-title { font-weight: 700; margin-bottom: 8px; color: #fff; font-size: 1.1rem; }
+    .step-details { color: rgba(255,255,255,0.8); }
     
     .method-card {
       background: rgba(255,255,255,0.08);
       border-radius: 10px;
-      padding: 20px;
-      margin-bottom: 15px;
-      border: 1px solid rgba(255,255,255,0.1);
-      transition: all 0.3s;
+      padding: 15px;
+      margin-bottom: 10px;
     }
-    
-    .method-card:hover { background: rgba(255,255,255,0.12); border-color: var(--secondary); }
-    .method-header { display: flex; align-items: center; margin-bottom: 15px; }
-    .method-icon { font-size: 1.5rem; margin-left: 15px; color: var(--secondary); }
-    .method-name { font-weight: 700; color: #fff; }
-    .method-details { color: rgba(255,255,255,0.8); margin-bottom: 15px; }
     
     .method-number {
-      background: rgba(255,255,255,0.1);
-      padding: 12px;
+      background: rgba(0,0,0,0.5);
+      padding: 10px;
       border-radius: 8px;
       font-family: monospace;
-      font-size: 1.1rem;
+      font-size: 1rem;
       color: var(--secondary);
       text-align: center;
-      margin-bottom: 15px;
+      margin-top: 10px;
       direction: ltr;
-      display: block;
     }
     
-    .upload-section { margin: 30px 0; }
-    .file-upload { position: relative; margin: 20px 0; }
-    .file-upload input { position: absolute; opacity: 0; width: 100%; height: 100%; top: 0; left: 0; cursor: pointer; }
+    .file-upload {
+      position: relative;
+      margin: 15px 0;
+    }
+    
+    .file-upload input {
+      position: absolute;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      cursor: pointer;
+    }
     
     .file-upload-label {
       display: block;
@@ -159,15 +161,45 @@
       border: 2px dashed rgba(255,255,255,0.3);
       border-radius: 10px;
       text-align: center;
-      color: rgba(255,255,255,0.6);
       transition: all 0.3s;
+      cursor: pointer;
     }
     
-    .file-upload-label:hover { border-color: var(--secondary); color: #fff; background: rgba(255,255,255,0.12); }
-    .file-upload-label i { display: block; font-size: 2.2rem; margin-bottom: 12px; color: var(--secondary); }
+    .file-upload-label:hover {
+      border-color: var(--secondary);
+      background: rgba(255,255,255,0.12);
+    }
     
-    .preview-container { display: none; margin-top: 15px; text-align: center; animation: fadeIn 0.5s ease-out; }
-    .preview-image { max-width: 100%; max-height: 200px; border-radius: 8px; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    .file-upload-label i { font-size: 2rem; margin-bottom: 10px; color: var(--secondary); display: block; }
+    
+    .preview-container {
+      display: none;
+      margin-top: 15px;
+      text-align: center;
+    }
+    
+    .preview-image {
+      max-width: 100%;
+      max-height: 200px;
+      border-radius: 8px;
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 12px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      color: #fff;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 1rem;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: var(--secondary);
+    }
     
     .btn {
       display: inline-block;
@@ -175,34 +207,18 @@
       color: #000;
       padding: 15px 30px;
       border-radius: 30px;
-      text-decoration: none;
       font-weight: 700;
       border: none;
       cursor: pointer;
       transition: all 0.3s;
       text-align: center;
       font-size: 1.1rem;
+      width: 100%;
       margin-top: 20px;
     }
     
     .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255, 122, 0, 0.3); }
-    .btn-whatsapp { background: var(--success); color: #fff; display: flex; align-items: center; justify-content: center; gap: 10px; }
-    
-    footer {
-      background: var(--primary);
-      padding: 20px 0;
-      text-align: center;
-      border-top: 1px solid rgba(255,255,255,0.1);
-    }
-    
-    .copyright { color: rgba(255,255,255,0.6); font-size: 0.9rem; }
-    
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    
-    @media (max-width: 768px) {
-      .payment-container { padding: 20px; }
-      .payment-header h2 { font-size: 1.5rem; }
-    }
+    .btn-whatsapp { background: var(--success); color: #fff; text-decoration: none; display: block; }
     
     .spinner {
       display: inline-block;
@@ -213,7 +229,18 @@
       border-top-color: #000;
       animation: spin 1s ease-in-out infinite;
     }
+    
     @keyframes spin { to { transform: rotate(360deg); } }
+    
+    footer {
+      background: var(--primary);
+      padding: 20px 0;
+      text-align: center;
+      margin-top: 40px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .copyright { color: rgba(255,255,255,0.6); font-size: 0.9rem; }
   </style>
 </head>
 <body>
@@ -230,108 +257,71 @@
     <div class="payment-container">
       <div class="payment-header">
         <h2><i class="fas fa-credit-card"></i> إتمام عملية الدفع</h2>
-        <p>الرجاء إتمام عملية التحويل ثم رفع صورة الإثبات</p>
       </div>
 
       <div class="payment-info">
         <div class="info-row">
           <span class="info-label">رقم الطلب:</span>
-          <span class="info-value" id="orderId">-</span>
+          <span class="info-value" id="orderId">جاري التحميل...</span>
         </div>
         <div class="info-row">
           <span class="info-label">المبلغ الإجمالي:</span>
-          <span class="info-value" id="orderAmount">-</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">النوع:</span>
-          <span class="info-value" id="orderType">-</span>
+          <span class="info-value" id="orderAmount">جاري التحميل...</span>
         </div>
       </div>
 
-      <div class="payment-steps">
-        <div class="step">
-          <div class="step-number">1</div>
-          <div class="step-content">
-            <div class="step-title">قم بالتحويل إلى أحد الأرقام التالية</div>
-            <div class="step-details">
-              <div class="payment-methods">
-                <div class="method-card">
-                  <div class="method-header">
-                    <i class="method-icon fas fa-mobile-alt"></i>
-                    <div class="method-name">فودافون كاش</div>
-                  </div>
-                  <div class="method-details">قم بالتحويل إلى الرقم التالي عبر تطبيق فودافون كاش</div>
-                  <span class="method-number">01274445091</span>
-                </div>
-
-                <div class="method-card">
-                  <div class="method-header">
-                    <i class="method-icon fas fa-mobile-alt"></i>
-                    <div class="method-name">اورانج ماني</div>
-                  </div>
-                  <div class="method-details">قم بالتحويل إلى الرقم التالي عبر تطبيق اورانج ماني</div>
-                  <span class="method-number">01274445091</span>
-                </div>
-
-                <div class="method-card">
-                  <div class="method-header">
-                    <i class="method-icon fas fa-mobile-alt"></i>
-                    <div class="method-name">اتصالات كاش</div>
-                  </div>
-                  <div class="method-details">قم بالتحويل إلى الرقم التالي عبر تطبيق اتصالات كاش</div>
-                  <span class="method-number">01274445091</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="step">
-          <div class="step-number">2</div>
-          <div class="step-content">
-            <div class="step-title">أدخل رقم المعاملة (Transaction ID)</div>
-            <div class="step-details">
-              <div class="form-group">
-                <input type="text" id="transactionId" class="form-control" placeholder="أدخل رقم التحويل من التطبيق" style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-family: 'Tajawal', sans-serif;">
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="step">
-          <div class="step-number">3</div>
-          <div class="step-content">
-            <div class="step-title">قم برفع صورة إثبات التحويل</div>
-            <div class="step-details">
-              <div class="upload-section">
-                <div class="file-upload">
-                  <input type="file" id="paymentProof" accept="image/*" required>
-                  <label for="paymentProof" class="file-upload-label">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <span>انقر لرفع صورة إثبات الدفع</span>
-                  </label>
-                </div>
-                <div class="preview-container" id="previewContainer">
-                  <img src="" class="preview-image" id="previewImage">
-                </div>
-              </div>
+      <!-- الخطوة 1: معلومات التحويل -->
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <div class="step-title">قم بالتحويل إلى أحد الأرقام التالية</div>
+          <div class="step-details">
+            <div class="method-card">
+              <i class="fas fa-mobile-alt"></i> <strong>فودافون كاش / اورانج ماني / اتصالات كاش</strong>
+              <div class="method-number">01274445091</div>
             </div>
           </div>
         </div>
       </div>
 
-      <div style="text-align: center;">
-        <button id="submitPayment" class="btn">
-          <i class="fas fa-check-circle"></i> تأكيد إتمام الدفع
-        </button>
-
-        <p style="color: rgba(255,255,255,0.7); margin: 20px 0;">
-          في حالة وجود أي مشكلة، يمكنك التواصل معنا عبر الواتساب
-        </p>
-        <a href="https://wa.me/201274445091" class="btn btn-whatsapp">
-          <i class="fab fa-whatsapp"></i> تواصل مع الدعم
-        </a>
+      <!-- الخطوة 2: إدخال رقم المعاملة -->
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <div class="step-title">أدخل رقم المعاملة (Transaction ID)</div>
+          <div class="step-details">
+            <input type="text" id="transactionId" class="form-control" placeholder="مثال: TRX-123456789" required>
+          </div>
+        </div>
       </div>
+
+      <!-- الخطوة 3: رفع الصورة -->
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <div class="step-title">ارفع صورة إثبات التحويل</div>
+          <div class="step-details">
+            <div class="file-upload">
+              <input type="file" id="paymentProof" accept="image/*" required>
+              <label for="paymentProof" class="file-upload-label">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <span>انقر لاختيار الصورة</span>
+              </label>
+            </div>
+            <div id="previewContainer" class="preview-container">
+              <img id="previewImage" class="preview-image">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button id="submitPayment" class="btn">
+        <i class="fas fa-check-circle"></i> تأكيد إتمام الدفع
+      </button>
+
+      <a href="https://wa.me/201274445091" class="btn btn-whatsapp" style="margin-top: 15px;">
+        <i class="fab fa-whatsapp"></i> تواصل مع الدعم
+      </a>
     </div>
   </main>
 
@@ -341,29 +331,12 @@
     </div>
   </footer>
 
-  <style>
-    .form-control {
-      width: 100%;
-      padding: 12px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 10px;
-      color: #fff;
-      font-family: 'Tajawal', sans-serif;
-      font-size: 1rem;
-    }
-    .form-control:focus {
-      outline: none;
-      border-color: var(--secondary);
-    }
-  </style>
-
   <script>
-    let orderData = null;
+    let orderId = null;
 
     document.addEventListener('DOMContentLoaded', async function() {
       const urlParams = new URLSearchParams(window.location.search);
-      const orderId = urlParams.get('orderId');
+      orderId = urlParams.get('orderId');
 
       if (!orderId) {
         alert('لم يتم العثور على معرّف الطلب');
@@ -373,60 +346,53 @@
 
       document.getElementById('orderId').textContent = orderId;
 
-      // جلب بيانات الطلب من السيرفر
+      // جلب بيانات الطلب
       try {
-        const response = await fetch(`/api/order/${orderId}`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include'
-        });
-
+        const response = await fetch(`/api/order/${orderId}`);
         const result = await response.json();
 
         if (result.success && result.data) {
-          orderData = result.data;
-          document.getElementById('orderAmount').textContent = orderData.totalAmount + ' ج.م';
-          document.getElementById('orderType').textContent = orderData.type === 'UC' ? orderData.ucAmount + ' UC' : orderData.bundle;
+          document.getElementById('orderAmount').textContent = result.data.totalAmount + ' ج.م';
         } else {
-          throw new Error('فشل جلب بيانات الطلب');
+          document.getElementById('orderAmount').textContent = 'غير معروف';
         }
       } catch (error) {
-        console.error('Error fetching order:', error);
-        alert('حدث خطأ في جلب بيانات الطلب. سيتم استخدام القيم الافتراضية.');
-        document.getElementById('orderAmount').textContent = 'غير معروف';
+        console.error('Error:', error);
+        document.getElementById('orderAmount').textContent = 'خطأ في التحميل';
       }
 
-      const paymentProofInput = document.getElementById('paymentProof');
+      // معاينة الصورة
+      const fileInput = document.getElementById('paymentProof');
       const previewContainer = document.getElementById('previewContainer');
       const previewImage = document.getElementById('previewImage');
 
-      paymentProofInput.addEventListener('change', function() {
+      fileInput.addEventListener('change', function() {
         const file = this.files[0];
         if (file) {
           const reader = new FileReader();
           reader.onload = function(e) {
             previewImage.src = e.target.result;
             previewContainer.style.display = 'block';
-          }
+          };
           reader.readAsDataURL(file);
+        } else {
+          previewContainer.style.display = 'none';
         }
       });
     });
 
+    // تأكيد الدفع
     document.getElementById('submitPayment').addEventListener('click', async function() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const orderId = urlParams.get('orderId');
-      
       const transactionId = document.getElementById('transactionId').value.trim();
       const fileInput = document.getElementById('paymentProof');
-      
+
       if (!transactionId) {
         alert('يرجى إدخال رقم المعاملة (Transaction ID)');
         return;
       }
-      
+
       if (!fileInput.files.length) {
-        alert('يرجى رفع صورة إثبات الدفع أولاً');
+        alert('يرجى رفع صورة إثبات الدفع');
         return;
       }
 
@@ -435,7 +401,6 @@
       btn.innerHTML = '<span class="spinner"></span> جاري المعالجة...';
 
       try {
-        // إنشاء FormData لإرسال الصورة والبيانات
         const formData = new FormData();
         formData.append('orderId', orderId);
         formData.append('transactionId', transactionId);
@@ -443,31 +408,24 @@
 
         const response = await fetch('/api/order/confirm-payment', {
           method: 'POST',
-          body: formData,
-          credentials: 'include'
+          body: formData
         });
 
         const result = await response.json();
 
         if (!response.ok) {
-          throw new Error(result.message || 'حدث خطأ أثناء تأكيد الدفع');
+          throw new Error(result.message || 'حدث خطأ في الخادم');
         }
 
         if (result.success) {
-          btn.innerHTML = '<i class="fas fa-check-circle"></i> تم تأكيد الدفع بنجاح';
-          btn.style.background = 'var(--success)';
-          
-          alert('تم استلام إثبات الدفع بنجاح! سيتم مراجعة طلبك وتنفيذه في أقرب وقت ممكن.');
-          
-          setTimeout(() => {
-            window.location.href = '/';
-          }, 3000);
+          alert('✅ تم تأكيد الدفع بنجاح! سيتم مراجعة طلبك قريباً.');
+          window.location.href = '/';
         } else {
-          throw new Error(result.message || 'حدث خطأ غير معروف');
+          throw new Error(result.message || 'فشل تأكيد الدفع');
         }
       } catch (error) {
         console.error('Error:', error);
-        alert(error.message || 'فشل تأكيد الدفع، يرجى المحاولة مرة أخرى');
+        alert('❌ ' + error.message);
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-check-circle"></i> تأكيد إتمام الدفع';
       }
