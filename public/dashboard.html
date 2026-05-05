@@ -759,8 +759,6 @@ async function loadOrders() {
     const container = document.getElementById("ordersList");
     container.innerHTML = "";
 
-    if (!Array.isArray(orders)) throw new Error('بيانات الطلبات غير صالحة');
-
     if (orders.length === 0) {
       container.innerHTML = `<tr><td colspan="8" style="text-align: center;">لا توجد طلبات لعرضها</td></tr>`;
       return;
@@ -769,8 +767,8 @@ async function loadOrders() {
     orders.forEach(order => {
       const row = document.createElement("tr");
       
-      // تحديد مكان الصورة - ممكن تكون في screenshot أو screenshotUrl
-      const screenshotUrl = order.screenshotUrl || order.screenshot || null;
+      // محاولة الحصول على رابط الصورة من عدة مصادر محتملة
+      const imageUrl = order.screenshotUrl || order.screenshot || null;
       
       row.innerHTML = `
         <td>
@@ -781,27 +779,24 @@ async function loadOrders() {
         <td>${order.type || ''}<br><small>${order.ucAmount || order.bundle || ''}</small></td>
         <td>${order.totalAmount || 0} ج.م</td>
         <td>
-          <span class="status">
-            ${order.status === 'تم الدفع' ? '<i class="fas fa-check-circle" style="color: var(--success);"></i> تم الدفع' :
-              order.status === 'قيد الانتظار' ? '<i class="fas fa-hourglass-half" style="color: var(--warning);"></i> قيد الانتظار' :
-              order.status === 'تم الدفع - قيد المراجعة' ? '<i class="fas fa-clock" style="color: var(--info);"></i> قيد المراجعة' :
-              '<i class="fas fa-times-circle" style="color: var(--danger);"></i> لم يتم الدفع'}
+          <span class="badge ${order.status === 'تم الدفع' ? 'badge-success' : order.status === 'تم الدفع - قيد المراجعة' ? 'badge-warning' : 'badge-danger'}">
+            ${order.status || 'لم يتم الدفع'}
           </span>
         </td>
         <td>${order.transactionId || 'لا يوجد'}</td>
         <td>
-          ${screenshotUrl ? `
-            <img src="${screenshotUrl}"
-                 onclick="openImageModal('${screenshotUrl}')"
-                 class="screenshot-preview"
-                 style="cursor: pointer; max-width: 60px; max-height: 60px; border-radius: 8px;">
-          ` : 'لا توجد صورة'}
+          ${imageUrl ? 
+            `<img src="${imageUrl}" 
+                 onclick="openImageModal('${imageUrl}')" 
+                 style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 1px solid #ddd;"
+                 onerror="this.style.display='none'; this.nextSibling.style.display='inline-block';"
+                 ><span style="display:none; color:#999; font-size:12px;">فشل التحميل</span>` : 
+            '<span style="color:#999;">لا توجد صورة</span>'}
         </td>
         <td>
-          <div style="display: flex; gap: 5px;">
-            <button class="btn btn-sm ${order.status === 'تم الدفع' ? 'btn-warning' : 'btn-success'}"
-                    onclick="updateStatus('${order.id}', '${order.status === 'تم الدفع' ? 'لم يتم الدفع' : 'تم الدفع'}')">
-              <i class="fas ${order.status === 'تم الدفع' ? 'fa-times' : 'fa-check'}"></i>
+          <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+            <button class="btn btn-sm btn-success" onclick="updateStatus('${order.id}', 'تم الدفع')">
+              <i class="fas fa-check"></i>
             </button>
             <button class="btn btn-sm btn-danger" onclick="deleteOrder('${order.id}')">
               <i class="fas fa-trash"></i>
