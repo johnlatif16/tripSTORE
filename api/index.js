@@ -264,12 +264,11 @@ app.post("/api/order/confirm-payment", upload.single("screenshot"), async (req, 
   try {
     console.log("=== CONFIRM PAYMENT REQUEST ===");
     console.log("Body:", req.body);
-    console.log("File:", req.file ? "File received: " + req.file.originalname : "No file");
+    console.log("File:", req.file ? req.file.originalname : "No file");
     
     const { orderId, transactionId } = req.body;
     
     if (!orderId || !transactionId) {
-      console.log("Missing required fields:", { orderId, transactionId });
       return res.status(400).json({ success: false, message: "رقم الطلب ورقم المعاملة مطلوبان" });
     }
     
@@ -277,10 +276,9 @@ app.post("/api/order/confirm-payment", upload.single("screenshot"), async (req, 
     if (req.file) {
       try {
         screenshotUrl = await uploadScreenshotToStorage(req.file);
-        console.log("Screenshot uploaded:", screenshotUrl);
+        console.log("Screenshot uploaded to:", screenshotUrl);
       } catch (uploadErr) {
         console.error("Upload error:", uploadErr);
-        // لا نوقف العملية إذا فشل رفع الصورة
       }
     }
     
@@ -291,31 +289,22 @@ app.post("/api/order/confirm-payment", upload.single("screenshot"), async (req, 
     };
     
     if (screenshotUrl) {
-      updateData.screenshotUrl = screenshotUrl;
+      updateData.screenshotUrl = screenshotUrl;  // مهم: use screenshotUrl not screenshot
     }
     
-    console.log("Updating order with:", updateData);
+    await firestore().collection("orders").doc(orderId).update(updateData);
     
-    const orderRef = firestore().collection("orders").doc(orderId);
-    const orderDoc = await orderRef.get();
-    
-    if (!orderDoc.exists) {
-      return res.status(404).json({ success: false, message: "الطلب غير موجود" });
-    }
-    
-    await orderRef.update(updateData);
-    console.log("Order updated successfully");
-    
-    // إشعار تليجرام
+    // جلب بيانات الطلب للإشعار
+    const orderDoc = await firestore().collection("orders").doc(orderId).get();
     const orderData = orderDoc.data();
-    const note = `💰 تم تأكيد الدفع\nرقم الطلب: ${orderId}\nرقم المعاملة: ${transactionId}\nالمبلغ: ${orderData.totalAmount}\nالعميل: ${orderData.name}`;
-    await telegramNotify(note);
     
-    res.json({ success: true, message: "تم تأكيد الدفع بنجاح" });
+    await telegramNotify(`💰 تم تأكيد الدفع\nرقم الطلب: ${orderId}\nرقم المعاملة: ${transactionId}\nالمبلغ: ${orderData.totalAmount}\nالعميل: ${orderData.name}`);
+    
+    res.json({ success: true, message: "تم تأكيد الدفع بنجاح", screenshotUrl: screenshotUrl });
     
   } catch (err) {
-    console.error("FATAL ERROR in confirm payment:", err);
-    res.status(500).json({ success: false, message: "حدث خطأ أثناء تأكيد الدفع: " + (err.message || "خطأ غير معروف") });
+    console.error("FATAL ERROR:", err);
+    res.status(500).json({ success: false, message: "حدث خطأ: " + (err.message || "خطأ غير معروف") });
   }
 });
 
