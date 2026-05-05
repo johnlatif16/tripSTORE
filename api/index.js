@@ -147,39 +147,64 @@ app.get("/api/health", (req, res) => {
 
 // ====== Public APIs ======
 app.post("/api/order", upload.single("screenshot"), async (req, res) => {
+app.post("/api/order", upload.single("screenshot"), async (req, res) => {
   try {
+    console.log("=== NEW ORDER REQUEST ===");
+    console.log("Body:", req.body);
+    console.log("File:", req.file);
+    
     const { name, playerId, email, ucAmount, bundle, totalAmount, transactionId } = req.body;
 
-    // التحقق من الحقول المطلوبة (transactionId أصبح غير مطلوب هنا)
+    // التحقق من الحقول المطلوبة
     if (!name || !playerId || !email || !totalAmount || (!ucAmount && !bundle)) {
-      return res.status(400).json({ success: false, message: "جميع الحقول الأساسية مطلوبة" });
+      console.log("Validation failed:", { name, playerId, email, totalAmount, ucAmount, bundle });
+      return res.status(400).json({ 
+        success: false, 
+        message: "جميع الحقول الأساسية مطلوبة (الاسم، ID، البريد، المبلغ، ونوع المنتج)" 
+      });
     }
 
     const type = ucAmount ? "UC" : "Bundle";
-    const screenshotUrl = await uploadScreenshotToStorage(req.file);
+    let screenshotUrl = null;
+    
+    // رفع الصورة إذا وجدت
+    if (req.file) {
+      try {
+        screenshotUrl = await uploadScreenshotToStorage(req.file);
+        console.log("Screenshot uploaded:", screenshotUrl);
+      } catch (uploadErr) {
+        console.error("Upload error:", uploadErr);
+        // لا نمنع إنشاء الطلب إذا فشل رفع الصورة
+      }
+    }
 
-    const ref = await firestore().collection("orders").add({
+    const orderData = {
       name,
       playerId,
       email,
       type,
       ucAmount: ucAmount || null,
       bundle: bundle || null,
-      totalAmount,
-      transactionId: transactionId || null, // إذا لم يتم إرساله يصبح null
-      screenshotUrl: screenshotUrl || null,
+      totalAmount: Number(totalAmount), // تأكد من أنها رقم
+      transactionId: transactionId || null,
+      screenshotUrl: screenshotUrl,
       status: "لم يتم الدفع",
       created_at: admin.firestore.FieldValue.serverTimestamp()
-    });
+    };
 
-    // إشعار تليجرام
+    console.log("Saving to Firestore:", orderData);
+    
+    const ref = await firestore().collection("orders").add(orderData);
+    console.log("Order saved with ID:", ref.id);
+
+    // إشعار تليجرام (لا ننتظر اكتماله)
     const note = `🧾 طلب جديد\nالاسم: ${name}\nالبريد: ${email}\nالنوع: ${type}\nالإجمالي: ${totalAmount}\nID: ${ref.id}`;
-    await telegramNotify(note);
+    telegramNotify(note).catch(e => console.error("Telegram error:", e));
 
-    // إشعار إيميل
+    // إشعار إيميل (لا ننتظر اكتماله)
     const notifyTo = process.env.NOTIFICATION_EMAIL || process.env.SMTP_USER || process.env.EMAIL_USER;
     if (notifyTo) {
-      await transporter.sendMail({
+      transporter.sendMail({
         from: `"Trip Store" <${process.env.SMTP_USER || process.env.EMAIL_USER}>`,
         to: notifyTo,
         subject: "طلب جديد",
@@ -192,13 +217,23 @@ app.post("/api/order", upload.single("screenshot"), async (req, res) => {
           ${screenshotUrl ? `<p><a href="${screenshotUrl}">صورة التحويل</a></p>` : ""}
           <p style="color:#999;font-size:12px;">ID: ${ref.id}</p>
         </div>`
-      });
+      }).catch(e => console.error("Email error:", e));
     }
 
-    return res.json({ success: true, id: ref.id });
+    // إرجاع استجابة نجاح واضحة
+    return res.status(200).json({ 
+      success: true, 
+      id: ref.id,
+      message: "تم إنشاء الطلب بنجاح"
+    });
+    
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ success: false, message: "حدث خطأ أثناء الحفظ" });
+    console.error("FATAL ERROR in /api/order:", err);
+    // تأكد من إرجاع JSON حتى في حالة الخطأ
+    return res.status(500).json({ 
+      success: false, 
+      message: "حدث خطأ أثناء الحفظ: " + (err.message || "خطأ غير معروف")
+    });
   }
 });
 
