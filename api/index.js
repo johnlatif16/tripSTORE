@@ -246,25 +246,42 @@ app.get("/api/order/:id", async (req, res) => {
       return res.status(404).json({ success: false, message: "الطلب غير موجود" });
     }
     
-    res.json({ success: true, data: { id: doc.id, ...doc.data() } });
+    const data = doc.data();
+    // تحويل الـ timestamp إلى string
+    if (data.created_at && data.created_at.toDate) {
+      data.created_at = data.created_at.toDate().toISOString();
+    }
+    
+    res.json({ success: true, data: { id: doc.id, ...data } });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: "خطأ في جلب الطلب" });
+    console.error("Error fetching order:", err);
+    res.status(500).json({ success: false, message: "خطأ في جلب الطلب: " + err.message });
   }
 });
 
 // تأكيد الدفع (رفع الصورة وإضافة transactionId)
 app.post("/api/order/confirm-payment", upload.single("screenshot"), async (req, res) => {
   try {
+    console.log("=== CONFIRM PAYMENT REQUEST ===");
+    console.log("Body:", req.body);
+    console.log("File:", req.file ? "File received: " + req.file.originalname : "No file");
+    
     const { orderId, transactionId } = req.body;
     
     if (!orderId || !transactionId) {
+      console.log("Missing required fields:", { orderId, transactionId });
       return res.status(400).json({ success: false, message: "رقم الطلب ورقم المعاملة مطلوبان" });
     }
     
     let screenshotUrl = null;
     if (req.file) {
-      screenshotUrl = await uploadScreenshotToStorage(req.file);
+      try {
+        screenshotUrl = await uploadScreenshotToStorage(req.file);
+        console.log("Screenshot uploaded:", screenshotUrl);
+      } catch (uploadErr) {
+        console.error("Upload error:", uploadErr);
+        // لا نوقف العملية إذا فشل رفع الصورة
+      }
     }
     
     const updateData = {
@@ -277,15 +294,28 @@ app.post("/api/order/confirm-payment", upload.single("screenshot"), async (req, 
       updateData.screenshotUrl = screenshotUrl;
     }
     
-    await firestore().collection("orders").doc(orderId).update(updateData);
+    console.log("Updating order with:", updateData);
     
-    // إشعار تليجرام بتأكيد الدفع
-    await telegramNotify(`💰 تم تأكيد الدفع\nرقم الطلب: ${orderId}\nرقم المعاملة: ${transactionId}`);
+    const orderRef = firestore().collection("orders").doc(orderId);
+    const orderDoc = await orderRef.get();
+    
+    if (!orderDoc.exists) {
+      return res.status(404).json({ success: false, message: "الطلب غير موجود" });
+    }
+    
+    await orderRef.update(updateData);
+    console.log("Order updated successfully");
+    
+    // إشعار تليجرام
+    const orderData = orderDoc.data();
+    const note = `💰 تم تأكيد الدفع\nرقم الطلب: ${orderId}\nرقم المعاملة: ${transactionId}\nالمبلغ: ${orderData.totalAmount}\nالعميل: ${orderData.name}`;
+    await telegramNotify(note);
     
     res.json({ success: true, message: "تم تأكيد الدفع بنجاح" });
+    
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: "حدث خطأ أثناء تأكيد الدفع" });
+    console.error("FATAL ERROR in confirm payment:", err);
+    res.status(500).json({ success: false, message: "حدث خطأ أثناء تأكيد الدفع: " + (err.message || "خطأ غير معروف") });
   }
 });
 
