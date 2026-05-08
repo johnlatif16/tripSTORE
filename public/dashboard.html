@@ -544,6 +544,12 @@
           </a>
         </li>
         <li class="nav-item">
+  <a class="nav-link" onclick="openTab('couponsTab', this)">
+    <i class="fas fa-tags"></i>
+    <span>الكوبونات</span>
+  </a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" onclick="openTab('messagesTab', this)">
             <i class="fas fa-envelope"></i>
             <span>الرسائل المباشرة</span>
@@ -638,6 +644,67 @@
         </div>
       </div>
 
+      <!-- تبويب الكوبونات -->
+<div id="couponsTab" class="section tab-content">
+  <div class="section-header">
+    <h2><i class="fas fa-tags"></i> إدارة كوبونات الخصم</h2>
+    <div class="actions">
+      <button class="btn btn-primary" onclick="showAddCouponModal()">
+        <i class="fas fa-plus"></i> إضافة كوبون جديد
+      </button>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>الكود</th>
+          <th>نسبة الخصم (%)</th>
+          <th>الوصف</th>
+          <th>تاريخ الانتهاء</th>
+          <th>عدد مرات الاستخدام</th>
+          <th>الحالة</th>
+          <th>الإجراءات</th>
+        </tr>
+      </thead>
+      <tbody id="couponsList"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- مودال إضافة كوبون -->
+<div id="addCouponModal" class="modal">
+  <div class="modal-content" style="max-width: 500px;">
+    <div class="modal-header">
+      <h3><i class="fas fa-plus-circle"></i> إضافة كوبون جديد</h3>
+      <button class="close" onclick="closeAddCouponModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>كود الخصم:</label>
+        <input type="text" id="couponCode" class="form-control" placeholder="مثال: JOHN50" maxlength="20" required>
+      </div>
+      <div class="form-group">
+        <label>نسبة الخصم (%):</label>
+        <input type="number" id="couponPercent" class="form-control" placeholder="مثال: 10" min="1" max="100" required>
+      </div>
+      <div class="form-group">
+        <label>الوصف (اختياري):</label>
+        <input type="text" id="couponDesc" class="form-control" placeholder="عرض خاص لـ JOHN">
+      </div>
+      <div class="form-group">
+        <label>تاريخ الانتهاء (اختياري):</label>
+        <input type="date" id="couponExpiry" class="form-control">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeAddCouponModal()">إلغاء</button>
+      <button class="btn btn-primary" onclick="addCoupon()">إضافة الكوبون</button>
+    </div>
+  </div>
+</div>
+      
       <div id="suggestionsTab" class="section tab-content">
         <div class="section-header">
           <h2><i class="fas fa-lightbulb"></i> إدارة الاقتراحات</h2>
@@ -1172,6 +1239,127 @@ async function loadOrders() {
         }, 5000);
       }
     }
+    // Coupons functions
+async function loadCoupons() {
+  try {
+    const res = await fetch("/api/admin/coupons", { credentials: "include" });
+    if (!res.ok) throw new Error("فشل في جلب الكوبونات");
+
+    const data = await res.json();
+    if (!data.success) throw new Error(data.message);
+
+    const coupons = data.data || [];
+    const container = document.getElementById("couponsList");
+    container.innerHTML = "";
+
+    if (coupons.length === 0) {
+      container.innerHTML = `<tr><td colspan="7" style="text-align: center;">لا توجد كوبونات</td></tr>`;
+      return;
+    }
+
+    coupons.forEach(coupon => {
+      const row = document.createElement("tr");
+      const expiryDate = coupon.expiresAt?.toDate ? new Date(coupon.expiresAt.toDate()).toLocaleDateString() : "لا يوجد";
+      row.innerHTML = `
+        <td><strong>${coupon.code}</strong></td>
+        <td>${coupon.discountPercent}%</td>
+        <td>${coupon.description || "-"}</td>
+        <td>${expiryDate}</td>
+        <td>${coupon.usedCount || 0}</td>
+        <td><span class="badge ${coupon.isActive ? 'badge-success' : 'badge-danger'}">${coupon.isActive ? "مفعل" : "معطل"}</span></td>
+        <td>
+          <button class="btn btn-sm btn-danger" onclick="deleteCoupon('${coupon.id}')">
+            <i class="fas fa-trash"></i>
+          </button>
+        </td>
+      `;
+      container.appendChild(row);
+    });
+  } catch (error) {
+    console.error("Error loading coupons:", error);
+    const container = document.getElementById("couponsList");
+    if (container) container.innerHTML = `<tr><td colspan="7" class="alert-danger" style="text-align:center;">حدث خطأ: ${error.message}</td></tr>`;
+  }
+}
+
+function showAddCouponModal() {
+  document.getElementById("addCouponModal").classList.add("show");
+  document.getElementById("couponCode").value = "";
+  document.getElementById("couponPercent").value = "";
+  document.getElementById("couponDesc").value = "";
+  document.getElementById("couponExpiry").value = "";
+}
+
+function closeAddCouponModal() {
+  document.getElementById("addCouponModal").classList.remove("show");
+}
+
+async function addCoupon() {
+  const code = document.getElementById("couponCode").value.trim();
+  const discountPercent = document.getElementById("couponPercent").value;
+  const description = document.getElementById("couponDesc").value.trim();
+  const expiresAt = document.getElementById("couponExpiry").value;
+
+  if (!code) {
+    showAlert("danger", "يرجى إدخال كود الكوبون");
+    return;
+  }
+  if (!discountPercent || discountPercent < 1 || discountPercent > 100) {
+    showAlert("danger", "يرجى إدخال نسبة خصم صحيحة بين 1 و 100");
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/admin/coupons", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ code, discountPercent, description, expiresAt })
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      showAlert("success", `تم إضافة الكوبون ${code.toUpperCase()} بنجاح`);
+      closeAddCouponModal();
+      loadCoupons();
+    } else {
+      throw new Error(data.message);
+    }
+  } catch (error) {
+    console.error("Error adding coupon:", error);
+    showAlert("danger", "حدث خطأ: " + error.message);
+  }
+}
+
+async function deleteCoupon(couponId) {
+  if (!confirm("هل أنت متأكد من حذف هذا الكوبون؟")) return;
+
+  try {
+    const res = await fetch(`/api/admin/coupons/${couponId}`, {
+      method: "DELETE",
+      credentials: "include"
+    });
+    const data = await res.json();
+    if (data.success) {
+      showAlert("success", "تم حذف الكوبون بنجاح");
+      loadCoupons();
+    } else {
+      throw new Error(data.message);
+    }
+  } catch (error) {
+    console.error("Error deleting coupon:", error);
+    showAlert("danger", "حدث خطأ: " + error.message);
+  }
+}
+
+// Update DOMContentLoaded to include loadCoupons
+const originalDOMContentLoaded = window.onload || function() {};
+window.addEventListener('DOMContentLoaded', function() {
+  loadOrders();
+  loadInquiries();
+  loadSuggestions();
+  loadCoupons(); // Add this
+});
   </script>
 </body>
 </html>
