@@ -221,7 +221,7 @@
       gap: 10px;
     }
 
-    /* بطاقات الإحصائيات */
+    /* بطاقات الإحصائيات - تصميم جديد قابل للنقر */
     .stats-cards {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -236,25 +236,67 @@
       box-shadow: var(--box-shadow);
       transition: transform 0.2s, box-shadow 0.2s;
       border-top: 5px solid var(--primary);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .stat-card::after {
+      content: '\f054';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      left: 20px;
+      bottom: 20px;
+      opacity: 0.3;
+      font-size: 1.2rem;
+      transition: all 0.2s;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+    }
+    
+    .stat-card:hover::after {
+      opacity: 0.8;
+      transform: translateX(-5px);
     }
 
     .stat-card.orders { border-top-color: var(--info); }
     .stat-card.inquiries { border-top-color: var(--warning); }
     .stat-card.suggestions { border-top-color: var(--success); }
 
+    .stat-card .stat-icon {
+      font-size: 2rem;
+      margin-bottom: 8px;
+      display: inline-block;
+    }
+    
+    .stat-card h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #475569;
+    }
+    
     .stat-card .value {
-      font-size: 2.3rem;
+      font-size: 2.5rem;
       font-weight: 800;
       margin: 10px 0 6px;
+      color: #0f172a;
     }
-
-    /* الأقسام الرئيسية */
+    
+    /* أقسام تفاصيل الجداول */
     .section {
       background: white;
       border-radius: 28px;
       padding: 1.6rem 1.8rem;
       margin-bottom: 2rem;
       box-shadow: var(--box-shadow);
+    }
+    
+    .section.hidden {
+      display: none;
     }
 
     .section-header {
@@ -266,6 +308,24 @@
       margin-bottom: 1.3rem;
       padding-bottom: 0.8rem;
       border-bottom: 1px solid #eef2f6;
+    }
+    
+    .back-button {
+      background: #f1f5f9;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 40px;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: 0.2s;
+    }
+    
+    .back-button:hover {
+      background: #e2e8f0;
     }
 
     /* جداول متجاوبة */
@@ -286,6 +346,7 @@
       padding: 14px 12px;
       font-weight: 700;
       color: #1e293b;
+      text-align: right;
     }
 
     .data-table td {
@@ -329,8 +390,9 @@
 
     .badge-success { background: #e0f2e9; color: #15803d; }
     .badge-warning { background: #fff3e3; color: #b45309; }
+    .badge-danger { background: #fee2e2; color: #b91c1c; }
 
-    /* مودال أنيق لإضافة الكوبون */
+    /* مودال أنيق للرد */
     .modal {
       display: none;
       position: fixed;
@@ -431,6 +493,10 @@
       align-items: center;
       gap: 12px;
     }
+    
+    .alert-success { background: #e0f2e9; color: #166534; border-right: 4px solid #22c55e; }
+    .alert-danger { background: #fee2e2; color: #991b1b; border-right: 4px solid #ef4444; }
+    .alert-warning { background: #fffbeb; color: #92400e; border-right: 4px solid #f59e0b; }
 
     .image-modal {
       position: fixed;
@@ -444,14 +510,35 @@
       align-items: center;
       justify-content: center;
     }
-
-    /* استجابات كاملة */
-    @media (max-width: 1024px) {
-      .main-content {
-        padding: 1.2rem;
-      }
+    
+    .image-modal-content {
+      position: relative;
+      max-width: 90%;
+      max-height: 90%;
+    }
+    
+    .image-modal-content img {
+      max-width: 100%;
+      max-height: 90vh;
+      border-radius: 16px;
+      border: 3px solid white;
+    }
+    
+    .close-image-modal {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      border: none;
+      font-size: 2rem;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
     }
 
+    /* استجابات كاملة */
     @media (max-width: 768px) {
       .mobile-menu-toggle {
         display: flex;
@@ -477,36 +564,10 @@
         margin-right: 0;
         padding-top: 70px;
       }
-
-      .header {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .section-header {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
+      
       .stat-card .value {
         font-size: 1.9rem;
       }
-    }
-
-    @media (max-width: 480px) {
-      .btn {
-        padding: 6px 14px;
-        font-size: 0.75rem;
-      }
-
-      .section {
-        padding: 1.2rem;
-      }
-    }
-
-    /* تأثير دوران loader */
-    @keyframes spin {
-      to { transform: rotate(360deg); }
     }
   </style>
 </head>
@@ -523,11 +584,9 @@
       </div>
 
       <ul class="nav-menu">
-        <li class="nav-item"><a class="nav-link active" onclick="openTab('ordersTab', this)"><i class="fas fa-shopping-cart"></i><span>الطلبات</span></a></li>
-        <li class="nav-item"><a class="nav-link" onclick="openTab('inquiriesTab', this)"><i class="fas fa-question-circle"></i><span>الاستفسارات</span></a></li>
-        <li class="nav-item"><a class="nav-link" onclick="openTab('suggestionsTab', this)"><i class="fas fa-lightbulb"></i><span>الاقتراحات</span></a></li>
-        <li class="nav-item"><a class="nav-link" onclick="openTab('couponsTab', this)"><i class="fas fa-tags"></i><span>الكوبونات</span></a></li>
-        <li class="nav-item"><a class="nav-link" onclick="openTab('messagesTab', this)"><i class="fas fa-envelope"></i><span>الرسائل المباشرة</span></a></li>
+        <li class="nav-item"><a class="nav-link" onclick="navigateToSection('orders')"><i class="fas fa-shopping-cart"></i><span>الطلبات</span></a></li>
+        <li class="nav-item"><a class="nav-link" onclick="navigateToSection('inquiries')"><i class="fas fa-question-circle"></i><span>الاستفسارات</span></a></li>
+        <li class="nav-item"><a class="nav-link" onclick="navigateToSection('suggestions')"><i class="fas fa-lightbulb"></i><span>الاقتراحات</span></a></li>
       </ul>
 
       <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>تسجيل الخروج</span></button>
@@ -542,54 +601,80 @@
         </div>
       </div>
 
-      <div class="stats-cards">
-        <div class="stat-card orders"><h3><i class="fas fa-shopping-cart"></i> الطلبات</h3><div class="value" id="ordersCount">0</div><div class="change positive"><i class="fas fa-arrow-up"></i> شهريًا</div></div>
-        <div class="stat-card inquiries"><h3><i class="fas fa-question-circle"></i> الاستفسارات</h3><div class="value" id="inquiriesCount">0</div></div>
-        <div class="stat-card suggestions"><h3><i class="fas fa-lightbulb"></i> الاقتراحات</h3><div class="value" id="suggestionsCount">0</div></div>
+      <!-- الصفحة الرئيسية: بطاقات الطلبات والاستفسارات والاقتراحات -->
+      <div id="dashboardView">
+        <div class="stats-cards">
+          <div class="stat-card orders" onclick="navigateToSection('orders')">
+            <div class="stat-icon"><i class="fas fa-shopping-cart" style="color:#2196F3;"></i></div>
+            <h3><i class="fas fa-chart-line"></i> الطلبات</h3>
+            <div class="value" id="ordersCount">0</div>
+            <div class="change positive">إجمالي الطلبات المسجلة</div>
+          </div>
+          <div class="stat-card inquiries" onclick="navigateToSection('inquiries')">
+            <div class="stat-icon"><i class="fas fa-question-circle" style="color:#ffc107;"></i></div>
+            <h3><i class="fas fa-headset"></i> الاستفسارات</h3>
+            <div class="value" id="inquiriesCount">0</div>
+            <div class="change">رسائل العملاء</div>
+          </div>
+          <div class="stat-card suggestions" onclick="navigateToSection('suggestions')">
+            <div class="stat-icon"><i class="fas fa-lightbulb" style="color:#25D366;"></i></div>
+            <h3><i class="fas fa-comment-dots"></i> الاقتراحات</h3>
+            <div class="value" id="suggestionsCount">0</div>
+            <div class="change">أفكار وتطوير</div>
+          </div>
+        </div>
+        <div class="section" style="text-align: center; background: #f8fafc;">
+          <i class="fas fa-chart-pie" style="font-size: 2rem; color: #ff7a00; margin-bottom: 10px;"></i>
+          <p style="color: #475569;">مرحبًا في لوحة التحكم المتكاملة. انقر على أي بطاقة لعرض البيانات التفصيلية وإدارة المحتوى.</p>
+        </div>
       </div>
 
-      <!-- الطلبات -->
-      <div id="ordersTab" class="section tab-content active">
-        <div class="section-header"><h2><i class="fas fa-shopping-cart"></i> إدارة الطلبات</h2><div class="actions"><button class="btn btn-outline"><i class="fas fa-filter"></i> تصفية</button></div></div>
-        <div class="table-responsive"><table class="data-table"><thead><tr><th>العميل</th><th>ID اللاعب</th><th>النوع</th><th>المبلغ</th><th>الحالة</th><th>رقم التحويل</th><th>إثبات الدفع</th><th>الإجراءات</th></tr></thead><tbody id="ordersList"></tbody></table></div>
+      <!-- أقسام التفاصيل (مخفية افتراضياً) -->
+      <div id="ordersSection" class="section hidden">
+        <div class="section-header">
+          <h2><i class="fas fa-shopping-cart"></i> إدارة الطلبات</h2>
+          <button class="back-button" onclick="showDashboard()"><i class="fas fa-arrow-right"></i> العودة للرئيسية</button>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr><th>العميل</th><th>ID اللاعب</th><th>النوع</th><th>المبلغ</th><th>الحالة</th><th>رقم التحويل</th><th>إثبات الدفع</th><th>الإجراءات</th></tr>
+            </thead>
+            <tbody id="ordersList"></tbody>
+          </table>
+        </div>
       </div>
 
-      <!-- الاستفسارات -->
-      <div id="inquiriesTab" class="section tab-content">
-        <div class="section-header"><h2><i class="fas fa-question-circle"></i> إدارة الاستفسارات</h2></div>
-        <div class="table-responsive"><table class="data-table"><thead><tr><th>البريد الإلكتروني</th><th>التاريخ</th><th>الرسالة</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody id="inquiriesList"></tbody></table></div>
+      <div id="inquiriesSection" class="section hidden">
+        <div class="section-header">
+          <h2><i class="fas fa-question-circle"></i> إدارة الاستفسارات</h2>
+          <button class="back-button" onclick="showDashboard()"><i class="fas fa-arrow-right"></i> العودة للرئيسية</button>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead><tr><th>البريد الإلكتروني</th><th>التاريخ</th><th>الرسالة</th><th>الحالة</th><th>الإجراءات</th></tr></thead>
+            <tbody id="inquiriesList"></tbody>
+          </table>
+        </div>
       </div>
 
-      <!-- الكوبونات بشكل محسن -->
-      <div id="couponsTab" class="section tab-content">
-        <div class="section-header"><h2><i class="fas fa-tags"></i> كوبونات الخصم</h2><button class="btn btn-primary" onclick="showAddCouponModal()"><i class="fas fa-plus"></i> إضافة كوبون جديد</button></div>
-        <div class="table-responsive"><table class="data-table"><thead><tr><th>الكود</th><th>الخصم (%)</th><th>الوصف</th><th>تاريخ الانتهاء</th><th>الاستخدام</th><th>الحالة</th><th>حذف</th></tr></thead><tbody id="couponsList"></tbody></table></div>
-      </div>
-
-      <!-- الاقتراحات -->
-      <div id="suggestionsTab" class="section tab-content">
-        <div class="section-header"><h2><i class="fas fa-lightbulb"></i> الاقتراحات</h2></div>
-        <div class="table-responsive"><table class="data-table"><thead><tr><th>الاسم</th><th>طريقة التواصل</th><th>التاريخ</th><th>الاقتراح</th><th>الإجراءات</th></tr></thead><tbody id="suggestionsList"></tbody></table></div>
-      </div>
-
-      <!-- الرسائل المباشرة -->
-      <div id="messagesTab" class="section tab-content">
-        <div class="section-header"><h2><i class="fas fa-envelope"></i> إرسال رسالة مباشرة</h2></div>
-        <div class="message-form">
-          <div class="form-group"><label>بريد العميل:</label><input type="email" id="clientEmail" class="form-control" placeholder="example@domain.com"></div>
-          <div class="form-group"><label>عنوان الرسالة:</label><input type="text" id="emailSubject" class="form-control" placeholder="العنوان"></div>
-          <div class="form-group"><label>نص الرسالة:</label><textarea id="emailMessage" class="form-control" rows="3" placeholder="محتوى الرسالة"></textarea></div>
-          <button class="btn btn-primary" onclick="sendDirectMessage()"><i class="fas fa-paper-plane"></i> إرسال</button>
+      <div id="suggestionsSection" class="section hidden">
+        <div class="section-header">
+          <h2><i class="fas fa-lightbulb"></i> الاقتراحات</h2>
+          <button class="back-button" onclick="showDashboard()"><i class="fas fa-arrow-right"></i> العودة للرئيسية</button>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead><tr><th>الاسم</th><th>طريقة التواصل</th><th>التاريخ</th><th>الاقتراح</th><th>الإجراءات</th></tr></thead>
+            <tbody id="suggestionsList"></tbody>
+          </table>
         </div>
       </div>
     </div>
   </div>
 
   <!-- مودال الرد على الاستفسار -->
-  <div id="replyModal" class="modal"><div class="modal-content"><div class="modal-header"><h3><i class="fas fa-reply"></i> رد على الاستفسار</h3><button class="close" onclick="closeReplyModal()">&times;</button></div><div class="modal-body"><div id="originalMessage" class="alert alert-info"></div><div class="form-group"><label>الرد:</label><textarea id="replyText" class="form-control" rows="4"></textarea></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="closeReplyModal()">إلغاء</button><button class="btn btn-primary" onclick="sendReply()">إرسال الرد</button></div></div></div>
-
-  <!-- مودال إضافة كوبون بتصميم محسن -->
-  <div id="addCouponModal" class="modal"><div class="modal-content"><div class="modal-header"><h3><i class="fas fa-ticket-alt"></i> إضافة كوبون جديد</h3><button class="close" onclick="closeAddCouponModal()">&times;</button></div><div class="modal-body"><div class="form-group"><label>كود الخصم *</label><input type="text" id="couponCode" class="form-control" placeholder="مثال: SUMMER20" maxlength="20"></div><div class="form-group"><label>نسبة الخصم (%) *</label><input type="number" id="couponPercent" class="form-control" placeholder="10" min="1" max="100"></div><div class="form-group"><label>الوصف (اختياري)</label><input type="text" id="couponDesc" class="form-control" placeholder="عرض خاص"></div><div class="form-group"><label>تاريخ الانتهاء (اختياري)</label><input type="date" id="couponExpiry" class="form-control"></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="closeAddCouponModal()">إلغاء</button><button class="btn btn-primary" onclick="addCoupon()">إضافة الكوبون</button></div></div></div>
+  <div id="replyModal" class="modal"><div class="modal-content"><div class="modal-header"><h3><i class="fas fa-reply"></i> رد على الاستفسار</h3><button class="close" onclick="closeReplyModal()">&times;</button></div><div class="modal-body"><div id="originalMessage" class="alert alert-warning"></div><div class="form-group"><label>الرد:</label><textarea id="replyText" class="form-control" rows="4"></textarea></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="closeReplyModal()">إلغاء</button><button class="btn btn-primary" onclick="sendReply()">إرسال الرد</button></div></div></div>
 
   <!-- مودال الصورة -->
   <div id="imageModal" class="image-modal"><div class="image-modal-content"><button class="close-image-modal" onclick="closeImageModal()">&times;</button><img id="modalImage" src="" alt="معاينة"></div></div>
@@ -598,7 +683,37 @@
     let currentInquiryId = null, currentInquiryEmail = null, currentInquiryMessage = null;
     let orders = [], inquiries = [], suggestions = [];
 
-    // التوافق مع الشاشات الصغيرة (القائمة الجانبية)
+    // UI التنقل
+    function showDashboard() {
+      document.getElementById('dashboardView').style.display = 'block';
+      document.getElementById('ordersSection').classList.add('hidden');
+      document.getElementById('inquiriesSection').classList.add('hidden');
+      document.getElementById('suggestionsSection').classList.add('hidden');
+      if(window.innerWidth < 768) closeMobileMenu();
+    }
+    
+    function navigateToSection(section) {
+      document.getElementById('dashboardView').style.display = 'none';
+      if(section === 'orders') {
+        document.getElementById('ordersSection').classList.remove('hidden');
+        document.getElementById('inquiriesSection').classList.add('hidden');
+        document.getElementById('suggestionsSection').classList.add('hidden');
+        loadOrders();
+      } else if(section === 'inquiries') {
+        document.getElementById('inquiriesSection').classList.remove('hidden');
+        document.getElementById('ordersSection').classList.add('hidden');
+        document.getElementById('suggestionsSection').classList.add('hidden');
+        loadInquiries();
+      } else if(section === 'suggestions') {
+        document.getElementById('suggestionsSection').classList.remove('hidden');
+        document.getElementById('ordersSection').classList.add('hidden');
+        document.getElementById('inquiriesSection').classList.add('hidden');
+        loadSuggestions();
+      }
+      if(window.innerWidth < 768) closeMobileMenu();
+    }
+
+    // قائمة متجاوبة
     const menuToggle = document.getElementById('menuToggleBtn');
     const sidebar = document.getElementById('mainSidebar');
     const overlay = document.getElementById('sidebarOverlay');
@@ -608,14 +723,7 @@
     if(overlay) overlay.addEventListener('click', closeMobileMenu);
     window.addEventListener('resize', () => { if(window.innerWidth > 768) closeMobileMenu(); });
 
-    function openTab(tabId, el) {
-      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-      if(el) el.classList.add('active');
-      if(window.innerWidth < 768) closeMobileMenu();
-    }
-
+    // --- تحميل الطلبات وعرضها ---
     async function loadOrders() {
       try {
         const res = await fetch("/api/admin/orders", { credentials: "include" });
@@ -624,16 +732,17 @@
         orders = data.data || [];
         document.getElementById('ordersCount').innerText = orders.length;
         const tbody = document.getElementById('ordersList');
-        tbody.innerHTML = orders.length ? "" : `<tr><td colspan="8" style="text-align:center;">لا توجد طلبات</td></tr>`;
+        if(!orders.length) { tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;">لا توجد طلبات</td></tr>`; return; }
+        tbody.innerHTML = "";
         orders.forEach(order => {
           const imgUrl = order.screenshotUrl || order.screenshot || null;
           const row = `<tr>
-            <td><strong>${order.name || ''}</strong><br><small>${order.email || ''}</small></td>
-            <td>${order.playerId || ''}</td>
-            <td>${order.type || ''}<br><small>${order.ucAmount || order.bundle || ''}</small></td>
+            <td><strong>${escapeHtml(order.name || '')}</strong><br><small>${escapeHtml(order.email || '')}</small></td>
+            <td>${escapeHtml(order.playerId || '')}</td>
+            <td>${escapeHtml(order.type || '')}<br><small>${escapeHtml(order.ucAmount || order.bundle || '')}</small></td>
             <td>${order.totalAmount || 0} ج.م</td>
             <td><span class="badge ${order.status === 'تم الدفع' ? 'badge-success' : 'badge-warning'}">${order.status || 'قيد المراجعة'}</span></td>
-            <td>${order.transactionId || '-'}</td>
+            <td>${escapeHtml(order.transactionId || '-')}</td>
             <td>${imgUrl ? `<img src="${imgUrl}" class="screenshot-preview" onclick="openImageModal('${imgUrl}')" onerror="this.style.display='none'">` : 'لا توجد'}</td>
             <td><div style="display:flex;gap:8px;"><button class="btn btn-sm btn-success" onclick="updateStatus('${order.id}','تم الدفع')"><i class="fas fa-check"></i></button><button class="btn btn-sm btn-danger" onclick="deleteOrder('${order.id}')"><i class="fas fa-trash"></i></button></div></td>
           </tr>`;
@@ -642,36 +751,113 @@
       } catch(e) { console.error(e); document.getElementById('ordersList').innerHTML = `<tr><td colspan="8" class="alert-danger">خطأ في التحميل</td></tr>`; }
     }
 
-    async function loadInquiries() { /* مشابهة */ 
-      try { const res=await fetch("/api/admin/inquiries",{credentials:"include"}); const d=await res.json(); inquiries=d.data||[]; document.getElementById('inquiriesCount').innerText=inquiries.length; const tbody=document.getElementById('inquiriesList'); tbody.innerHTML=inquiries.length?"":`<tr><td colspan="5">لا توجد استفسارات</td></tr>`; inquiries.forEach(i=>{tbody.insertAdjacentHTML('beforeend',`<tr><td>${i.email}</td><td>${new Date(i.created_at).toLocaleString()}</td><td>${i.message.substring(0,60)}</td><td><span class="badge ${i.status==='تم الرد'?'badge-success':'badge-warning'}">${i.status}</span></td><td><button class="btn btn-sm btn-info" onclick="openReplyModal(${i.id},'${i.email.replace(/'/g,"\\'")}','${i.message.replace(/'/g,"\\'")}')"><i class="fas fa-reply"></i></button> <button class="btn btn-sm btn-danger" onclick="deleteInquiry(${i.id})"><i class="fas fa-trash"></i></button></td></tr>`);});}catch(e){console.error(e);} }
-    async function loadSuggestions() {
-      try { const res=await fetch("/api/admin/suggestions",{credentials:"include"}); const d=await res.json(); suggestions=d.data||[]; document.getElementById('suggestionsCount').innerText=suggestions.length; const tbody=document.getElementById('suggestionsList'); tbody.innerHTML=suggestions.length?"":`<tr><td colspan="5">لا توجد اقتراحات</td></tr>`; suggestions.forEach(s=>{tbody.insertAdjacentHTML('beforeend',`<tr><td>${s.name}</td><td>${s.contact}</td><td>${new Date(s.created_at).toLocaleString()}</td><td>${s.message.substring(0,60)}</td><td><button class="btn btn-sm btn-primary" onclick="contactSuggestion('${s.contact.replace(/'/g,"\\'")}')"><i class="fas fa-envelope"></i></button> <button class="btn btn-sm btn-danger" onclick="deleteSuggestion(${s.id})"><i class="fas fa-trash"></i></button></td></tr>`);});}catch(e){console.error(e);} }
+    async function loadInquiries() { 
+      try { 
+        const res=await fetch("/api/admin/inquiries",{credentials:"include"}); 
+        const d=await res.json(); 
+        inquiries=d.data||[]; 
+        document.getElementById('inquiriesCount').innerText=inquiries.length; 
+        const tbody=document.getElementById('inquiriesList'); 
+        if(!inquiries.length) { tbody.innerHTML=`<tr><td colspan="5" style="text-align:center;">لا توجد استفسارات</td></tr>`; return; }
+        tbody.innerHTML="";
+        inquiries.forEach(i=>{
+          tbody.insertAdjacentHTML('beforeend',`<tr>
+            <td>${escapeHtml(i.email)}</td>
+            <td>${new Date(i.created_at).toLocaleString()}</td>
+            <td>${escapeHtml(i.message.substring(0,80))}</td>
+            <td><span class="badge ${i.status==='تم الرد'?'badge-success':'badge-warning'}">${i.status||'جديد'}</span></td>
+            <td><button class="btn btn-sm btn-info" onclick="openReplyModal(${i.id},'${escapeHtml(i.email)}','${escapeHtml(i.message.replace(/'/g, "\\'"))}')"><i class="fas fa-reply"></i></button> <button class="btn btn-sm btn-danger" onclick="deleteInquiry(${i.id})"><i class="fas fa-trash"></i></button></td>
+          </tr>`);
+        });
+      } catch(e){ console.error(e); } 
+    }
     
-    function contactSuggestion(contact){ document.getElementById('clientEmail').value=contact.includes('@')?contact:''; document.getElementById('emailSubject').value="رد على اقتراحك"; openTab('messagesTab', document.querySelectorAll('.nav-link')[4]); }
-    async function deleteSuggestion(id){ if(confirm("حذف الاقتراح؟")){ try{ await fetch("/api/admin/delete-suggestion",{method:"DELETE",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({id})}); showAlert('success','تم الحذف'); loadSuggestions();}catch(e){showAlert('danger','حدث خطأ');} } }
+    async function loadSuggestions() {
+      try { 
+        const res=await fetch("/api/admin/suggestions",{credentials:"include"}); 
+        const d=await res.json(); 
+        suggestions=d.data||[]; 
+        document.getElementById('suggestionsCount').innerText=suggestions.length; 
+        const tbody=document.getElementById('suggestionsList'); 
+        if(!suggestions.length) { tbody.innerHTML=`<tr><td colspan="5">لا توجد اقتراحات</td></tr>`; return; }
+        tbody.innerHTML="";
+        suggestions.forEach(s=>{
+          tbody.insertAdjacentHTML('beforeend',`<tr>
+            <td>${escapeHtml(s.name)}</td>
+            <td>${escapeHtml(s.contact)}</td>
+            <td>${new Date(s.created_at).toLocaleString()}</td>
+            <td>${escapeHtml(s.message.substring(0,80))}</td>
+            <td><button class="btn btn-sm btn-primary" onclick="contactSuggestion('${escapeHtml(s.contact)}')"><i class="fas fa-envelope"></i></button> <button class="btn btn-sm btn-danger" onclick="deleteSuggestion(${s.id})"><i class="fas fa-trash"></i></button></td>
+          </tr>`);
+        });
+      } catch(e){ console.error(e); } 
+    }
+    
+    function contactSuggestion(contact){ 
+      alert(`يمكنك التواصل مع: ${contact} عبر البريد الإلكتروني المباشر.`); 
+    }
+    
+    async function deleteSuggestion(id){ if(confirm("حذف الاقتراح؟")){ try{ await fetch("/api/admin/delete-suggestion",{method:"DELETE",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({id})}); showAlert('success','تم الحذف'); loadSuggestions();} catch(e){showAlert('danger','حدث خطأ');} } }
+    
     function openReplyModal(id,email,msg){ currentInquiryId=id; currentInquiryEmail=email; currentInquiryMessage=msg; document.getElementById('originalMessage').innerHTML=`<i class="fas fa-info-circle"></i> <strong>من ${email}:</strong><br>${msg}`; document.getElementById('replyText').value=''; document.getElementById('replyModal').classList.add('show'); }
     function closeReplyModal(){ document.getElementById('replyModal').classList.remove('show'); }
+    
     async function sendReply(){ const txt=document.getElementById('replyText').value.trim(); if(!txt){ showAlert('warning','يرجى كتابة رد'); return; } try{ const res=await fetch("/api/admin/reply-inquiry",{method:"POST",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({inquiryId:currentInquiryId,email:currentInquiryEmail,message:currentInquiryMessage,reply:txt})}); const result=await res.json(); if(result.success){ showAlert('success','تم الرد'); closeReplyModal(); loadInquiries();} else throw new Error(result.message); }catch(e){ showAlert('danger','فشل الإرسال'); } }
-    async function sendDirectMessage(){ const email=document.getElementById('clientEmail').value.trim(), subject=document.getElementById('emailSubject').value.trim(), msg=document.getElementById('emailMessage').value.trim(); if(!email||!subject||!msg){ showAlert('warning','جميع الحقول مطلوبة'); return; } try{ const res=await fetch("/api/admin/send-message",{method:"POST",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({email,subject,message:msg})}); const d=await res.json(); if(d.success){ showAlert('success','تم الإرسال'); document.getElementById('clientEmail').value=''; document.getElementById('emailSubject').value=''; document.getElementById('emailMessage').value=''; } else throw new Error(d.message); }catch(e){ showAlert('danger','خطأ في الإرسال'); } }
-    async function updateStatus(id,status){ try{ await fetch("/api/admin/update-status",{method:"POST",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({id,status})}); showAlert('success','تم التحديث'); loadOrders(); }catch(e){ showAlert('danger','فشل التحديث'); } }
-    async function deleteOrder(id){ if(confirm("حذف الطلب نهائياً؟")){ try{ await fetch("/api/admin/delete-order",{method:"DELETE",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({id})}); showAlert('success','حذف الطلب'); loadOrders();}catch(e){showAlert('danger','خطأ');} } }
+    
+    async function updateStatus(id,status){ try{ await fetch("/api/admin/update-status",{method:"POST",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({id,status})}); showAlert('success','تم التحديث'); if(document.getElementById('ordersSection').classList.contains('hidden')===false) loadOrders(); else loadOrders(); }catch(e){ showAlert('danger','فشل التحديث'); } }
+    
+    async function deleteOrder(id){ if(confirm("حذف الطلب نهائياً؟")){ try{ await fetch("/api/admin/delete-order",{method:"DELETE",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({id})}); showAlert('success','حذف الطلب'); if(document.getElementById('ordersSection').classList.contains('hidden')===false) loadOrders(); else loadOrders(); }catch(e){showAlert('danger','خطأ');} } }
+    
     async function deleteInquiry(id){ if(confirm("حذف الاستفسار؟")){ try{ await fetch("/api/admin/delete-inquiry",{method:"DELETE",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({id})}); showAlert('success','تم الحذف'); loadInquiries();}catch(e){showAlert('danger','خطأ');} } }
+    
     async function logout(){ try{ await fetch("/api/admin/logout",{method:"POST",credentials:"include"}); window.location.href="login.html"; }catch(e){ showAlert('danger','خطأ تسجيل الخروج'); } }
+    
     function openImageModal(src){ document.getElementById('modalImage').src=src; document.getElementById('imageModal').style.display='flex'; }
     function closeImageModal(){ document.getElementById('imageModal').style.display='none'; }
-    function showAlert(type,msg){ const alertDiv=document.createElement('div'); alertDiv.className=`alert alert-${type}`; alertDiv.innerHTML=`<i class="fas ${type==='success'?'fa-check-circle':'fa-exclamation-triangle'}"></i>${msg}`; const firstSection=document.querySelector('.section'); if(firstSection) firstSection.parentNode.insertBefore(alertDiv,firstSection); setTimeout(()=>{alertDiv.remove();},4000); }
     
-    // الكوبونات 
-    async function loadCoupons() {
-      try { const res=await fetch("/api/admin/coupons",{credentials:"include"}); const data=await res.json(); const coupons=data.data||[]; const container=document.getElementById('couponsList'); container.innerHTML=coupons.length?"":`<tr><td colspan="7" style="text-align:center;">لا توجد كوبونات</td></tr>`; coupons.forEach(c=>{ const expDate=c.expiresAt?.toDate?new Date(c.expiresAt.toDate()).toLocaleDateString():c.expiresAt||"لا يوجد"; container.insertAdjacentHTML('beforeend',`<td><td><strong>${c.code}</strong></td><td>${c.discountPercent}%</td><td>${c.description||"-"}</td><td>${expDate}</td><td>${c.usedCount||0}</td><td><span class="badge ${c.isActive?'badge-success':'badge-danger'}">${c.isActive?"مفعل":"معطل"}</span></td><td><button class="btn btn-sm btn-danger" onclick="deleteCoupon('${c.id}')"><i class="fas fa-trash"></i></button></td></tr>`); });
-      } catch(e){ console.error(e); document.getElementById('couponsList').innerHTML=`<tr><td colspan="7" class="alert-danger">فشل تحميل الكوبونات</td></tr>`; }
+    function showAlert(type,msg){ 
+      const alertDiv=document.createElement('div'); 
+      alertDiv.className=`alert alert-${type}`; 
+      alertDiv.innerHTML=`<i class="fas ${type==='success'?'fa-check-circle':'fa-exclamation-triangle'}"></i>${msg}`; 
+      const container=document.querySelector('.main-content'); 
+      if(container) container.prepend(alertDiv); 
+      setTimeout(()=>{alertDiv.remove();},4000); 
     }
-    function showAddCouponModal(){ document.getElementById('addCouponModal').classList.add('show'); }
-    function closeAddCouponModal(){ document.getElementById('addCouponModal').classList.remove('show'); }
-    async function addCoupon(){ const code=document.getElementById('couponCode').value.trim(); const percent=document.getElementById('couponPercent').value; const desc=document.getElementById('couponDesc').value.trim(); const expiry=document.getElementById('couponExpiry').value; if(!code||!percent||percent<1||percent>100){ showAlert('danger','كود ونسبة خصم صحيحة مطلوبة'); return; } try{ const res=await fetch("/api/admin/coupons",{method:"POST",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({code,discountPercent:Number(percent),description:desc,expiresAt:expiry})}); const data=await res.json(); if(data.success){ showAlert('success','تمت إضافة الكوبون'); closeAddCouponModal(); loadCoupons(); } else throw new Error(data.message); }catch(e){ showAlert('danger',e.message); } }
-    async function deleteCoupon(couponId){ if(!confirm("حذف الكوبون نهائياً؟")) return; try{ const res=await fetch(`/api/admin/coupons/${couponId}`,{method:"DELETE",credentials:"include"}); const data=await res.json(); if(data.success){ showAlert('success','تم الحذف'); loadCoupons(); } else throw new Error(data.message); }catch(e){ showAlert('danger','فشل الحذف'); } }
-
-    window.addEventListener('DOMContentLoaded',()=>{ loadOrders(); loadInquiries(); loadSuggestions(); loadCoupons(); });
+    
+    function escapeHtml(str) {
+      if(!str) return '';
+      return str.replace(/[&<>]/g, function(m) {
+        if(m === '&') return '&amp;';
+        if(m === '<') return '&lt;';
+        if(m === '>') return '&gt;';
+        return m;
+      }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+        return c;
+      });
+    }
+    
+    // التحميل الابتدائي للعدادات فقط
+    async function loadCounts() {
+      try {
+        const [ordersRes, inquiriesRes, suggestionsRes] = await Promise.all([
+          fetch("/api/admin/orders", { credentials: "include" }),
+          fetch("/api/admin/inquiries", { credentials: "include" }),
+          fetch("/api/admin/suggestions", { credentials: "include" })
+        ]);
+        const ordersData = await ordersRes.json();
+        const inquiriesData = await inquiriesRes.json();
+        const suggestionsData = await suggestionsRes.json();
+        document.getElementById('ordersCount').innerText = ordersData.data?.length || 0;
+        document.getElementById('inquiriesCount').innerText = inquiriesData.data?.length || 0;
+        document.getElementById('suggestionsCount').innerText = suggestionsData.data?.length || 0;
+      } catch(e) { console.error(e); }
+    }
+    
+    window.addEventListener('DOMContentLoaded',()=>{ 
+      loadCounts();
+      // عرض الداشبورد الرئيسي فقط
+      showDashboard();
+    });
   </script>
 </body>
 </html>
