@@ -623,7 +623,18 @@
             <label for="email">البريد الإلكتروني</label>
             <input type="email" id="email" class="form-control" placeholder="لتواصل في حالة وجود مشكلة" required>
           </div>
-
+          
+<div class="form-group">
+  <label for="couponCode">كود الخصم (إن وجد)</label>
+  <div style="display: flex; gap: 10px;">
+    <input type="text" id="couponCode" class="form-control" placeholder="أدخل كود الخصم" style="flex: 1;">
+    <button type="button" class="btn" id="applyCouponBtn" style="width: auto; margin-top: 0; padding: 0 20px; background: var(--accent);">
+      <i class="fas fa-check"></i> تطبيق
+    </button>
+  </div>
+  <small id="couponMessage" style="display: block; margin-top: 5px; font-size: 0.8rem;"></small>
+</div>
+          
           <div class="form-group">
             <label for="totalAmount">المبلغ الإجمالي</label>
             <input type="text" id="totalAmount" class="form-control" placeholder="سيتم حسابه تلقائياً" readonly>
@@ -1275,6 +1286,101 @@ document.getElementById('orderForm').addEventListener('submit', async (e) => {
       @keyframes slideOut { from { transform: translateX(0); } to { transform: translateX(120%); } }
     `;
     document.head.appendChild(style);
+    // Coupon functionality
+let appliedCoupon = null;
+let originalTotalBeforeCoupon = 0;
+
+function calculateOriginalTotal() {
+  const total = (selectedUC?.dataset.price || 0) * 1 + (selectedBundle?.dataset.price || 0) * 1;
+  originalTotalBeforeCoupon = total;
+  return total;
+}
+
+function updateTotalWithCoupon() {
+  let total = calculateOriginalTotal();
+  if (appliedCoupon && appliedCoupon.newTotal) {
+    total = parseFloat(appliedCoupon.newTotal);
+    document.getElementById('totalAmount').value = total + " ج.م";
+    document.getElementById('couponMessage').innerHTML = `<span style="color: var(--success);">✔ تم تطبيق الخصم ${appliedCoupon.discountPercent}% - وفرت ${appliedCoupon.discount} ج.م</span>`;
+  } else {
+    document.getElementById('totalAmount').value = total + " ج.م";
+  }
+}
+
+async function applyCoupon() {
+  const code = document.getElementById('couponCode').value.trim();
+  if (!code) {
+    showAlert("خطأ", "يرجى إدخال كود الخصم", "error");
+    return;
+  }
+
+  const originalAmount = calculateOriginalTotal();
+  if (originalAmount <= 0) {
+    showAlert("خطأ", "يرجى اختيار منتج أولاً", "error");
+    return;
+  }
+
+  const applyBtn = document.getElementById('applyCouponBtn');
+  applyBtn.disabled = true;
+  applyBtn.innerHTML = '<span class="spinner"></span>';
+
+  try {
+    const response = await fetch("/api/verify-coupon", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code, originalAmount })
+    });
+
+    const result = await response.json();
+    if (result.success) {
+      appliedCoupon = result;
+      updateTotalWithCoupon();
+    } else {
+      appliedCoupon = null;
+      document.getElementById('couponMessage').innerHTML = `<span style="color: var(--danger);">✘ ${result.message}</span>`;
+      updateTotalWithCoupon();
+    }
+  } catch (error) {
+    console.error("Coupon error:", error);
+    document.getElementById('couponMessage').innerHTML = `<span style="color: var(--danger);">✘ حدث خطأ أثناء التحقق من الكوبون</span>`;
+  } finally {
+    applyBtn.disabled = false;
+    applyBtn.innerHTML = '<i class="fas fa-check"></i> تطبيق';
+  }
+}
+
+// Modify updateTotal function to reset coupon when product changes
+const originalUpdateTotal = updateTotal;
+window.updateTotal = function() {
+  appliedCoupon = null;
+  document.getElementById('couponCode').value = '';
+  document.getElementById('couponMessage').innerHTML = '';
+  originalUpdateTotal();
+};
+updateTotal = window.updateTotal;
+
+// Add event listener for apply button
+document.getElementById('applyCouponBtn').addEventListener('click', applyCoupon);
+
+// Modify order submission to include coupon code
+const originalOrderSubmit = document.getElementById('orderForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  // ... existing validation code ...
+
+  const orderData = {
+    name: name,
+    playerId: playerId,
+    email: email,
+    ucAmount: selectedUC ? selectedUC.dataset.value : "",
+    bundle: selectedBundle ? selectedBundle.dataset.value : "",
+    totalAmount: totalAmount,
+    couponCode: appliedCoupon ? appliedCoupon.couponCode : null,
+    discountAmount: appliedCoupon ? appliedCoupon.discount : null
+  };
+  // ... rest of your submit code ...
+});
+
+// Note: You'll need to merge this with your existing submit handler
   </script>
 </body>
 </html>
