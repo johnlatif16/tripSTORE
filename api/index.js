@@ -571,5 +571,137 @@ app.post("/api/admin/send-message", requireAdmin, async (req, res) => {
   }
 });
 
+// =======================
+// COUPONS SYSTEM
+// =======================
+
+// Helper: Get coupons collection
+function getCouponsCollection() {
+  return firestore().collection("coupons");
+}
+
+// API: Create/Add a new coupon (Admin only)
+app.post("/api/admin/coupons", requireAdmin, async (req, res) => {
+  try {
+    const { code, discountPercent, description, expiresAt } = req.body;
+
+    if (!code || !discountPercent) {
+      return res.status(400).json({ success: false, message: "كود الخصم ونسبة الخصم مطلوبان" });
+    }
+
+    // Check if coupon already exists
+    const existing = await getCouponsCollection().where("code", "==", code.toUpperCase()).get();
+    if (!existing.empty) {
+      return res.status(400).json({ success: false, message: "هذا الكود موجود بالفعل" });
+    }
+
+    const couponData = {
+      code: code.toUpperCase(),
+      discountPercent: Number(discountPercent),
+      description: description || "",
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      expiresAt: expiresAt ? admin.firestore.Timestamp.fromDate(new Date(expiresAt)) : null,
+      usedCount: 0,
+      isActive: true
+    };
+
+    const ref = await getCouponsCollection().add(couponData);
+    res.json({ success: true, id: ref.id, data: couponData });
+  } catch (err) {
+    console.error("Error creating coupon:", err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// API: Get all coupons (Admin only)
+app.get("/api/admin/coupons", requireAdmin, async (req, res) => {
+  try {
+    const snap = await getCouponsCollection().orderBy("createdAt", "desc").get();
+    const coupons = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.json({ success: true, data: coupons });
+  } catch (err) {
+    console.error("Error fetching coupons:", err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// API: Delete a coupon (Admin only)
+app.delete("/api/admin/coupons/:id", requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await getCouponsCollection().doc(id).delete();
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Error deleting coupon:", err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// API: Verify and apply coupon (Public)
+app.post("/api/verify-coupon", async (req, res) => {
+  try {
+    const { code, originalAmount } = req.body;
+
+    if (!code || !originalAmount) {
+      return res.status(400).json({ success: false, message: "الكود والمبلغ مطلوبان" });
+    }
+
+    const snap = await getCouponsCollection()
+      .where("code", "==", code.toUpperCase())
+      .where("isActive", "==", true)
+      .limit(1)
+      .get();
+
+    if (snap.empty) {
+      return res.status(404).json({ success: false, message: "الكوبون غير صالح أو منتهي الصلاحية" });
+    }
+
+    const couponDoc = snap.docs[0];
+    const coupon = { id: couponDoc.id, ...couponDoc.data() };
+
+    // Check expiry date
+    if (coupon.expiresAt && coupon.expiresAt.toDate) {
+      if (coupon.expiresAt.toDate() < new Date()) {
+        return res.status(400).json({ success: false, message: "انتهت صلاحية الكوبون" });
+      }
+    }
+
+    const discount = (Number(originalAmount) * coupon.discountPercent) / 100;
+    const newAmount = Number(originalAmount) - discount;
+
+    res.json({
+      success: true,
+      discount: discount.toFixed(2),
+      newTotal: newAmount.toFixed(2),
+      discountPercent: coupon.discountPercent,
+      couponCode: coupon.code
+    });
+
+  } catch (err) {
+    console.error("Error verifying coupon:", err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// Optional: Increment coupon usage count (when order is paid)
+app.post("/api/use-coupon", async (req, res) => {
+  try {
+    const { code } = req.body;
+    if (!code) return res.status(400).json({ success: false });
+
+    const snap = await getCouponsCollection().where("code", "==", code.toUpperCase()).limit(1).get();
+    if (!snap.empty) {
+      const doc = snap.docs[0];
+      await doc.ref.update({
+        usedCount: admin.firestore.FieldValue.increment(1)
+      });
+    }
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Error using coupon:", err);
+    res.json({ success: false });
+  }
+});
+
 // ====== IMPORTANT for Vercel: export app (no listen) ======
 module.exports = app;
