@@ -4,14 +4,28 @@ const multer = require("multer");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const admin = require("firebase-admin");
-
+const path = require("path");
 const app = express();
 
 // ====== Middlewares ======
 app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+// Serve static files
+app.use(express.static(path.join(__dirname, "../public")));
 
+// Routes
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/index.html"));
+});
+
+app.get("/login", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/login.html"));
+});
+
+app.get("/dashboard", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/dashboard.html"));
+});
 // ====== Multer memory (serverless-safe) ======
 const upload = multer({
   storage: multer.memoryStorage(),
