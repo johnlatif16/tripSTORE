@@ -190,20 +190,21 @@ app.post("/api/order", upload.single("screenshot"), async (req, res) => {
         // لا نمنع إنشاء الطلب إذا فشل رفع الصورة
       }
     }
-
-    const orderData = {
-      name,
-      playerId,
-      email,
-      type,
-      ucAmount: ucAmount || null,
-      bundle: bundle || null,
-      totalAmount: Number(totalAmount), // تأكد من أنها رقم
-      transactionId: transactionId || null,
-      screenshotUrl: screenshotUrl,
-      status: "لم يتم الدفع",
-      created_at: admin.firestore.FieldValue.serverTimestamp()
-    };
+const orderData = {
+  name,
+  playerId,
+  email,
+  type,
+  ucAmount: ucAmount || null,
+  bundle: bundle || null,
+  totalAmount: Number(totalAmount),
+  transactionId: transactionId || null,
+  screenshotUrl: screenshotUrl,
+  status: "لم يتم الدفع",
+  created_at: admin.firestore.FieldValue.serverTimestamp(),
+  couponCode: req.body.couponCode || null,
+  discountAmount: req.body.discountAmount ? Number(req.body.discountAmount) : null
+};
 
     console.log("Saving to Firestore:", orderData);
     
