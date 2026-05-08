@@ -12,851 +12,560 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
     }
 
     :root {
       --primary: #1a1a2e;
       --secondary: #ff7a00;
-      --accent: #00b4d8;
       --dark: #16213e;
       --light: #f8f9fa;
       --success: #25D366;
       --danger: #ff4d4f;
       --warning: #ffc107;
       --info: #2196F3;
-      --border-radius: 12px;
-      --box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-      --transition: all 0.25s ease;
+      --border-radius: 24px;
+      --box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
     }
 
     body {
       font-family: 'Tajawal', sans-serif;
-      background: #f5f7fb;
-      color: #1e293b;
+      background: #f1f5f9;
+      color: #0f172a;
       line-height: 1.5;
-      overflow-x: hidden;
     }
 
-    .admin-container {
+    /* الحاوية الرئيسية */
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* الهيدر */
+    .dashboard-header {
       display: flex;
-      min-height: 100vh;
-      position: relative;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #e2e8f0;
     }
 
-    /* سايدبار ريسبونسيف */
-    .sidebar {
-      width: 280px;
-      background: linear-gradient(145deg, #0f172a, #0a0f1f);
-      backdrop-filter: blur(2px);
-      color: white;
-      position: fixed;
-      right: 0;
-      top: 0;
-      height: 100%;
-      z-index: 1000;
-      transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-      overflow-y: auto;
-      border-left: 1px solid rgba(255,255,255,0.08);
-      box-shadow: -5px 0 25px rgba(0,0,0,0.2);
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
-    .mobile-menu-toggle {
-      display: none;
-      position: fixed;
-      top: 18px;
-      right: 20px;
-      background: var(--secondary);
-      color: white;
-      border: none;
-      width: 46px;
-      height: 46px;
-      border-radius: 50%;
-      font-size: 1.5rem;
-      z-index: 1100;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      transition: transform 0.2s;
-    }
-
-    .mobile-menu-toggle:hover {
-      transform: scale(1.02);
-    }
-
-    .sidebar-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.5);
-      backdrop-filter: blur(3px);
-      z-index: 999;
-    }
-
-    .sidebar-header {
-      text-align: center;
-      padding: 1.8rem 1.2rem 1.5rem;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .sidebar-header img {
-      width: 85px;
-      height: 85px;
+    .logo-area img {
+      width: 55px;
+      height: 55px;
       border-radius: 50%;
       object-fit: cover;
-      border: 3px solid rgba(255,122,0,0.4);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-      margin-bottom: 12px;
+      border: 2px solid var(--secondary);
     }
 
-    .sidebar-header h2 {
-      background: linear-gradient(135deg, #ff9a3c, var(--secondary));
+    .logo-area h1 {
+      font-size: 1.7rem;
+      background: linear-gradient(135deg, #0f172a, var(--secondary));
       background-clip: text;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      font-size: 1.6rem;
     }
 
-    .nav-menu {
-      padding: 1rem 1rem;
-      list-style: none;
-    }
-
-    .nav-item {
-      margin-bottom: 6px;
-    }
-
-    .nav-link {
+    .admin-badge {
+      background: white;
+      padding: 6px 18px;
+      border-radius: 40px;
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 12px 18px;
-      color: #e2e8f0;
-      text-decoration: none;
-      border-radius: 14px;
-      transition: all 0.2s;
-      cursor: pointer;
+      gap: 8px;
+      box-shadow: var(--box-shadow);
       font-weight: 500;
     }
 
-    .nav-link i {
-      width: 26px;
-      font-size: 1.2rem;
+    /* شبكة البطاقات (الأقسام الرئيسية) */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.8rem;
+      margin: 2rem 0 2rem 0;
+    }
+
+    .dashboard-card {
+      background: white;
+      border-radius: 28px;
+      padding: 1.8rem 1.5rem;
+      box-shadow: var(--box-shadow);
+      cursor: pointer;
+      transition: all 0.25s ease;
+      border: 1px solid rgba(0, 0, 0, 0.03);
       text-align: center;
     }
 
-    .nav-link:hover, .nav-link.active {
-      background: rgba(255,122,0,0.18);
-      color: white;
-      transform: translateX(-5px);
+    .dashboard-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.12);
+      border-color: rgba(255, 122, 0, 0.2);
     }
 
-    .logout-btn {
+    .card-icon {
+      width: 70px;
+      height: 70px;
+      background: #fef4e8;
+      margin: 0 auto 1.2rem;
+      border-radius: 50%;
       display: flex;
       align-items: center;
-      gap: 12px;
-      width: calc(100% - 2rem);
-      margin: 1.5rem 1rem;
-      padding: 12px 18px;
-      background: rgba(255,77,79,0.12);
-      border: none;
-      border-radius: 14px;
-      color: #fecaca;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: inherit;
-    }
-
-    .logout-btn i {
-      font-size: 1.2rem;
-    }
-
-    .logout-btn:hover {
-      background: rgba(255,77,79,0.35);
-      color: white;
-    }
-
-    .main-content {
-      flex: 1;
-      margin-right: 280px;
-      padding: 1.8rem 2rem;
-      transition: margin 0.25s;
-      width: 100%;
-    }
-
-    .header {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 2rem;
-      padding-bottom: 0.8rem;
-      border-bottom: 2px solid rgba(0,0,0,0.05);
-    }
-
-    .header h1 {
-      font-size: 1.7rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: var(--primary);
-    }
-
-    .user-info {
-      background: white;
-      padding: 6px 18px 6px 12px;
-      border-radius: 60px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    /* بطاقات الإحصائيات - dashboard */
-    .stats-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .stat-card {
-      background: white;
-      border-radius: 24px;
-      padding: 1.4rem 1.8rem;
-      box-shadow: var(--box-shadow);
-      transition: transform 0.2s, box-shadow 0.2s;
-      border-top: 5px solid var(--primary);
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .stat-card::after {
-      content: '\f054';
-      font-family: 'Font Awesome 6 Free';
-      font-weight: 900;
-      position: absolute;
-      left: 20px;
-      bottom: 20px;
-      opacity: 0.3;
-      font-size: 1.2rem;
-      transition: all 0.2s;
-    }
-    
-    .stat-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 30px rgba(0,0,0,0.12);
-    }
-    
-    .stat-card:hover::after {
-      opacity: 0.8;
-      transform: translateX(-5px);
-    }
-
-    .stat-card.orders { border-top-color: var(--info); }
-    .stat-card.inquiries { border-top-color: var(--warning); }
-    .stat-card.suggestions { border-top-color: var(--success); }
-
-    .stat-card .stat-icon {
+      justify-content: center;
       font-size: 2rem;
+      color: var(--secondary);
+    }
+
+    .dashboard-card h3 {
+      font-size: 1.6rem;
       margin-bottom: 8px;
-      display: inline-block;
-    }
-    
-    .stat-card h3 {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #475569;
-    }
-    
-    .stat-card .value {
-      font-size: 2.5rem;
-      font-weight: 800;
-      margin: 10px 0 6px;
       color: #0f172a;
     }
-    
-    /* الأقسام الرئيسية */
-    .section {
-      background: white;
-      border-radius: 28px;
-      padding: 1.6rem 1.8rem;
-      margin-bottom: 2rem;
-      box-shadow: var(--box-shadow);
-    }
-    
-    .section.hidden {
-      display: none;
+
+    .dashboard-card p {
+      color: #475569;
+      font-size: 0.9rem;
     }
 
-    .section-header {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 1.3rem;
-      padding-bottom: 0.8rem;
-      border-bottom: 1px solid #eef2f6;
-    }
-    
-    .back-button {
-      background: #f1f5f9;
-      border: none;
-      padding: 8px 18px;
-      border-radius: 40px;
-      font-family: inherit;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: 0.2s;
-    }
-    
-    .back-button:hover {
-      background: #e2e8f0;
-    }
-
-    .table-responsive {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      border-radius: 20px;
-    }
-
-    .data-table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 620px;
-    }
-
-    .data-table th {
-      background: #f8fafc;
-      padding: 14px 12px;
+    .count-badge {
+      display: inline-block;
+      background: #eef2ff;
+      padding: 4px 12px;
+      border-radius: 60px;
+      font-size: 0.8rem;
       font-weight: 700;
-      color: #1e293b;
-      text-align: right;
+      margin-top: 12px;
+      color: #1e40af;
     }
 
-    .data-table td {
-      padding: 14px 12px;
-      border-bottom: 1px solid #ecf3f9;
-      vertical-align: middle;
-    }
-
-    .btn {
-      padding: 8px 18px;
-      border-radius: 40px;
-      border: none;
-      font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
+    /* تذييل بسيط */
+    .footer-note {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #e2e8f0;
+      color: #64748b;
       font-size: 0.85rem;
     }
 
-    .btn-sm {
-      padding: 6px 12px;
-      font-size: 0.8rem;
-    }
-
-    .btn-primary { background: linear-gradient(120deg, #1a2a3a, #0f172a); color: white; }
-    .btn-success { background: var(--success); color: white; }
-    .btn-danger  { background: var(--danger); color: white; }
-    .btn-info    { background: var(--info); color: white; }
-    .btn-outline { background: transparent; border: 1px solid #cbd5e1; color: #334155; }
-
-    .badge {
-      padding: 5px 12px;
-      border-radius: 50px;
-      font-size: 0.75rem;
-      font-weight: 700;
-    }
-
-    .badge-success { background: #e0f2e9; color: #15803d; }
-    .badge-warning { background: #fff3e3; color: #b45309; }
-    .badge-danger { background: #fee2e2; color: #b91c1c; }
-
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(6px);
-      z-index: 1200;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .modal.show {
-      display: flex;
-    }
-
-    .modal-content {
-      background: white;
-      max-width: 550px;
-      width: 90%;
-      border-radius: 32px;
-      overflow: hidden;
-      box-shadow: 0 25px 45px rgba(0,0,0,0.3);
-      animation: fadeSlideUp 0.2s ease;
-    }
-
-    @keyframes fadeSlideUp {
-      from { opacity: 0; transform: translateY(18px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .modal-header {
-      padding: 1.2rem 1.8rem;
-      background: #fef9f0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #ffe5cc;
-    }
-
-    .modal-body {
-      padding: 1.5rem 1.8rem;
-    }
-
-    .form-group {
-      margin-bottom: 1.2rem;
-    }
-
-    .form-group label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: #1e293b;
-    }
-
-    .form-control {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 24px;
-      font-family: inherit;
-      transition: 0.2s;
-      font-size: 0.95rem;
-    }
-
-    .form-control:focus {
-      outline: none;
-      border-color: var(--secondary);
-      box-shadow: 0 0 0 3px rgba(255,122,0,0.1);
-    }
-
-    .modal-footer {
-      padding: 1rem 1.8rem;
-      background: #fefefe;
-      display: flex;
-      justify-content: flex-end;
-      gap: 12px;
-      border-top: 1px solid #edf2f7;
-    }
-
-    .screenshot-preview {
-      width: 52px;
-      height: 52px;
-      object-fit: cover;
-      border-radius: 12px;
-      border: 1px solid #e2e8f0;
-      cursor: pointer;
-    }
-
-    .alert {
-      padding: 12px 20px;
-      border-radius: 20px;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    
-    .alert-success { background: #e0f2e9; color: #166534; border-right: 4px solid #22c55e; }
-    .alert-danger { background: #fee2e2; color: #991b1b; border-right: 4px solid #ef4444; }
-    .alert-warning { background: #fffbeb; color: #92400e; border-right: 4px solid #f59e0b; }
-
-    .image-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.92);
-      z-index: 1300;
-      display: none;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .image-modal-content {
-      position: relative;
-      max-width: 90%;
-      max-height: 90%;
-    }
-    
-    .image-modal-content img {
-      max-width: 100%;
-      max-height: 90vh;
-      border-radius: 16px;
-      border: 3px solid white;
-    }
-    
-    .close-image-modal {
-      position: absolute;
-      top: -40px;
-      left: 0;
-      background: rgba(0,0,0,0.6);
-      color: white;
+    /* زر تسجيل الخروج */
+    .logout-mini {
+      background: none;
       border: none;
-      font-size: 2rem;
+      color: #94a3b8;
       cursor: pointer;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      transition: color 0.2s;
     }
 
-    @media (max-width: 768px) {
-      .mobile-menu-toggle {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
+    .logout-mini:hover {
+      color: var(--danger);
+    }
 
-      .sidebar {
-        transform: translateX(100%);
-        width: 280px;
-        box-shadow: none;
+    @media (max-width: 640px) {
+      .dashboard-container {
+        padding: 1rem;
       }
-
-      .sidebar.open {
-        transform: translateX(0);
+      .dashboard-header {
+        flex-direction: column;
+        align-items: stretch;
       }
-
-      .sidebar-overlay.active {
-        display: block;
+      .cards-grid {
+        gap: 1rem;
       }
-
-      .main-content {
-        margin-right: 0;
-        padding-top: 70px;
+      .dashboard-card {
+        padding: 1.2rem;
       }
-      
-      .stat-card .value {
-        font-size: 1.9rem;
+      .card-icon {
+        width: 55px;
+        height: 55px;
+        font-size: 1.5rem;
       }
     }
   </style>
 </head>
 <body>
-  <button class="mobile-menu-toggle" id="menuToggleBtn"><i class="fas fa-bars"></i></button>
-  <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-  <div class="admin-container">
-    <div class="sidebar" id="mainSidebar">
-      <div class="sidebar-header">
+  <div class="dashboard-container">
+    <div class="dashboard-header">
+      <div class="logo-area">
         <img src="https://i.postimg.cc/ZnqqqkLd/TRIPx-ESPORTS.jpg" alt="TRIPxESPORTS">
-        <h2>TRIPxESPORTS</h2>
-        <p>لوحة إدارة متكاملة</p>
+        <h1>TRIPxESPORTS</h1>
       </div>
-
-      <ul class="nav-menu">
-        <li class="nav-item"><a class="nav-link" onclick="navigateToSection('orders')"><i class="fas fa-shopping-cart"></i><span>الطلبات</span></a></li>
-        <li class="nav-item"><a class="nav-link" onclick="navigateToSection('inquiries')"><i class="fas fa-question-circle"></i><span>الاستفسارات</span></a></li>
-        <li class="nav-item"><a class="nav-link" onclick="navigateToSection('suggestions')"><i class="fas fa-lightbulb"></i><span>الاقتراحات</span></a></li>
-        <li class="nav-item"><a class="nav-link" onclick="navigateToSection('coupons')"><i class="fas fa-tags"></i><span>الكوبونات</span></a></li>
-        <li class="nav-item"><a class="nav-link" onclick="navigateToSection('messages')"><i class="fas fa-envelope"></i><span>الرسائل المباشرة</span></a></li>
-      </ul>
-
-      <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>تسجيل الخروج</span></button>
+      <div style="display: flex; gap: 16px; align-items: center;">
+        <div class="admin-badge">
+          <i class="fas fa-user-shield"></i>
+          <span>مرحباً Admin</span>
+        </div>
+        <button class="logout-mini" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i> خروج
+        </button>
+      </div>
     </div>
 
-    <div class="main-content">
-      <div class="header">
-        <h1><i class="fas fa-tachometer-alt"></i> لوحة التحكم</h1>
-        <div class="user-info">
-          <span class="user-name">مرحبًا، Admin</span>
-          <img src="https://i.postimg.cc/RF4XpcRp/Whats.jpg" alt="Admin Avatar" style="width:40px;height:40px;border-radius:50%;object-fit:cover">
-        </div>
+    <div class="cards-grid">
+      <!-- بطاقة الطلبات -->
+      <div class="dashboard-card" onclick="navigateTo('orders')">
+        <div class="card-icon"><i class="fas fa-shopping-cart"></i></div>
+        <h3>الطلبات</h3>
+        <p>إدارة طلبات العملاء وعرض تفاصيل الدفع</p>
+        <span class="count-badge" id="ordersCountBadge">0 طلب</span>
       </div>
 
-      <!-- الصفحة الرئيسية (Dashboard) -->
-      <div id="dashboardView">
-        <div class="stats-cards">
-          <div class="stat-card orders" onclick="navigateToSection('orders')">
-            <div class="stat-icon"><i class="fas fa-shopping-cart" style="color:#2196F3;"></i></div>
-            <h3><i class="fas fa-chart-line"></i> الطلبات</h3>
-            <div class="value" id="ordersCount">0</div>
-            <div class="change positive">إجمالي الطلبات المسجلة</div>
-          </div>
-          <div class="stat-card inquiries" onclick="navigateToSection('inquiries')">
-            <div class="stat-icon"><i class="fas fa-question-circle" style="color:#ffc107;"></i></div>
-            <h3><i class="fas fa-headset"></i> الاستفسارات</h3>
-            <div class="value" id="inquiriesCount">0</div>
-            <div class="change">رسائل العملاء</div>
-          </div>
-          <div class="stat-card suggestions" onclick="navigateToSection('suggestions')">
-            <div class="stat-icon"><i class="fas fa-lightbulb" style="color:#25D366;"></i></div>
-            <h3><i class="fas fa-comment-dots"></i> الاقتراحات</h3>
-            <div class="value" id="suggestionsCount">0</div>
-            <div class="change">أفكار وتطوير</div>
-          </div>
-        </div>
-        <div class="section" style="text-align: center; background: #f8fafc;">
-          <i class="fas fa-chart-pie" style="font-size: 2rem; color: #ff7a00; margin-bottom: 10px;"></i>
-          <p style="color: #475569;">مرحبًا في لوحة التحكم المتكاملة. انقر على أي بطاقة لعرض البيانات التفصيلية وإدارة المحتوى.</p>
-        </div>
+      <!-- بطاقة الاستفسارات -->
+      <div class="dashboard-card" onclick="navigateTo('inquiries')">
+        <div class="card-icon"><i class="fas fa-question-circle"></i></div>
+        <h3>الاستفسارات</h3>
+        <p>الرد على استفسارات العملاء ومتابعتها</p>
+        <span class="count-badge" id="inquiriesCountBadge">0 استفسار</span>
       </div>
 
-      <!-- أقسام التفاصيل -->
-      <div id="ordersSection" class="section hidden">
-        <div class="section-header"><h2><i class="fas fa-shopping-cart"></i> إدارة الطلبات</h2><button class="back-button" onclick="showDashboard()"><i class="fas fa-arrow-right"></i> العودة للرئيسية</button></div>
-        <div class="table-responsive"><table class="data-table"><thead><tr><th>العميل</th><th>ID اللاعب</th><th>النوع</th><th>المبلغ</th><th>الحالة</th><th>رقم التحويل</th><th>إثبات الدفع</th><th>الإجراءات</th></tr></thead><tbody id="ordersList"></tbody></table></div>
+      <!-- بطاقة الاقتراحات -->
+      <div class="dashboard-card" onclick="navigateTo('suggestions')">
+        <div class="card-icon"><i class="fas fa-lightbulb"></i></div>
+        <h3>الاقتراحات</h3>
+        <p>اقتراحات العملاء والتواصل معهم</p>
+        <span class="count-badge" id="suggestionsCountBadge">0 اقتراح</span>
       </div>
 
-      <div id="inquiriesSection" class="section hidden">
-        <div class="section-header"><h2><i class="fas fa-question-circle"></i> إدارة الاستفسارات</h2><button class="back-button" onclick="showDashboard()"><i class="fas fa-arrow-right"></i> العودة للرئيسية</button></div>
-        <div class="table-responsive"><table class="data-table"><thead><tr><th>البريد الإلكتروني</th><th>التاريخ</th><th>الرسالة</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody id="inquiriesList"></tbody></table></div>
+      <!-- بطاقة إرسال رسالة -->
+      <div class="dashboard-card" onclick="navigateTo('messages')">
+        <div class="card-icon"><i class="fas fa-paper-plane"></i></div>
+        <h3>إرسال رسالة</h3>
+        <p>مراسلة العملاء عبر البريد الإلكتروني</p>
+        <span class="count-badge">تواصل فوري</span>
       </div>
 
-      <div id="suggestionsSection" class="section hidden">
-        <div class="section-header"><h2><i class="fas fa-lightbulb"></i> الاقتراحات</h2><button class="back-button" onclick="showDashboard()"><i class="fas fa-arrow-right"></i> العودة للرئيسية</button></div>
-        <div class="table-responsive"><table class="data-table"><thead><tr><th>الاسم</th><th>طريقة التواصل</th><th>التاريخ</th><th>الاقتراح</th><th>الإجراءات</th></tr></thead><tbody id="suggestionsList"></tbody></table></div>
+      <!-- بطاقة الكوبونات -->
+      <div class="dashboard-card" onclick="navigateTo('coupons')">
+        <div class="card-icon"><i class="fas fa-tags"></i></div>
+        <h3>الكوبونات</h3>
+        <p>إدارة كوبونات الخصم وإنشاء جديدة</p>
+        <span class="count-badge" id="couponsCountBadge">0 كوبون</span>
       </div>
+    </div>
 
-      <!-- قسم الكوبونات (معاد كما كان) -->
-      <div id="couponsSection" class="section hidden">
-        <div class="section-header"><h2><i class="fas fa-tags"></i> كوبونات الخصم</h2><div><button class="btn btn-primary" onclick="showAddCouponModal()"><i class="fas fa-plus"></i> إضافة كوبون جديد</button><button class="back-button" style="margin-right:10px;" onclick="showDashboard()"><i class="fas fa-arrow-right"></i> العودة للرئيسية</button></div></div>
-        <div class="table-responsive"><table class="data-table"><thead><tr><th>الكود</th><th>الخصم (%)</th><th>الوصف</th><th>تاريخ الانتهاء</th><th>الاستخدام</th><th>الحالة</th><th>حذف</th></tr></thead><tbody id="couponsList"></tbody></table></div>
-      </div>
-
-      <!-- قسم الرسائل المباشرة (معاد) -->
-      <div id="messagesSection" class="section hidden">
-        <div class="section-header"><h2><i class="fas fa-envelope"></i> إرسال رسالة مباشرة</h2><button class="back-button" onclick="showDashboard()"><i class="fas fa-arrow-right"></i> العودة للرئيسية</button></div>
-        <div class="message-form">
-          <div class="form-group"><label>بريد العميل:</label><input type="email" id="clientEmail" class="form-control" placeholder="example@domain.com"></div>
-          <div class="form-group"><label>عنوان الرسالة:</label><input type="text" id="emailSubject" class="form-control" placeholder="العنوان"></div>
-          <div class="form-group"><label>نص الرسالة:</label><textarea id="emailMessage" class="form-control" rows="3" placeholder="محتوى الرسالة"></textarea></div>
-          <button class="btn btn-primary" onclick="sendDirectMessage()"><i class="fas fa-paper-plane"></i> إرسال</button>
-        </div>
-      </div>
+    <div class="footer-note">
+      <i class="fas fa-chart-line"></i> لوحة تحكم TRIPxESPORTS — اختر أي قسم للإدارة
     </div>
   </div>
 
-  <!-- مودال الرد على الاستفسار -->
-  <div id="replyModal" class="modal"><div class="modal-content"><div class="modal-header"><h3><i class="fas fa-reply"></i> رد على الاستفسار</h3><button class="close" onclick="closeReplyModal()">&times;</button></div><div class="modal-body"><div id="originalMessage" class="alert alert-warning"></div><div class="form-group"><label>الرد:</label><textarea id="replyText" class="form-control" rows="4"></textarea></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="closeReplyModal()">إلغاء</button><button class="btn btn-primary" onclick="sendReply()">إرسال الرد</button></div></div></div>
-
-  <!-- مودال إضافة كوبون -->
-  <div id="addCouponModal" class="modal"><div class="modal-content"><div class="modal-header"><h3><i class="fas fa-ticket-alt"></i> إضافة كوبون جديد</h3><button class="close" onclick="closeAddCouponModal()">&times;</button></div><div class="modal-body"><div class="form-group"><label>كود الخصم *</label><input type="text" id="couponCode" class="form-control" placeholder="مثال: SUMMER20" maxlength="20"></div><div class="form-group"><label>نسبة الخصم (%) *</label><input type="number" id="couponPercent" class="form-control" placeholder="10" min="1" max="100"></div><div class="form-group"><label>الوصف (اختياري)</label><input type="text" id="couponDesc" class="form-control" placeholder="عرض خاص"></div><div class="form-group"><label>تاريخ الانتهاء (اختياري)</label><input type="date" id="couponExpiry" class="form-control"></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="closeAddCouponModal()">إلغاء</button><button class="btn btn-primary" onclick="addCoupon()">إضافة الكوبون</button></div></div></div>
-
-  <!-- مودال الصورة -->
-  <div id="imageModal" class="image-modal"><div class="image-modal-content"><button class="close-image-modal" onclick="closeImageModal()">&times;</button><img id="modalImage" src="" alt="معاينة"></div></div>
-
   <script>
-    let currentInquiryId = null, currentInquiryEmail = null, currentInquiryMessage = null;
-    let orders = [], inquiries = [], suggestions = [];
-
-    // أوامر التنقل بين Dashboard والأقسام
-    function showDashboard() {
-      document.getElementById('dashboardView').style.display = 'block';
-      document.getElementById('ordersSection').classList.add('hidden');
-      document.getElementById('inquiriesSection').classList.add('hidden');
-      document.getElementById('suggestionsSection').classList.add('hidden');
-      document.getElementById('couponsSection').classList.add('hidden');
-      document.getElementById('messagesSection').classList.add('hidden');
-      if(window.innerWidth < 768) closeMobileMenu();
-    }
+    // دوال التنقل: كل قسم يفتح في صفحة منفصلة (أو يمكن تعديلها لتبقى في نفس الصفحة لكن سنحتفظ بفكرة الـ SPA بسيطة)
+    // لكن حسب رغبتك "كل قسم ادوس عليه يوديني" -> سنعتبر أن الصفحة الحالية هي الداشبورد، وعند الضغط ننتقل إلى صفحة مخصصة.
+    // لعمل تجربة متكاملة، سنقوم بتحويل الروابط إلى ملفات html منفصلة أو استخدام window.location.href.
+    // إذا أردت الاحتفاظ بنفس الملف مع إظهار المحتوى بشكل ديناميكي، يمكن تعديلها، لكن الأفضل استخدام صفحات منفصلة.
+    // لكن هنا سأجعلها تعمل كـ "spa" بسيط عن طريق إعادة توجيه إلى نفس الصفحة مع بارامتر، ثم قراءة البارامتر وعرض المحتوى.
+    // هكذا نضمن أن كل قسم يودي إلى واجهة مخصصة مع الحفاظ على نفس التصميم العام.
     
-    function navigateToSection(section) {
-      document.getElementById('dashboardView').style.display = 'none';
-      // إخفاء الكل
-      const sections = ['ordersSection', 'inquiriesSection', 'suggestionsSection', 'couponsSection', 'messagesSection'];
-      sections.forEach(sec => document.getElementById(sec).classList.add('hidden'));
-      
-      if(section === 'orders') {
-        document.getElementById('ordersSection').classList.remove('hidden');
-        loadOrders();
-      } else if(section === 'inquiries') {
-        document.getElementById('inquiriesSection').classList.remove('hidden');
-        loadInquiries();
-      } else if(section === 'suggestions') {
-        document.getElementById('suggestionsSection').classList.remove('hidden');
-        loadSuggestions();
-      } else if(section === 'coupons') {
-        document.getElementById('couponsSection').classList.remove('hidden');
-        loadCoupons();
-      } else if(section === 'messages') {
-        document.getElementById('messagesSection').classList.remove('hidden');
-      }
-      if(window.innerWidth < 768) closeMobileMenu();
+    // دالة التنقل الرئيسية: ستغير الرابط ليحتوي على ?section=sectionName ثم تحميل المحتوى
+    function navigateTo(section) {
+      // نستخدم history.pushState لتغيير الـ URL بدون ريلود كامل، ثم نعرض الواجهة الخاصة
+      const url = new URL(window.location.href);
+      url.searchParams.set('section', section);
+      window.history.pushState({}, '', url);
+      loadSectionContent(section);
     }
 
-    // القائمة الجانبية المتجاوبة
-    const menuToggle = document.getElementById('menuToggleBtn');
-    const sidebar = document.getElementById('mainSidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    function closeMobileMenu() { sidebar.classList.remove('open'); overlay.classList.remove('active'); }
-    function openMobileMenu() { sidebar.classList.add('open'); overlay.classList.add('active'); }
-    if(menuToggle) menuToggle.addEventListener('click', () => { sidebar.classList.contains('open') ? closeMobileMenu() : openMobileMenu(); });
-    if(overlay) overlay.addEventListener('click', closeMobileMenu);
-    window.addEventListener('resize', () => { if(window.innerWidth > 768) closeMobileMenu(); });
+    // تحميل محتوى القسم المختار بشكل ديناميكي (موحد داخل نفس الصفحة)
+    function loadSectionContent(section) {
+      // نحذف أي محتوى سابق بخلاف الهيدر والبطاقات الأصلية؟ 
+      // لكن الأجمل أن نستبدل الـ cards-grid بمحتوى القسم.
+      const grid = document.querySelector('.cards-grid');
+      const footer = document.querySelector('.footer-note');
+      if (!grid) return;
 
-    // --- وظائف جلب البيانات ---
-    async function loadOrders() {
+      // تخزين المحتوى الأصلي للعودة إليه لاحقاً (زر رجوع مثلاً)
+      if (!window.originalGridHTML) {
+        window.originalGridHTML = grid.innerHTML;
+        window.originalFooterHTML = footer ? footer.innerHTML : '';
+      }
+
+      // بناء على القسم المختار نعرض الواجهة
+      if (section === 'orders') {
+        renderOrdersPanel(grid, footer);
+      } else if (section === 'inquiries') {
+        renderInquiriesPanel(grid, footer);
+      } else if (section === 'suggestions') {
+        renderSuggestionsPanel(grid, footer);
+      } else if (section === 'messages') {
+        renderMessagesPanel(grid, footer);
+      } else if (section === 'coupons') {
+        renderCouponsPanel(grid, footer);
+      } else {
+        // لا يوجد قسم -> نعيد الصفحة الرئيسية
+        if (window.originalGridHTML) {
+          grid.innerHTML = window.originalGridHTML;
+          if (footer) footer.innerHTML = window.originalFooterHTML;
+          // إعادة ربط أحداث البطاقات
+          attachCardEvents();
+          // تحديث العدادات
+          loadCounts();
+        }
+      }
+    }
+
+    // دوال لعرض الألواح المختلفة
+    function renderOrdersPanel(grid, footer) {
+      grid.innerHTML = `
+        <div style="background: white; border-radius: 32px; padding: 1.5rem; width: 100%; grid-column: 1/-1;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 1.5rem;">
+            <h2><i class="fas fa-shopping-cart"></i> إدارة الطلبات</h2>
+            <button class="back-home-btn" onclick="goHome()" style="background:#f1f5f9; border:none; padding:8px 20px; border-radius:40px; cursor:pointer;"><i class="fas fa-arrow-right"></i> العودة للرئيسية</button>
+          </div>
+          <div style="overflow-x: auto;">
+            <table style="width:100%; border-collapse:collapse; min-width:600px;">
+              <thead><tr style="background:#f8fafc;"><th>العميل</th><th>اللاعب ID</th><th>النوع</th><th>المبلغ</th><th>الحالة</th><th>رقم التحويل</th><th>إثبات الدفع</th><th>الإجراءات</th></tr></thead>
+              <tbody id="ordersTableBody"><tr><td colspan="8" style="text-align:center;">جاري تحميل الطلبات...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      `;
+      if (footer) footer.style.display = 'none';
+      fetchOrdersForPanel();
+    }
+
+    function renderInquiriesPanel(grid, footer) {
+      grid.innerHTML = `
+        <div style="background: white; border-radius: 32px; padding: 1.5rem; width: 100%; grid-column: 1/-1;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2><i class="fas fa-question-circle"></i> الاستفسارات</h2>
+            <button class="back-home-btn" onclick="goHome()" style="background:#f1f5f9; border:none; padding:8px 20px; border-radius:40px; cursor:pointer;"><i class="fas fa-arrow-right"></i> الرئيسية</button>
+          </div>
+          <div style="overflow-x: auto;"><table style="width:100%; border-collapse:collapse;"><thead><tr style="background:#f8fafc;"><th>البريد</th><th>التاريخ</th><th>الرسالة</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody id="inquiriesTableBody"><tr><td colspan="5">جاري التحميل...</td></tr></tbody></table></div>
+        </div>
+      `;
+      if (footer) footer.style.display = 'none';
+      fetchInquiriesForPanel();
+    }
+
+    function renderSuggestionsPanel(grid, footer) {
+      grid.innerHTML = `
+        <div style="background: white; border-radius: 32px; padding: 1.5rem; width: 100%; grid-column: 1/-1;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2><i class="fas fa-lightbulb"></i> الاقتراحات</h2>
+            <button class="back-home-btn" onclick="goHome()" style="background:#f1f5f9; border:none; padding:8px 20px; border-radius:40px; cursor:pointer;"><i class="fas fa-arrow-right"></i> الرئيسية</button>
+          </div>
+          <div style="overflow-x: auto;"><table style="width:100%; border-collapse:collapse;"><thead><tr><th>الاسم</th><th>طريقة التواصل</th><th>التاريخ</th><th>الاقتراح</th><th>إجراء</th></tr></thead><tbody id="suggestionsTableBody"><tr><td colspan="5">جاري التحميل...</td></tr></tbody></table></div>
+        </div>
+      `;
+      if (footer) footer.style.display = 'none';
+      fetchSuggestionsForPanel();
+    }
+
+    function renderMessagesPanel(grid, footer) {
+      grid.innerHTML = `
+        <div style="background: white; border-radius: 32px; padding: 1.8rem; width: 100%; grid-column: 1/-1;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2><i class="fas fa-envelope"></i> إرسال رسالة مباشرة</h2>
+            <button class="back-home-btn" onclick="goHome()" style="background:#f1f5f9; border:none; padding:8px 20px; border-radius:40px; cursor:pointer;"><i class="fas fa-arrow-right"></i> الرئيسية</button>
+          </div>
+          <div class="message-form">
+            <div class="form-group" style="margin-bottom:1rem;"><label>بريد العميل:</label><input type="email" id="clientEmail" class="form-control" style="width:100%; padding:12px; border-radius:60px; border:1px solid #cbd5e1;"></div>
+            <div class="form-group" style="margin-bottom:1rem;"><label>العنوان:</label><input type="text" id="emailSubject" class="form-control" style="width:100%; padding:12px; border-radius:60px; border:1px solid #cbd5e1;"></div>
+            <div class="form-group" style="margin-bottom:1rem;"><label>الرسالة:</label><textarea id="emailMessage" rows="4" class="form-control" style="width:100%; padding:12px; border-radius:24px; border:1px solid #cbd5e1;"></textarea></div>
+            <button class="btn-send" onclick="sendDirectMessage()" style="background:#ff7a00; border:none; padding:10px 28px; border-radius:40px; color:white; font-weight:bold; cursor:pointer;"><i class="fas fa-paper-plane"></i> إرسال</button>
+          </div>
+        </div>
+      `;
+      if (footer) footer.style.display = 'none';
+    }
+
+    function renderCouponsPanel(grid, footer) {
+      grid.innerHTML = `
+        <div style="background: white; border-radius: 32px; padding: 1.5rem; width: 100%; grid-column: 1/-1;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 1.5rem;">
+            <h2><i class="fas fa-tags"></i> الكوبونات</h2>
+            <div><button onclick="showAddCouponUIModal()" style="background:#ff7a00; border:none; padding:8px 18px; border-radius:40px; color:white; font-weight:bold; margin-left:10px;"><i class="fas fa-plus"></i> إضافة كوبون</button><button class="back-home-btn" onclick="goHome()" style="background:#f1f5f9; border:none; padding:8px 20px; border-radius:40px; cursor:pointer;"><i class="fas fa-arrow-right"></i> الرئيسية</button></div>
+          </div>
+          <div style="overflow-x: auto;"><table style="width:100%; border-collapse:collapse;"><thead><tr><th>الكود</th><th>الخصم%</th><th>الوصف</th><th>تاريخ الانتهاء</th><th>الاستخدام</th><th>الحالة</th><th>حذف</th></tr></thead><tbody id="couponsTableBody"><tr><td colspan="7">جار التحميل...</td></tr></tbody></table></div>
+        </div>
+      `;
+      if (footer) footer.style.display = 'none';
+      fetchCouponsForPanel();
+    }
+
+    // إظهار مودال إضافة كوبون (بسيط)
+    function showAddCouponUIModal() {
+      const code = prompt("أدخل كود الخصم (مثل: SAVE10)");
+      if (!code) return;
+      const percent = prompt("نسبة الخصم (1-100)");
+      if (!percent || percent < 1 || percent > 100) return alert("نسبة غير صحيحة");
+      const desc = prompt("وصف اختياري") || "";
+      const expiry = prompt("تاريخ الانتهاء (YYYY-MM-DD) اختياري") || "";
+      addCouponViaAPI(code, parseInt(percent), desc, expiry);
+    }
+
+    async function addCouponViaAPI(code, percent, desc, expiry) {
+      try {
+        const res = await fetch("/api/admin/coupons", {
+          method: "POST", headers: { 'Content-Type': 'application/json' }, credentials: "include",
+          body: JSON.stringify({ code, discountPercent: percent, description: desc, expiresAt: expiry || null })
+        });
+        const data = await res.json();
+        if (data.success) { alert("تمت الإضافة"); fetchCouponsForPanel(); loadCounts(); }
+        else alert("فشل الإضافة: " + (data.message || ""));
+      } catch(e) { alert("خطأ في الاتصال"); }
+    }
+
+    async function deleteCouponItem(id) {
+      if (!confirm("حذف الكوبون؟")) return;
+      try {
+        await fetch(`/api/admin/coupons/${id}`, { method: "DELETE", credentials: "include" });
+        alert("تم الحذف");
+        fetchCouponsForPanel();
+        loadCounts();
+      } catch(e) { alert("خطأ"); }
+    }
+
+    // جلب البيانات وتعبئة الجداول
+    async function fetchOrdersForPanel() {
       try {
         const res = await fetch("/api/admin/orders", { credentials: "include" });
-        if(!res.ok) throw new Error("فشل التحميل");
         const data = await res.json();
-        orders = data.data || [];
-        document.getElementById('ordersCount').innerText = orders.length;
-        const tbody = document.getElementById('ordersList');
-        if(!orders.length) { tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;">لا توجد طلبات</td></tr>`; return; }
-        tbody.innerHTML = "";
+        const orders = data.data || [];
+        const tbody = document.getElementById('ordersTableBody');
+        if (!tbody) return;
+        if (orders.length === 0) { tbody.innerHTML = '<tr><td colspan="8">لا توجد طلبات</td></tr>'; return; }
+        tbody.innerHTML = '';
         orders.forEach(order => {
-          const imgUrl = order.screenshotUrl || order.screenshot || null;
           const row = `<tr>
-            <td><strong>${escapeHtml(order.name || '')}</strong><br><small>${escapeHtml(order.email || '')}</small></td>
-            <td>${escapeHtml(order.playerId || '')}</td>
-            <td>${escapeHtml(order.type || '')}<br><small>${escapeHtml(order.ucAmount || order.bundle || '')}</small></td>
+            <td>${order.name || ''}<br><small>${order.email || ''}</small></td>
+            <td>${order.playerId || ''}</td>
+            <td>${order.type || ''}</td>
             <td>${order.totalAmount || 0} ج.م</td>
-            <td><span class="badge ${order.status === 'تم الدفع' ? 'badge-success' : 'badge-warning'}">${order.status || 'قيد المراجعة'}</span></td>
-            <td>${escapeHtml(order.transactionId || '-')}</td>
-            <td>${imgUrl ? `<img src="${imgUrl}" class="screenshot-preview" onclick="openImageModal('${imgUrl}')" onerror="this.style.display='none'">` : 'لا توجد'}</td>
-            <td><div style="display:flex;gap:8px;"><button class="btn btn-sm btn-success" onclick="updateStatus('${order.id}','تم الدفع')"><i class="fas fa-check"></i></button><button class="btn btn-sm btn-danger" onclick="deleteOrder('${order.id}')"><i class="fas fa-trash"></i></button></div></td>
+            <td><span style="background:#e2e3e8; padding:4px 12px; border-radius:40px;">${order.status || 'قيد المراجعة'}</span></td>
+            <td>${order.transactionId || '-'}</td>
+            <td>${order.screenshotUrl ? '📷 موجود' : '-'}</td>
+            <td><button onclick="updateOrderStatus('${order.id}')" style="background:#25D366; border:none; color:white; padding:4px 12px; border-radius:30px; margin-left:5px;">تحديث</button><button onclick="deleteOrder('${order.id}')" style="background:#ff4d4f; border:none; color:white; padding:4px 12px; border-radius:30px;">حذف</button></td>
           </tr>`;
           tbody.insertAdjacentHTML('beforeend', row);
         });
-      } catch(e) { console.error(e); document.getElementById('ordersList').innerHTML = `<tr><td colspan="8" class="alert-danger">خطأ في التحميل</td></tr>`; }
+      } catch(e) { console.error(e); }
     }
 
-    async function loadInquiries() { 
-      try { 
-        const res=await fetch("/api/admin/inquiries",{credentials:"include"}); 
-        const d=await res.json(); 
-        inquiries=d.data||[]; 
-        document.getElementById('inquiriesCount').innerText=inquiries.length; 
-        const tbody=document.getElementById('inquiriesList'); 
-        if(!inquiries.length) { tbody.innerHTML=`<tr><td colspan="5" style="text-align:center;">لا توجد استفسارات</td></tr>`; return; }
-        tbody.innerHTML="";
-        inquiries.forEach(i=>{
-          tbody.insertAdjacentHTML('beforeend',`<tr>
-            <td>${escapeHtml(i.email)}</td>
-            <td>${new Date(i.created_at).toLocaleString()}</td>
-            <td>${escapeHtml(i.message.substring(0,80))}</td>
-            <td><span class="badge ${i.status==='تم الرد'?'badge-success':'badge-warning'}">${i.status||'جديد'}</span></td>
-            <td><button class="btn btn-sm btn-info" onclick="openReplyModal(${i.id},'${escapeHtml(i.email)}','${escapeHtml(i.message.replace(/'/g, "\\'"))}')"><i class="fas fa-reply"></i></button> <button class="btn btn-sm btn-danger" onclick="deleteInquiry(${i.id})"><i class="fas fa-trash"></i></button></td>
-          </table>`);
-        });
-      } catch(e){ console.error(e); } 
-    }
-    
-    async function loadSuggestions() {
-      try { 
-        const res=await fetch("/api/admin/suggestions",{credentials:"include"}); 
-        const d=await res.json(); 
-        suggestions=d.data||[]; 
-        document.getElementById('suggestionsCount').innerText=suggestions.length; 
-        const tbody=document.getElementById('suggestionsList'); 
-        if(!suggestions.length) { tbody.innerHTML=`<tr><td colspan="5">لا توجد اقتراحات</td>`; return; }
-        tbody.innerHTML="";
-        suggestions.forEach(s=>{
-          tbody.insertAdjacentHTML('beforeend',`<tr>
-            <td>${escapeHtml(s.name)}</td>
-            <td>${escapeHtml(s.contact)}</td>
-            <td>${new Date(s.created_at).toLocaleString()}</td>
-            <td>${escapeHtml(s.message.substring(0,80))}</td>
-            <td><button class="btn btn-sm btn-primary" onclick="contactSuggestion('${escapeHtml(s.contact)}')"><i class="fas fa-envelope"></i></button> <button class="btn btn-sm btn-danger" onclick="deleteSuggestion(${s.id})"><i class="fas fa-trash"></i></button></td>
+    async function fetchInquiriesForPanel() {
+      try {
+        const res = await fetch("/api/admin/inquiries", { credentials: "include" });
+        const data = await res.json();
+        const items = data.data || [];
+        const tbody = document.getElementById('inquiriesTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = items.length ? '' : '<tr><td colspan="5">لا توجد استفسارات</td></tr>';
+        items.forEach(inq => {
+          tbody.insertAdjacentHTML('beforeend', `<tr>
+            <td>${inq.email}</td><td>${new Date(inq.created_at).toLocaleDateString()}</td><td>${inq.message.substring(0,60)}</td>
+            <td>${inq.status}</td>
+            <td><button onclick="replyToInquiry('${inq.id}','${inq.email.replace(/'/g,"\\'")}','${inq.message.replace(/'/g,"\\'")}')" style="background:#2196F3; border:none; color:white; padding:4px 12px; border-radius:30px;">رد</button></td>
           </tr>`);
         });
-      } catch(e){ console.error(e); } 
-    }
-    
-    function contactSuggestion(contact){ 
-      alert(`يمكنك التواصل مع: ${contact} عبر البريد الإلكتروني المباشر من قسم الرسائل.`); 
-    }
-    
-    async function deleteSuggestion(id){ if(confirm("حذف الاقتراح؟")){ try{ await fetch("/api/admin/delete-suggestion",{method:"DELETE",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({id})}); showAlert('success','تم الحذف'); loadSuggestions();} catch(e){showAlert('danger','حدث خطأ');} } }
-    
-    // الرد والرسائل
-    function openReplyModal(id,email,msg){ currentInquiryId=id; currentInquiryEmail=email; currentInquiryMessage=msg; document.getElementById('originalMessage').innerHTML=`<i class="fas fa-info-circle"></i> <strong>من ${email}:</strong><br>${msg}`; document.getElementById('replyText').value=''; document.getElementById('replyModal').classList.add('show'); }
-    function closeReplyModal(){ document.getElementById('replyModal').classList.remove('show'); }
-    
-    async function sendReply(){ const txt=document.getElementById('replyText').value.trim(); if(!txt){ showAlert('warning','يرجى كتابة رد'); return; } try{ const res=await fetch("/api/admin/reply-inquiry",{method:"POST",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({inquiryId:currentInquiryId,email:currentInquiryEmail,message:currentInquiryMessage,reply:txt})}); const result=await res.json(); if(result.success){ showAlert('success','تم الرد'); closeReplyModal(); loadInquiries();} else throw new Error(result.message); }catch(e){ showAlert('danger','فشل الإرسال'); } }
-    
-    async function sendDirectMessage(){ const email=document.getElementById('clientEmail').value.trim(), subject=document.getElementById('emailSubject').value.trim(), msg=document.getElementById('emailMessage').value.trim(); if(!email||!subject||!msg){ showAlert('warning','جميع الحقول مطلوبة'); return; } try{ const res=await fetch("/api/admin/send-message",{method:"POST",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({email,subject,message:msg})}); const d=await res.json(); if(d.success){ showAlert('success','تم الإرسال'); document.getElementById('clientEmail').value=''; document.getElementById('emailSubject').value=''; document.getElementById('emailMessage').value=''; } else throw new Error(d.message); }catch(e){ showAlert('danger','خطأ في الإرسال'); } }
-    
-    async function updateStatus(id,status){ try{ await fetch("/api/admin/update-status",{method:"POST",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({id,status})}); showAlert('success','تم التحديث'); if(document.getElementById('ordersSection').classList.contains('hidden')===false) loadOrders(); }catch(e){ showAlert('danger','فشل التحديث'); } }
-    
-    async function deleteOrder(id){ if(confirm("حذف الطلب نهائياً؟")){ try{ await fetch("/api/admin/delete-order",{method:"DELETE",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({id})}); showAlert('success','حذف الطلب'); if(document.getElementById('ordersSection').classList.contains('hidden')===false) loadOrders(); }catch(e){showAlert('danger','خطأ');} } }
-    
-    async function deleteInquiry(id){ if(confirm("حذف الاستفسار؟")){ try{ await fetch("/api/admin/delete-inquiry",{method:"DELETE",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({id})}); showAlert('success','تم الحذف'); loadInquiries();}catch(e){showAlert('danger','خطأ');} } }
-    
-    async function logout(){ try{ await fetch("/api/admin/logout",{method:"POST",credentials:"include"}); window.location.href="login.html"; }catch(e){ showAlert('danger','خطأ تسجيل الخروج'); } }
-    
-    function openImageModal(src){ document.getElementById('modalImage').src=src; document.getElementById('imageModal').style.display='flex'; }
-    function closeImageModal(){ document.getElementById('imageModal').style.display='none'; }
-    
-    function showAlert(type,msg){ 
-      const alertDiv=document.createElement('div'); 
-      alertDiv.className=`alert alert-${type}`; 
-      alertDiv.innerHTML=`<i class="fas ${type==='success'?'fa-check-circle':'fa-exclamation-triangle'}"></i>${msg}`; 
-      const container=document.querySelector('.main-content'); 
-      if(container) container.prepend(alertDiv); 
-      setTimeout(()=>{alertDiv.remove();},4000); 
-    }
-    
-    // الكوبونات
-    async function loadCoupons() {
-      try { const res=await fetch("/api/admin/coupons",{credentials:"include"}); const data=await res.json(); const coupons=data.data||[]; const container=document.getElementById('couponsList'); container.innerHTML=coupons.length?"":`<tr><td colspan="7" style="text-align:center;">لا توجد كوبونات</td></tr>`; coupons.forEach(c=>{ const expDate=c.expiresAt?.toDate?new Date(c.expiresAt.toDate()).toLocaleDateString():c.expiresAt||"لا يوجد"; container.insertAdjacentHTML('beforeend',`<tr><td><strong>${c.code}</strong></td><td>${c.discountPercent}%</td><td>${c.description||"-"}</td><td>${expDate}</td><td>${c.usedCount||0}</td><td><span class="badge ${c.isActive?'badge-success':'badge-danger'}">${c.isActive?"مفعل":"معطل"}</span></td><td><button class="btn btn-sm btn-danger" onclick="deleteCoupon('${c.id}')"><i class="fas fa-trash"></i></button></td></tr>`); });
-      } catch(e){ console.error(e); document.getElementById('couponsList').innerHTML=`<tr><td colspan="7" class="alert-danger">فشل تحميل الكوبونات</td></tr>`; }
-    }
-    function showAddCouponModal(){ document.getElementById('addCouponModal').classList.add('show'); }
-    function closeAddCouponModal(){ document.getElementById('addCouponModal').classList.remove('show'); }
-    async function addCoupon(){ const code=document.getElementById('couponCode').value.trim(); const percent=document.getElementById('couponPercent').value; const desc=document.getElementById('couponDesc').value.trim(); const expiry=document.getElementById('couponExpiry').value; if(!code||!percent||percent<1||percent>100){ showAlert('danger','كود ونسبة خصم صحيحة مطلوبة'); return; } try{ const res=await fetch("/api/admin/coupons",{method:"POST",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({code,discountPercent:Number(percent),description:desc,expiresAt:expiry})}); const data=await res.json(); if(data.success){ showAlert('success','تمت إضافة الكوبون'); closeAddCouponModal(); loadCoupons(); } else throw new Error(data.message); }catch(e){ showAlert('danger',e.message); } }
-    async function deleteCoupon(couponId){ if(!confirm("حذف الكوبون نهائياً؟")) return; try{ const res=await fetch(`/api/admin/coupons/${couponId}`,{method:"DELETE",credentials:"include"}); const data=await res.json(); if(data.success){ showAlert('success','تم الحذف'); loadCoupons(); } else throw new Error(data.message); }catch(e){ showAlert('danger','فشل الحذف'); } }
-    
-    function escapeHtml(str) {
-      if(!str) return '';
-      return str.replace(/[&<>]/g, function(m) {
-        if(m === '&') return '&amp;';
-        if(m === '<') return '&lt;';
-        if(m === '>') return '&gt;';
-        return m;
-      });
-    }
-    
-    async function loadCounts() {
-      try {
-        const [ordersRes, inquiriesRes, suggestionsRes] = await Promise.all([
-          fetch("/api/admin/orders", { credentials: "include" }),
-          fetch("/api/admin/inquiries", { credentials: "include" }),
-          fetch("/api/admin/suggestions", { credentials: "include" })
-        ]);
-        const ordersData = await ordersRes.json();
-        const inquiriesData = await inquiriesRes.json();
-        const suggestionsData = await suggestionsRes.json();
-        document.getElementById('ordersCount').innerText = ordersData.data?.length || 0;
-        document.getElementById('inquiriesCount').innerText = inquiriesData.data?.length || 0;
-        document.getElementById('suggestionsCount').innerText = suggestionsData.data?.length || 0;
       } catch(e) { console.error(e); }
     }
     
-    window.addEventListener('DOMContentLoaded',()=>{ 
+    async function fetchSuggestionsForPanel() {
+      try {
+        const res = await fetch("/api/admin/suggestions", { credentials: "include" });
+        const data = await res.json();
+        const items = data.data || [];
+        const tbody = document.getElementById('suggestionsTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = items.length ? '' : '<tr><td colspan="5">لا توجد اقتراحات</td></tr>';
+        items.forEach(sug => {
+          tbody.insertAdjacentHTML('beforeend', `<tr><td>${sug.name}</td><td>${sug.contact}</td><td>${new Date(sug.created_at).toLocaleDateString()}</td><td>${sug.message.substring(0,60)}</td><td><button onclick="contactSuggestion('${sug.contact}')" style="background:#ff7a00; border:none; color:white; padding:4px 12px; border-radius:30px;">مراسلة</button></td></tr>`);
+        });
+      } catch(e) { console.error(e); }
+    }
+
+    async function fetchCouponsForPanel() {
+      try {
+        const res = await fetch("/api/admin/coupons", { credentials: "include" });
+        const data = await res.json();
+        const coupons = data.data || [];
+        const tbody = document.getElementById('couponsTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = coupons.length ? '' : '<tr><td colspan="7">لا توجد كوبونات</td></tr>';
+        coupons.forEach(c => {
+          tbody.insertAdjacentHTML('beforeend', `<tr>
+            <td>${c.code}</td><td>${c.discountPercent}%</td><td>${c.description || '-'}</td><td>${c.expiresAt || 'لا يوجد'}</td><td>${c.usedCount || 0}</td>
+            <td>${c.isActive ? 'مفعل' : 'معطل'}</td>
+            <td><button onclick="deleteCouponItem('${c.id}')" style="background:#ff4d4f; border:none; color:white; padding:4px 12px; border-radius:30px;">حذف</button></td>
+          </tr>`);
+        });
+      } catch(e) { console.error(e); }
+    }
+
+    window.updateOrderStatus = async (id) => {
+      const newStatus = prompt("أدخل الحالة الجديدة (مثال: تم الدفع , قيد المراجعة)", "تم الدفع");
+      if (!newStatus) return;
+      try {
+        await fetch("/api/admin/update-status", { method: "POST", headers: { 'Content-Type': 'application/json' }, credentials: "include", body: JSON.stringify({ id, status: newStatus }) });
+        alert("تم التحديث");
+        fetchOrdersForPanel();
+      } catch(e) { alert("فشل"); }
+    };
+    window.deleteOrder = async (id) => { if(confirm("حذف الطلب؟")){ await fetch("/api/admin/delete-order",{method:"DELETE",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({id})}); alert("تم الحذف"); fetchOrdersForPanel(); loadCounts();} };
+    window.replyToInquiry = (id, email, msg) => {
+      const replyText = prompt("اكتب ردك على الاستفسار:", "شكراً لتواصلك...");
+      if(!replyText) return;
+      fetch("/api/admin/reply-inquiry", { method:"POST", headers:{'Content-Type':'application/json'}, credentials:"include", body: JSON.stringify({inquiryId:id, email:email, message:msg, reply:replyText}) })
+      .then(r=>r.json()).then(res=>{ if(res.success){ alert("تم الإرسال"); fetchInquiriesForPanel(); loadCounts(); } else alert("فشل"); });
+    };
+    window.contactSuggestion = (contact) => { navigateTo('messages'); setTimeout(()=>{ document.getElementById('clientEmail') && (document.getElementById('clientEmail').value = contact.includes('@')?contact:''); document.getElementById('emailSubject') && (document.getElementById('emailSubject').value = "رد على اقتراحك"); },100); };
+    window.sendDirectMessage = async () => {
+      const email = document.getElementById('clientEmail')?.value, subject = document.getElementById('emailSubject')?.value, msg = document.getElementById('emailMessage')?.value;
+      if(!email||!subject||!msg) return alert("املأ جميع الحقول");
+      try{
+        const res = await fetch("/api/admin/send-message",{method:"POST",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({email,subject,message:msg})});
+        const d = await res.json();
+        if(d.success) alert("تم الإرسال");
+        else alert("فشل");
+      } catch(e){ alert("خطأ"); }
+    };
+    async function loadCounts(){
+      try{
+        let [ordersRes, inquiriesRes, suggestionsRes, couponsRes] = await Promise.all([fetch("/api/admin/orders",{credentials:"include"}), fetch("/api/admin/inquiries",{credentials:"include"}), fetch("/api/admin/suggestions",{credentials:"include"}), fetch("/api/admin/coupons",{credentials:"include"})]);
+        let ordersData = await ordersRes.json(), inquiriesData = await inquiriesRes.json(), suggestionsData = await suggestionsRes.json(), couponsData = await couponsRes.json();
+        document.getElementById('ordersCountBadge') && (document.getElementById('ordersCountBadge').innerText = (ordersData.data?.length || 0) + " طلب");
+        document.getElementById('inquiriesCountBadge') && (document.getElementById('inquiriesCountBadge').innerText = (inquiriesData.data?.length || 0) + " استفسار");
+        document.getElementById('suggestionsCountBadge') && (document.getElementById('suggestionsCountBadge').innerText = (suggestionsData.data?.length || 0) + " اقتراح");
+        document.getElementById('couponsCountBadge') && (document.getElementById('couponsCountBadge').innerText = (couponsData.data?.length || 0) + " كوبون");
+      }catch(e){}
+    }
+    function attachCardEvents(){
+      document.querySelectorAll('.dashboard-card').forEach(card=>{ card.onclick = (e)=>{ const txt = card.querySelector('h3')?.innerText; if(txt.includes('الطلبات')) navigateTo('orders'); else if(txt.includes('الاستفسارات')) navigateTo('inquiries'); else if(txt.includes('الاقتراحات')) navigateTo('suggestions'); else if(txt.includes('رسالة')) navigateTo('messages'); else if(txt.includes('الكوبونات')) navigateTo('coupons'); }; });
+    }
+    window.goHome = function(){
+      const url = new URL(window.location.href);
+      url.searchParams.delete('section');
+      window.history.pushState({}, '', url);
+      const grid = document.querySelector('.cards-grid');
+      const footer = document.querySelector('.footer-note');
+      if(window.originalGridHTML && grid) grid.innerHTML = window.originalGridHTML;
+      if(footer && window.originalFooterHTML) footer.innerHTML = window.originalFooterHTML;
+      attachCardEvents();
       loadCounts();
-      showDashboard();
+      if(footer) footer.style.display = 'block';
+    };
+    window.logout = async ()=>{ await fetch("/api/admin/logout",{method:"POST",credentials:"include"}); window.location.href="login.html"; };
+    window.addEventListener('DOMContentLoaded',()=>{
+      attachCardEvents();
+      loadCounts();
+      const params = new URLSearchParams(window.location.search);
+      const sectionParam = params.get('section');
+      if(sectionParam && ['orders','inquiries','suggestions','messages','coupons'].includes(sectionParam)){
+        loadSectionContent(sectionParam);
+      }
     });
   </script>
 </body>
