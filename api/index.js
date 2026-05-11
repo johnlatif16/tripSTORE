@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const admin = require("firebase-admin");
 const path = require("path");
+const cloudinary = require("cloudinary").v2;
 const app = express();
 
 // ====== Middlewares ======
@@ -30,6 +31,12 @@ app.get("/dashboard", (req, res) => {
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 3 * 1024 * 1024 } // 3MB
+});
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 // ====== Firebase Admin Init ======
@@ -129,37 +136,23 @@ function setAdminCookie(res, token) {
 }
 
 // ====== Storage upload ======
-async function uploadScreenshotToStorage(file) {
+async function uploadToCloudinary(file) {
   if (!file) return null;
 
-  const ext =
-    file.originalname && file.originalname.includes(".")
-      ? file.originalname.split(".").pop()
-      : "png";
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: "orders",
+        resource_type: "image",
+      },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result.secure_url);
+      }
+    );
 
-  const safeExt =
-    String(ext).toLowerCase().replace(/[^a-z0-9]/g, "") || "png";
-
-  const filename = `orders/${Date.now()}-${Math.random()
-    .toString(16)
-    .slice(2)}.${safeExt}`;
-
-  const bucket = storageBucket();
-  const obj = bucket.file(filename);
-
-  // رفع الملف
-  await obj.save(file.buffer, {
-    contentType: file.mimetype || "application/octet-stream",
-    resumable: false,
+    stream.end(file.buffer);
   });
-
-  // إنشاء رابط للصورة
-  const [url] = await obj.getSignedUrl({
-    action: "read",
-    expires: "03-01-2500"
-  });
-
-  return url;
 }
 
 // ====== Health ======
@@ -191,7 +184,7 @@ app.post("/api/order", upload.single("screenshot"), async (req, res) => {
     // رفع الصورة إذا وجدت
     if (req.file) {
       try {
-        screenshotUrl = await uploadScreenshotToStorage(req.file);
+        screenshotUrl = await uploadToCloudinary(req.file);
         console.log("Screenshot uploaded:", screenshotUrl);
       } catch (uploadErr) {
         console.error("Upload error:", uploadErr);
@@ -299,7 +292,7 @@ app.post("/api/order/confirm-payment", upload.single("screenshot"), async (req, 
     let screenshotUrl = null;
     if (req.file) {
       try {
-        screenshotUrl = await uploadScreenshotToStorage(req.file);
+        screenshotUrl = await uploadToCloudinary(req.file);
         console.log("UPLOADED URL:", screenshotUrl);
         console.log("Screenshot uploaded to:", screenshotUrl);
       } catch (uploadErr) {
