@@ -133,25 +133,33 @@ async function uploadScreenshotToStorage(file) {
   if (!file) return null;
 
   const ext =
-    (file.originalname && file.originalname.includes("."))
+    file.originalname && file.originalname.includes(".")
       ? file.originalname.split(".").pop()
       : "png";
 
-  const safeExt = String(ext).toLowerCase().replace(/[^a-z0-9]/g, "") || "png";
-  const filename = `orders/${Date.now()}-${Math.random().toString(16).slice(2)}.${safeExt}`;
+  const safeExt =
+    String(ext).toLowerCase().replace(/[^a-z0-9]/g, "") || "png";
 
-  const b = storageBucket();
-  const obj = b.file(filename);
+  const filename = `orders/${Date.now()}-${Math.random()
+    .toString(16)
+    .slice(2)}.${safeExt}`;
 
+  const bucket = storageBucket();
+  const obj = bucket.file(filename);
+
+  // رفع الملف
   await obj.save(file.buffer, {
     contentType: file.mimetype || "application/octet-stream",
     resumable: false,
-    metadata: { cacheControl: "public, max-age=31536000" }
   });
 
-  // Public URL (بديل: signed URL)
-  await obj.makePublic();
-  return `https://storage.googleapis.com/${b.name}/${filename}`;
+  // إنشاء رابط للصورة
+  const [url] = await obj.getSignedUrl({
+    action: "read",
+    expires: "03-01-2500"
+  });
+
+  return url;
 }
 
 // ====== Health ======
