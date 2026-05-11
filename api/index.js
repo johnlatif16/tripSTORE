@@ -286,6 +286,7 @@ app.get("/api/order/:id", async (req, res) => {
 app.post("/api/order/confirm-payment", upload.single("screenshot"), async (req, res) => {
   try {
     console.log("=== CONFIRM PAYMENT REQUEST ===");
+    console.log("HEADERS:", req.headers["content-type"]);
     console.log("Body:", req.body);
     console.log("File:", req.file ? req.file.originalname : "No file");
     
@@ -299,6 +300,7 @@ app.post("/api/order/confirm-payment", upload.single("screenshot"), async (req, 
     if (req.file) {
       try {
         screenshotUrl = await uploadScreenshotToStorage(req.file);
+        console.log("UPLOADED URL:", screenshotUrl);
         console.log("Screenshot uploaded to:", screenshotUrl);
       } catch (uploadErr) {
         console.error("Upload error:", uploadErr);
