@@ -662,15 +662,30 @@
     function showAlert(type,msg){ const alertDiv=document.createElement('div'); alertDiv.className=`alert alert-${type}`; alertDiv.innerHTML=`<i class="fas ${type==='success'?'fa-check-circle':'fa-exclamation-triangle'}"></i>${msg}`; const firstSection=document.querySelector('.section'); if(firstSection) firstSection.parentNode.insertBefore(alertDiv,firstSection); setTimeout(()=>{alertDiv.remove();},4000); }
     
     // الكوبونات 
-    async function loadCoupons() {
-      try { const res=await fetch("/api/admin/coupons",{credentials:"include"}); const data=await res.json(); const coupons=data.data||[]; const container=document.getElementById('couponsList'); container.innerHTML=coupons.length?"":`<tr><td colspan="7" style="text-align:center;">لا توجد كوبونات</td></tr>`; coupons.forEach(c=>{ const expDate=c.expiresAt?.toDate?new Date(c.expiresAt.toDate()).toLocaleDateString():c.expiresAt||"لا يوجد"; container.insertAdjacentHTML('beforeend',`<td><td><strong>${c.code}</strong></td><td>${c.discountPercent}%</td><td>${c.description||"-"}</td><td>${expDate}</td><td>${c.usedCount||0}</td><td><span class="badge ${c.isActive?'badge-success':'badge-danger'}">${c.isActive?"مفعل":"معطل"}</span></td><td><button class="btn btn-sm btn-danger" onclick="deleteCoupon('${c.id}')"><i class="fas fa-trash"></i></button></td></tr>`); });
-      } catch(e){ console.error(e); document.getElementById('couponsList').innerHTML=`<tr><td colspan="7" class="alert-danger">فشل تحميل الكوبونات</td></tr>`; }
-    }
-    function showAddCouponModal(){ document.getElementById('addCouponModal').classList.add('show'); }
-    function closeAddCouponModal(){ document.getElementById('addCouponModal').classList.remove('show'); }
-    async function addCoupon(){ const code=document.getElementById('couponCode').value.trim(); const percent=document.getElementById('couponPercent').value; const desc=document.getElementById('couponDesc').value.trim(); const expiry=document.getElementById('couponExpiry').value; if(!code||!percent||percent<1||percent>100){ showAlert('danger','كود ونسبة خصم صحيحة مطلوبة'); return; } try{ const res=await fetch("/api/admin/coupons",{method:"POST",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({code,discountPercent:Number(percent),description:desc,expiresAt:expiry})}); const data=await res.json(); if(data.success){ showAlert('success','تمت إضافة الكوبون'); closeAddCouponModal(); loadCoupons(); } else throw new Error(data.message); }catch(e){ showAlert('danger',e.message); } }
-    async function deleteCoupon(couponId){ if(!confirm("حذف الكوبون نهائياً؟")) return; try{ const res=await fetch(`/api/admin/coupons/${couponId}`,{method:"DELETE",credentials:"include"}); const data=await res.json(); if(data.success){ showAlert('success','تم الحذف'); loadCoupons(); } else throw new Error(data.message); }catch(e){ showAlert('danger','فشل الحذف'); } }
-
+app.get('/api/admin/coupons', async (req, res) => {
+  try {
+    const snapshot = await db.collection('coupons').get();
+    const coupons = [];
+    
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      coupons.push({
+        id: doc.id,
+        code: data.code,
+        discountPercent: data.discountPercent,
+        description: data.description || '',
+        // تحويل Timestamp إلى سلسلة نصية أو ISO string
+        expiresAt: data.expiresAt ? data.expiresAt.toDate().toISOString() : null,
+        usedCount: data.usedCount || 0,
+        isActive: data.isActive !== false
+      });
+    });
+    
+    res.json({ success: true, data: coupons });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
     window.addEventListener('DOMContentLoaded',()=>{ loadOrders(); loadInquiries(); loadSuggestions(); loadCoupons(); });
   </script>
 </body>
