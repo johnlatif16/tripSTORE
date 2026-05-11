@@ -634,7 +634,7 @@
             <td>${order.totalAmount || 0} ج.م</td>
             <td><span class="badge ${order.status === 'تم الدفع' ? 'badge-success' : 'badge-warning'}">${order.status || 'قيد المراجعة'}</span></td>
             <td>${order.transactionId || '-'}</td>
-            <td>${imgUrl ? `<img src="${imgUrl}" class="screenshot-preview" onclick="openImageModal('${imgUrl}')" onerror="this.style.display='none'">` : 'لا توجد'}</td>
+            <td>${imgUrl ? `<img src="${imgUrl}" class="screenshot-preview" onclick="openImageModal('${imgUrl}')" onerror="console.error('فشل تحميل الصورة:', this.src); this.style.display='none'">` : 'لا توجد'}</td>
             <td><div style="display:flex;gap:8px;"><button class="btn btn-sm btn-success" onclick="updateStatus('${order.id}','تم الدفع')"><i class="fas fa-check"></i></button><button class="btn btn-sm btn-danger" onclick="deleteOrder('${order.id}')"><i class="fas fa-trash"></i></button></div></td>
           </tr>`;
           tbody.insertAdjacentHTML('beforeend', row);
