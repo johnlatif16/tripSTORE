@@ -618,14 +618,29 @@ app.post("/api/admin/coupons", requireAdmin, async (req, res) => {
 });
 
 // API: Get all coupons (Admin only)
-app.get("/api/admin/coupons", requireAdmin, async (req, res) => {
+    // الكوبونات 
+app.get('/api/admin/coupons', async (req, res) => {
   try {
-    const snap = await getCouponsCollection().orderBy("createdAt", "desc").get();
-    const coupons = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const snapshot = await db.collection('coupons').get();
+    const coupons = [];
+    
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      coupons.push({
+        id: doc.id,
+        code: data.code,
+        discountPercent: data.discountPercent,
+        description: data.description || '',
+        // تحويل Timestamp إلى سلسلة نصية أو ISO string
+        expiresAt: data.expiresAt ? data.expiresAt.toDate().toISOString() : null,
+        usedCount: data.usedCount || 0,
+        isActive: data.isActive !== false
+      });
+    });
+    
     res.json({ success: true, data: coupons });
-  } catch (err) {
-    console.error("Error fetching coupons:", err);
-    res.status(500).json({ success: false, message: err.message });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
