@@ -621,7 +621,22 @@ app.post("/api/admin/coupons", requireAdmin, async (req, res) => {
 app.get("/api/admin/coupons", requireAdmin, async (req, res) => {
   try {
     const snap = await getCouponsCollection().orderBy("createdAt", "desc").get();
-    const coupons = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const coupons = snap.docs.map(doc => {
+      const data = doc.data();
+      // تحويل حقل expiresAt من Timestamp إلى string ISO أو null
+      let expiryDate = null;
+      if (data.expiresAt && data.expiresAt.toDate) {
+        expiryDate = data.expiresAt.toDate().toISOString();
+      } else if (data.expiresAt && typeof data.expiresAt === 'string') {
+        expiryDate = data.expiresAt;
+      }
+      
+      return { 
+        id: doc.id, 
+        ...data,
+        expiresAt: expiryDate // استبدال الحقل الأصلي بالنسخة النصية
+      };
+    });
     res.json({ success: true, data: coupons });
   } catch (err) {
     console.error("Error fetching coupons:", err);
