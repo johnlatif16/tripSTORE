@@ -6,13 +6,17 @@ const nodemailer = require("nodemailer");
 const admin = require("firebase-admin");
 const path = require("path");
 const cloudinary = require("cloudinary").v2;
+const cors = require("cors");
 const app = express();
 
 // ====== Middlewares ======
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
 app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-// Serve static files
 app.use(express.static(path.resolve(__dirname, "../public")));
 
 // Routes
@@ -27,12 +31,14 @@ app.get("/login", (req, res) => {
 app.get("/dashboard", (req, res) => {
   res.sendFile(path.resolve(__dirname, "../public/dashboard.html"));
 });
-// ====== Multer memory (serverless-safe) ======
+
+// ====== Multer ======
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 3 * 1024 * 1024 } // 3MB
+  limits: { fileSize: 3 * 1024 * 1024 }
 });
 
+// ====== Cloudinary Config ======
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -44,15 +50,13 @@ function initFirebase() {
   if (admin.apps.length) return;
 
   if (!process.env.FIREBASE_CONFIG) {
-    throw new Error("Missing FIREBASE_CONFIG env var (service account JSON).");
+    throw new Error("Missing FIREBASE_CONFIG env var");
   }
   if (!process.env.FIREBASE_STORAGE_BUCKET) {
-    throw new Error("Missing FIREBASE_STORAGE_BUCKET env var.");
+    throw new Error("Missing FIREBASE_STORAGE_BUCKET env var");
   }
 
   const serviceAccount = JSON.parse(process.env.FIREBASE_CONFIG);
-
-  // fix \n in private key when stored in env
   if (serviceAccount.private_key) {
     serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, "\n");
   }
@@ -77,7 +81,7 @@ function nowISO() {
   return new Date().toISOString();
 }
 
-// ====== Email (Nodemailer) ======
+// ====== Email ======
 const transporter = nodemailer.createTransport({
   service: process.env.SMTP_SERVICE || "gmail",
   auth: {
@@ -86,7 +90,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// ====== Telegram notify (no extra deps) ======
+// ====== Telegram Notify ======
 async function telegramNotify(text) {
   try {
     const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -106,14 +110,11 @@ async function telegramNotify(text) {
   }
 }
 
-// ====== Auth helpers ======
+// ====== Auth Helpers ======
 function requireAdmin(req, res, next) {
   try {
-    const token =
-      req.cookies?.admin_token ||
-      (req.headers.authorization?.startsWith("Bearer ")
-        ? req.headers.authorization.slice(7)
-        : null);
+    const token = req.cookies?.admin_token ||
+      (req.headers.authorization?.startsWith("Bearer ") ? req.headers.authorization.slice(7) : null);
 
     if (!token) return res.status(403).json({ success: false, message: "غير مصرح" });
 
@@ -126,31 +127,26 @@ function requireAdmin(req, res, next) {
 }
 
 function setAdminCookie(res, token) {
-  // لو موقعك على HTTPS (Vercel) خليه secure=true
   res.cookie("admin_token", token, {
     httpOnly: true,
     secure: true,
     sameSite: "lax",
-    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    maxAge: 7 * 24 * 60 * 60 * 1000
   });
 }
 
-// ====== Storage upload ======
+// ====== Storage Upload ======
 async function uploadToCloudinary(file) {
   if (!file) return null;
 
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      {
-        folder: "orders",
-        resource_type: "image",
-      },
+      { folder: "orders", resource_type: "image" },
       (error, result) => {
         if (error) return reject(error);
         resolve(result.secure_url);
       }
     );
-
     stream.end(file.buffer);
   });
 }
@@ -163,165 +159,92 @@ app.get("/api/health", (req, res) => {
 // ====== Public APIs ======
 app.post("/api/order", upload.single("screenshot"), async (req, res) => {
   try {
-    console.log("=== NEW ORDER REQUEST ===");
-    console.log("Body:", req.body);
-    console.log("File:", req.file);
-    
-    const { name, playerId, email, ucAmount, bundle, totalAmount, transactionId } = req.body;
+    const { name, playerId, email, ucAmount, bundle, totalAmount, transactionId, couponCode, discountAmount } = req.body;
 
-    // التحقق من الحقول المطلوبة
     if (!name || !playerId || !email || !totalAmount || (!ucAmount && !bundle)) {
-      console.log("Validation failed:", { name, playerId, email, totalAmount, ucAmount, bundle });
-      return res.status(400).json({ 
-        success: false, 
-        message: "جميع الحقول الأساسية مطلوبة (الاسم، ID، البريد، المبلغ، ونوع المنتج)" 
-      });
+      return res.status(400).json({ success: false, message: "جميع الحقول الأساسية مطلوبة" });
     }
 
     const type = ucAmount ? "UC" : "Bundle";
     let screenshotUrl = null;
-    
-    // رفع الصورة إذا وجدت
+
     if (req.file) {
       try {
         screenshotUrl = await uploadToCloudinary(req.file);
-        console.log("Screenshot uploaded:", screenshotUrl);
       } catch (uploadErr) {
         console.error("Upload error:", uploadErr);
-        // لا نمنع إنشاء الطلب إذا فشل رفع الصورة
       }
     }
-const orderData = {
-  name,
-  playerId,
-  email,
-  type,
-  ucAmount: ucAmount || null,
-  bundle: bundle || null,
-  totalAmount: Number(totalAmount),
-  transactionId: transactionId || null,
-  screenshotUrl: screenshotUrl,
-  status: "لم يتم الدفع",
-  created_at: admin.firestore.FieldValue.serverTimestamp(),
-  couponCode: req.body.couponCode || null,
-  discountAmount: req.body.discountAmount ? Number(req.body.discountAmount) : null
-};
 
-    console.log("Saving to Firestore:", orderData);
-    
+    const orderData = {
+      name, playerId, email, type,
+      ucAmount: ucAmount || null,
+      bundle: bundle || null,
+      totalAmount: Number(totalAmount),
+      transactionId: transactionId || null,
+      screenshotUrl: screenshotUrl,
+      status: "لم يتم الدفع",
+      created_at: admin.firestore.FieldValue.serverTimestamp(),
+      couponCode: couponCode || null,
+      discountAmount: discountAmount ? Number(discountAmount) : null
+    };
+
     const ref = await firestore().collection("orders").add(orderData);
-    console.log("Order saved with ID:", ref.id);
 
-    // إشعار تليجرام (لا ننتظر اكتماله)
-    const note = `🧾 طلب جديد\nالاسم: ${name}\nالبريد: ${email}\nالنوع: ${type}\nالإجمالي: ${totalAmount}\nID: ${ref.id}`;
-    telegramNotify(note).catch(e => console.error("Telegram error:", e));
+    telegramNotify(`🧾 طلب جديد\nالاسم: ${name}\nالبريد: ${email}\nالنوع: ${type}\nالإجمالي: ${totalAmount}\nID: ${ref.id}`).catch(e => console.error(e));
 
-    // إشعار إيميل (لا ننتظر اكتماله)
     const notifyTo = process.env.NOTIFICATION_EMAIL || process.env.SMTP_USER || process.env.EMAIL_USER;
     if (notifyTo) {
       transporter.sendMail({
         from: `"Trip Store" <${process.env.SMTP_USER || process.env.EMAIL_USER}>`,
         to: notifyTo,
         subject: "طلب جديد",
-        html: `<div dir="rtl">
-          <h2>طلب جديد</h2>
-          <p><b>الاسم:</b> ${name}</p>
-          <p><b>البريد:</b> ${email}</p>
-          <p><b>النوع:</b> ${type}</p>
-          <p><b>الإجمالي:</b> ${totalAmount}</p>
-          ${screenshotUrl ? `<p><a href="${screenshotUrl}">صورة التحويل</a></p>` : ""}
-          <p style="color:#999;font-size:12px;">ID: ${ref.id}</p>
-        </div>`
-      }).catch(e => console.error("Email error:", e));
+        html: `<div dir="rtl"><h2>طلب جديد</h2><p><b>الاسم:</b> ${name}</p><p><b>البريد:</b> ${email}</p><p><b>النوع:</b> ${type}</p><p><b>الإجمالي:</b> ${totalAmount}</p>${screenshotUrl ? `<p><a href="${screenshotUrl}">صورة التحويل</a></p>` : ""}</div>`
+      }).catch(e => console.error(e));
     }
 
-    // إرجاع استجابة نجاح واضحة
-    return res.status(200).json({ 
-      success: true, 
-      id: ref.id,
-      message: "تم إنشاء الطلب بنجاح"
-    });
-    
+    return res.status(200).json({ success: true, id: ref.id, message: "تم إنشاء الطلب بنجاح" });
   } catch (err) {
-    console.error("FATAL ERROR in /api/order:", err);
-    // تأكد من إرجاع JSON حتى في حالة الخطأ
-    return res.status(500).json({ 
-      success: false, 
-      message: "حدث خطأ أثناء الحفظ: " + (err.message || "خطأ غير معروف")
-    });
+    console.error("Error in /api/order:", err);
+    return res.status(500).json({ success: false, message: "حدث خطأ أثناء الحفظ: " + (err.message || "خطأ غير معروف") });
   }
 });
 
-// جلب طلب معين بواسطة ID
 app.get("/api/order/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const doc = await firestore().collection("orders").doc(id).get();
-    
-    if (!doc.exists) {
-      return res.status(404).json({ success: false, message: "الطلب غير موجود" });
-    }
-    
+    if (!doc.exists) return res.status(404).json({ success: false, message: "الطلب غير موجود" });
     const data = doc.data();
-    // تحويل الـ timestamp إلى string
-    if (data.created_at && data.created_at.toDate) {
-      data.created_at = data.created_at.toDate().toISOString();
-    }
-    
+    if (data.created_at && data.created_at.toDate) data.created_at = data.created_at.toDate().toISOString();
     res.json({ success: true, data: { id: doc.id, ...data } });
   } catch (err) {
-    console.error("Error fetching order:", err);
-    res.status(500).json({ success: false, message: "خطأ في جلب الطلب: " + err.message });
+    res.status(500).json({ success: false, message: "خطأ في جلب الطلب" });
   }
 });
 
-// تأكيد الدفع (رفع الصورة وإضافة transactionId)
 app.post("/api/order/confirm-payment", upload.single("screenshot"), async (req, res) => {
   try {
-    console.log("=== CONFIRM PAYMENT REQUEST ===");
-    console.log("HEADERS:", req.headers["content-type"]);
-    console.log("Body:", req.body);
-    console.log("File:", req.file ? req.file.originalname : "No file");
-    
     const { orderId, transactionId } = req.body;
-    
-    if (!orderId || !transactionId) {
-      return res.status(400).json({ success: false, message: "رقم الطلب ورقم المعاملة مطلوبان" });
-    }
-    
+    if (!orderId || !transactionId) return res.status(400).json({ success: false, message: "رقم الطلب ورقم المعاملة مطلوبان" });
+
     let screenshotUrl = null;
-    if (req.file) {
-      try {
-        screenshotUrl = await uploadToCloudinary(req.file);
-        console.log("UPLOADED URL:", screenshotUrl);
-        console.log("Screenshot uploaded to:", screenshotUrl);
-      } catch (uploadErr) {
-        console.error("Upload error:", uploadErr);
-      }
-    }
-    
+    if (req.file) screenshotUrl = await uploadToCloudinary(req.file);
+
     const updateData = {
-      transactionId: transactionId,
+      transactionId,
       status: "تم الدفع - قيد المراجعة",
       payment_confirmed_at: admin.firestore.FieldValue.serverTimestamp()
     };
-    
-    if (screenshotUrl) {
-      updateData.screenshotUrl = screenshotUrl;  // مهم: use screenshotUrl not screenshot
-    }
-    
+    if (screenshotUrl) updateData.screenshotUrl = screenshotUrl;
+
     await firestore().collection("orders").doc(orderId).update(updateData);
-    
-    // جلب بيانات الطلب للإشعار
     const orderDoc = await firestore().collection("orders").doc(orderId).get();
     const orderData = orderDoc.data();
-    
     await telegramNotify(`💰 تم تأكيد الدفع\nرقم الطلب: ${orderId}\nرقم المعاملة: ${transactionId}\nالمبلغ: ${orderData.totalAmount}\nالعميل: ${orderData.name}`);
-    
-    res.json({ success: true, message: "تم تأكيد الدفع بنجاح", screenshotUrl: screenshotUrl });
-    
+    res.json({ success: true, message: "تم تأكيد الدفع بنجاح", screenshotUrl });
   } catch (err) {
-    console.error("FATAL ERROR:", err);
+    console.error(err);
     res.status(500).json({ success: false, message: "حدث خطأ: " + (err.message || "خطأ غير معروف") });
   }
 });
@@ -329,73 +252,50 @@ app.post("/api/order/confirm-payment", upload.single("screenshot"), async (req, 
 app.post("/api/inquiry", async (req, res) => {
   try {
     const { email, message } = req.body;
-    if (!email || !message) {
-      return res.status(400).json({ success: false, message: "البريد والرسالة مطلوبان" });
-    }
+    if (!email || !message) return res.status(400).json({ success: false, message: "البريد والرسالة مطلوبان" });
 
     const ref = await firestore().collection("inquiries").add({
-      email,
-      message,
-      status: "قيد الانتظار",
+      email, message, status: "قيد الانتظار",
       created_at: admin.firestore.FieldValue.serverTimestamp()
     });
 
     await telegramNotify(`📩 استفسار جديد\nالبريد: ${email}\nID: ${ref.id}\n\n${message}`);
-
     const notifyTo = process.env.NOTIFICATION_EMAIL || process.env.SMTP_USER || process.env.EMAIL_USER;
     if (notifyTo) {
       await transporter.sendMail({
         from: `"فريق الدعم" <${process.env.SMTP_USER || process.env.EMAIL_USER}>`,
         to: notifyTo,
         subject: "استفسار جديد من العميل",
-        html: `<div dir="rtl">
-          <h2 style="color:#ffa726;">استفسار جديد</h2>
-          <p><b>البريد:</b> ${email}</p>
-          <p style="background:#f5f5f5;padding:10px;border-right:3px solid #ffa726;">${message}</p>
-          <p style="color:#999;font-size:12px;">ID: ${ref.id}</p>
-        </div>`
+        html: `<div dir="rtl"><h2>استفسار جديد</h2><p><b>البريد:</b> ${email}</p><p>${message}</p></div>`
       });
     }
-
     return res.json({ success: true, id: ref.id });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ success: false, message: "فشل إرسال البريد الإلكتروني" });
+    return res.status(500).json({ success: false, message: "فشل إرسال الاستفسار" });
   }
 });
 
 app.post("/api/suggestion", async (req, res) => {
   try {
     const { name, contact, message } = req.body;
-    if (!name || !contact || !message) {
-      return res.status(400).json({ success: false, message: "جميع الحقول مطلوبة" });
-    }
+    if (!name || !contact || !message) return res.status(400).json({ success: false, message: "جميع الحقول مطلوبة" });
 
     const ref = await firestore().collection("suggestions").add({
-      name,
-      contact,
-      message,
+      name, contact, message,
       created_at: admin.firestore.FieldValue.serverTimestamp()
     });
 
     await telegramNotify(`💡 اقتراح جديد\nالاسم: ${name}\nتواصل: ${contact}\nID: ${ref.id}\n\n${message}`);
-
     const notifyTo = process.env.NOTIFICATION_EMAIL || process.env.SMTP_USER || process.env.EMAIL_USER;
     if (notifyTo) {
       await transporter.sendMail({
         from: `"اقتراح جديد" <${process.env.SMTP_USER || process.env.EMAIL_USER}>`,
         to: notifyTo,
         subject: "اقتراح جديد للموقع",
-        html: `<div dir="rtl">
-          <h2 style="color:#ffa726;">اقتراح جديد</h2>
-          <p><b>الاسم:</b> ${name}</p>
-          <p><b>طريقة التواصل:</b> ${contact}</p>
-          <p style="background:#f5f5f5;padding:10px;border-right:3px solid #ffa726;">${message}</p>
-          <p style="color:#999;font-size:12px;">ID: ${ref.id}</p>
-        </div>`
+        html: `<div dir="rtl"><h2>اقتراح جديد</h2><p><b>الاسم:</b> ${name}</p><p><b>طريقة التواصل:</b> ${contact}</p><p>${message}</p></div>`
       });
     }
-
     return res.json({ success: true, id: ref.id });
   } catch (err) {
     console.error(err);
@@ -406,21 +306,10 @@ app.post("/api/suggestion", async (req, res) => {
 // ====== Admin APIs ======
 app.post("/api/admin/login", async (req, res) => {
   const { username, password } = req.body;
+  if (!username || !password) return res.status(400).json({ success: false, message: "بيانات الدخول مطلوبة" });
+  if (username !== process.env.ADMIN_USER || password !== process.env.ADMIN_PASS) return res.status(401).json({ success: false, message: "بيانات الدخول غير صحيحة" });
 
-  if (!username || !password) {
-    return res.status(400).json({ success: false, message: "بيانات الدخول مطلوبة" });
-  }
-
-  if (username !== process.env.ADMIN_USER || password !== process.env.ADMIN_PASS) {
-    return res.status(401).json({ success: false, message: "بيانات الدخول غير صحيحة" });
-  }
-
-  const token = jwt.sign(
-    { role: "admin", u: username },
-    process.env.ADMIN_JWT_SECRET,
-    { expiresIn: "7d" }
-  );
-
+  const token = jwt.sign({ role: "admin", u: username }, process.env.ADMIN_JWT_SECRET, { expiresIn: "7d" });
   setAdminCookie(res, token);
   return res.json({ success: true });
 });
@@ -463,13 +352,21 @@ app.get("/api/admin/suggestions", requireAdmin, async (req, res) => {
   }
 });
 
+app.get("/api/admin/messages", requireAdmin, async (req, res) => {
+  try {
+    const snap = await firestore().collection("messages").orderBy("sent_at", "desc").get();
+    const messages = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.json({ success: true, data: messages });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "فشل جلب الرسائل" });
+  }
+});
+
 app.post("/api/admin/update-status", requireAdmin, async (req, res) => {
   try {
     const { id, status } = req.body;
-    if (!id || !status) {
-      return res.status(400).json({ success: false, message: "معرّف الطلب والحالة مطلوبان" });
-    }
-
+    if (!id || !status) return res.status(400).json({ success: false, message: "معرّف الطلب والحالة مطلوبان" });
     await firestore().collection("orders").doc(id).update({ status });
     res.json({ success: true });
   } catch (e) {
@@ -482,7 +379,6 @@ app.delete("/api/admin/delete-order", requireAdmin, async (req, res) => {
   try {
     const { id } = req.body;
     if (!id) return res.status(400).json({ success: false, message: "معرّف الطلب مطلوب" });
-
     await firestore().collection("orders").doc(id).delete();
     res.json({ success: true });
   } catch (e) {
@@ -495,7 +391,6 @@ app.delete("/api/admin/delete-inquiry", requireAdmin, async (req, res) => {
   try {
     const { id } = req.body;
     if (!id) return res.status(400).json({ success: false, message: "معرّف الاستفسار مطلوب" });
-
     await firestore().collection("inquiries").doc(id).delete();
     res.json({ success: true });
   } catch (e) {
@@ -508,7 +403,6 @@ app.delete("/api/admin/delete-suggestion", requireAdmin, async (req, res) => {
   try {
     const { id } = req.body;
     if (!id) return res.status(400).json({ success: false, message: "معرّف الاقتراح مطلوب" });
-
     await firestore().collection("suggestions").doc(id).delete();
     res.json({ success: true });
   } catch (e) {
@@ -517,28 +411,29 @@ app.delete("/api/admin/delete-suggestion", requireAdmin, async (req, res) => {
   }
 });
 
+app.delete("/api/admin/delete-message", requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.body;
+    if (!id) return res.status(400).json({ success: false, message: "معرّف الرسالة مطلوب" });
+    await firestore().collection("messages").doc(id).delete();
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "فشل حذف الرسالة" });
+  }
+});
+
 app.post("/api/admin/reply-inquiry", requireAdmin, async (req, res) => {
   try {
     const { inquiryId, email, message, reply } = req.body;
-    if (!inquiryId || !email || !message || !reply) {
-      return res.status(400).json({ success: false, message: "جميع الحقول مطلوبة" });
-    }
+    if (!inquiryId || !email || !message || !reply) return res.status(400).json({ success: false, message: "جميع الحقول مطلوبة" });
 
     await transporter.sendMail({
       from: `"فريق الدعم" <${process.env.SMTP_USER || process.env.EMAIL_USER}>`,
       to: email,
       subject: "رد على استفسارك",
-      html: `<div dir="rtl" style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color:#ffa726;">شكراً لتواصلك معنا</h2>
-        <p><strong>استفسارك:</strong></p>
-        <p style="background:#f5f5f5;padding:10px;border-right:3px solid #ffa726;">${message}</p>
-        <h3 style="color:#ffa726;">رد الفريق:</h3>
-        <p style="background:#f5f5f5;padding:10px;border-right:3px solid #2196F3;">${reply}</p>
-        <hr>
-        <p style="text-align:center;color:#777;">مع تحيات فريق الدعم</p>
-      </div>`
+      html: `<div dir="rtl"><h2>شكراً لتواصلك معنا</h2><p><strong>استفسارك:</strong></p><p>${message}</p><h3>رد الفريق:</h3><p>${reply}</p><p>مع تحيات فريق الدعم</p></div>`
     });
-
     await firestore().collection("inquiries").doc(inquiryId).update({ status: "تم الرد" });
     res.json({ success: true });
   } catch (e) {
@@ -550,24 +445,19 @@ app.post("/api/admin/reply-inquiry", requireAdmin, async (req, res) => {
 app.post("/api/admin/send-message", requireAdmin, async (req, res) => {
   try {
     const { email, subject, message } = req.body;
-    if (!email || !subject || !message) {
-      return res.status(400).json({ success: false, message: "جميع الحقول مطلوبة" });
-    }
+    if (!email || !subject || !message) return res.status(400).json({ success: false, message: "جميع الحقول مطلوبة" });
+
+    await firestore().collection("messages").add({
+      to: email, subject, message,
+      sent_at: admin.firestore.FieldValue.serverTimestamp()
+    });
 
     await transporter.sendMail({
       from: `"فريق الدعم" <${process.env.SMTP_USER || process.env.EMAIL_USER}>`,
       to: email,
       subject,
-      html: `<div dir="rtl" style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color:#ffa726;">${subject}</h2>
-        <div style="background:#f5f5f5;padding:15px;border-radius:5px;border-right:3px solid #2196F3;">
-          ${String(message).replace(/\n/g, "<br>")}
-        </div>
-        <hr>
-        <p style="text-align:center;color:#777;">مع تحيات فريق الدعم</p>
-      </div>`
+      html: `<div dir="rtl"><h2>${subject}</h2><div>${String(message).replace(/\n/g, "<br>")}</div><hr><p>مع تحيات فريق الدعم</p></div>`
     });
-
     res.json({ success: true });
   } catch (e) {
     console.error(e);
@@ -575,29 +465,18 @@ app.post("/api/admin/send-message", requireAdmin, async (req, res) => {
   }
 });
 
-// =======================
-// COUPONS SYSTEM
-// =======================
-
-// Helper: Get coupons collection
+// ====== COUPONS SYSTEM ======
 function getCouponsCollection() {
   return firestore().collection("coupons");
 }
 
-// API: Create/Add a new coupon (Admin only)
 app.post("/api/admin/coupons", requireAdmin, async (req, res) => {
   try {
     const { code, discountPercent, description, expiresAt } = req.body;
+    if (!code || !discountPercent) return res.status(400).json({ success: false, message: "كود الخصم ونسبة الخصم مطلوبان" });
 
-    if (!code || !discountPercent) {
-      return res.status(400).json({ success: false, message: "كود الخصم ونسبة الخصم مطلوبان" });
-    }
-
-    // Check if coupon already exists
     const existing = await getCouponsCollection().where("code", "==", code.toUpperCase()).get();
-    if (!existing.empty) {
-      return res.status(400).json({ success: false, message: "هذا الكود موجود بالفعل" });
-    }
+    if (!existing.empty) return res.status(400).json({ success: false, message: "هذا الكود موجود بالفعل" });
 
     const couponData = {
       code: code.toUpperCase(),
@@ -608,119 +487,75 @@ app.post("/api/admin/coupons", requireAdmin, async (req, res) => {
       usedCount: 0,
       isActive: true
     };
-
     const ref = await getCouponsCollection().add(couponData);
-    res.json({ success: true, id: ref.id, data: couponData });
+    res.json({ success: true, id: ref.id });
   } catch (err) {
-    console.error("Error creating coupon:", err);
+    console.error(err);
     res.status(500).json({ success: false, message: err.message });
   }
 });
 
-// API: Get all coupons (Admin only)
 app.get("/api/admin/coupons", requireAdmin, async (req, res) => {
   try {
     const snap = await getCouponsCollection().orderBy("createdAt", "desc").get();
     const coupons = snap.docs.map(doc => {
       const data = doc.data();
-      // تحويل حقل expiresAt من Timestamp إلى string ISO أو null
       let expiryDate = null;
-      if (data.expiresAt && data.expiresAt.toDate) {
-        expiryDate = data.expiresAt.toDate().toISOString();
-      } else if (data.expiresAt && typeof data.expiresAt === 'string') {
-        expiryDate = data.expiresAt;
-      }
-      
-      return { 
-        id: doc.id, 
-        ...data,
-        expiresAt: expiryDate // استبدال الحقل الأصلي بالنسخة النصية
-      };
+      if (data.expiresAt && data.expiresAt.toDate) expiryDate = data.expiresAt.toDate().toISOString();
+      return { id: doc.id, ...data, expiresAt: expiryDate };
     });
     res.json({ success: true, data: coupons });
   } catch (err) {
-    console.error("Error fetching coupons:", err);
+    console.error(err);
     res.status(500).json({ success: false, message: err.message });
   }
 });
 
-// API: Delete a coupon (Admin only)
 app.delete("/api/admin/coupons/:id", requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     await getCouponsCollection().doc(id).delete();
     res.json({ success: true });
   } catch (err) {
-    console.error("Error deleting coupon:", err);
+    console.error(err);
     res.status(500).json({ success: false, message: err.message });
   }
 });
 
-// API: Verify and apply coupon (Public)
 app.post("/api/verify-coupon", async (req, res) => {
   try {
     const { code, originalAmount } = req.body;
+    if (!code || !originalAmount) return res.status(400).json({ success: false, message: "الكود والمبلغ مطلوبان" });
 
-    if (!code || !originalAmount) {
-      return res.status(400).json({ success: false, message: "الكود والمبلغ مطلوبان" });
-    }
-
-    const snap = await getCouponsCollection()
-      .where("code", "==", code.toUpperCase())
-      .where("isActive", "==", true)
-      .limit(1)
-      .get();
-
-    if (snap.empty) {
-      return res.status(404).json({ success: false, message: "الكوبون غير صالح أو منتهي الصلاحية" });
-    }
+    const snap = await getCouponsCollection().where("code", "==", code.toUpperCase()).where("isActive", "==", true).limit(1).get();
+    if (snap.empty) return res.status(404).json({ success: false, message: "الكوبون غير صالح أو منتهي الصلاحية" });
 
     const couponDoc = snap.docs[0];
     const coupon = { id: couponDoc.id, ...couponDoc.data() };
-
-    // Check expiry date
-    if (coupon.expiresAt && coupon.expiresAt.toDate) {
-      if (coupon.expiresAt.toDate() < new Date()) {
-        return res.status(400).json({ success: false, message: "انتهت صلاحية الكوبون" });
-      }
+    if (coupon.expiresAt && coupon.expiresAt.toDate && coupon.expiresAt.toDate() < new Date()) {
+      return res.status(400).json({ success: false, message: "انتهت صلاحية الكوبون" });
     }
 
     const discount = (Number(originalAmount) * coupon.discountPercent) / 100;
     const newAmount = Number(originalAmount) - discount;
-
-    res.json({
-      success: true,
-      discount: discount.toFixed(2),
-      newTotal: newAmount.toFixed(2),
-      discountPercent: coupon.discountPercent,
-      couponCode: coupon.code
-    });
-
+    res.json({ success: true, discount: discount.toFixed(2), newTotal: newAmount.toFixed(2), discountPercent: coupon.discountPercent, couponCode: coupon.code });
   } catch (err) {
-    console.error("Error verifying coupon:", err);
+    console.error(err);
     res.status(500).json({ success: false, message: err.message });
   }
 });
 
-// Optional: Increment coupon usage count (when order is paid)
 app.post("/api/use-coupon", async (req, res) => {
   try {
     const { code } = req.body;
     if (!code) return res.status(400).json({ success: false });
-
     const snap = await getCouponsCollection().where("code", "==", code.toUpperCase()).limit(1).get();
-    if (!snap.empty) {
-      const doc = snap.docs[0];
-      await doc.ref.update({
-        usedCount: admin.firestore.FieldValue.increment(1)
-      });
-    }
+    if (!snap.empty) await snap.docs[0].ref.update({ usedCount: admin.firestore.FieldValue.increment(1) });
     res.json({ success: true });
   } catch (err) {
-    console.error("Error using coupon:", err);
+    console.error(err);
     res.json({ success: false });
   }
 });
 
-// ====== IMPORTANT for Vercel: export app (no listen) ======
 module.exports = app;
