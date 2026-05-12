@@ -478,26 +478,139 @@ app.post("/api/admin/reply-inquiry", requireAdmin, async (req, res) => {
   }
 });
 
+// تحسين واجهة إرسال الرسائل المباشرة
 app.post("/api/admin/send-message", requireAdmin, async (req, res) => {
   try {
     const { email, subject, message } = req.body;
-    if (!email || !subject || !message) return res.status(400).json({ success: false, message: "جميع الحقول مطلوبة" });
+    
+    // تحقق محسن من الحقول
+    if (!email || !subject || !message) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "جميع الحقول مطلوبة: البريد الإلكتروني، العنوان، والرسالة" 
+      });
+    }
 
-    await firestore().collection("messages").add({
-      to: email, subject, message,
-      sent_at: admin.firestore.FieldValue.serverTimestamp()
-    });
+    // تحقق من صيغة البريد الإلكتروني
+    const emailRegex = /^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "صيغة البريد الإلكتروني غير صحيحة" 
+      });
+    }
 
-    await transporter.sendMail({
-      from: `"فريق الدعم" <${process.env.SMTP_USER || process.env.EMAIL_USER}>`,
+    // حفظ الرسالة في Firestore (نسخة احتياطية)
+    const messageData = {
       to: email,
-      subject,
-      html: `<div dir="rtl"><h2>${subject}</h2><div>${String(message).replace(/\n/g, "<br>")}</div><hr><p>مع تحيات فريق الدعم</p></div>`
+      subject: subject,
+      message: message,
+      sent_at: admin.firestore.FieldValue.serverTimestamp(),
+      status: "pending"
+    };
+    
+    const docRef = await firestore().collection("messages").add(messageData);
+
+    // التحقق من وجود إعدادات SMTP
+    const smtpUser = process.env.SMTP_USER || process.env.EMAIL_USER;
+    const smtpPass = process.env.SMTP_PASS || process.env.EMAIL_PASS;
+    
+    if (!smtpUser || !smtpPass) {
+      console.error("❌ SMTP غير مهيأ: تأكد من وجود SMTP_USER و SMTP_PASS في البيئة");
+      
+      // تحديث حالة الرسالة في قاعدة البيانات
+      await docRef.update({ 
+        status: "failed",
+        error: "SMTP configuration missing"
+      });
+      
+      return res.status(500).json({ 
+        success: false, 
+        message: "خادم البريد الإلكتروني غير مهيأ. يرجى التواصل مع الدعم الفني." 
+      });
+    }
+
+    // محاولة إرسال البريد الإلكتروني
+    try {
+      const info = await transporter.sendMail({
+        from: `"TRIPxESPORTS فريق الدعم" <${smtpUser}>`,
+        to: email,
+        subject: subject,
+        html: `
+          <div dir="rtl" style="font-family: 'Tajawal', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
+            <div style="text-align: center; margin-bottom: 20px;">
+              <img src="https://i.postimg.cc/ZnqqqkLd/TRIPx-ESPORTS.jpg" alt="TRIPxESPORTS" style="width: 80px; height: 80px; border-radius: 50%;">
+              <h2 style="color: #ff7a00; margin-top: 10px;">TRIPxESPORTS</h2>
+            </div>
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 15px 0;">
+              <h3 style="color: #1a1a2e; margin-top: 0;">${subject}</h3>
+              <div style="color: #333; line-height: 1.6;">
+                ${String(message)
+                  .replace(/\n/g, "<br>")
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;')}
+              </div>
+            </div>
+            <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 20px 0;">
+            <p style="color: #666; font-size: 12px; text-align: center;">
+              هذا البريد إلكتروني آلي، يرجى عدم الرد عليه.<br>
+              مع تحيات فريق دعم TRIPxESPORTS
+            </p>
+          </div>
+        `,
+        text: `TRIPxESPORTS\n\nالموضوع: ${subject}\n\n${message}\n\nهذا البريد إلكتروني آلي، يرجى عدم الرد عليه.`
+      });
+
+      console.log("✅ تم إرسال البريد:", info.messageId);
+      
+      // تحديث حالة الرسالة في قاعدة البيانات
+      await docRef.update({ 
+        status: "sent",
+        message_id: info.messageId,
+        sent_at: admin.firestore.FieldValue.serverTimestamp()
+      });
+      
+      return res.json({ 
+        success: true, 
+        message: "تم إرسال الرسالة بنجاح",
+        messageId: info.messageId
+      });
+      
+    } catch (smtpError) {
+      console.error("❌ فشل إرسال البريد:", smtpError);
+      
+      // تحديث حالة الرسالة في قاعدة البيانات
+      await docRef.update({ 
+        status: "failed",
+        error: smtpError.message || "SMTP sending failed"
+      });
+      
+      // رسائل خطأ محددة حسب نوع المشكلة
+      let userMessage = "فشل إرسال الرسالة. ";
+      if (smtpError.code === 'EAUTH') {
+        userMessage += "خطأ في المصادقة. يرجى التحقق من إعدادات البريد الإلكتروني.";
+      } else if (smtpError.code === 'ESOCKET') {
+        userMessage += "مشكلة في الاتصال بالخادم. يرجى المحاولة لاحقاً.";
+      } else if (smtpError.response && smtpError.response.includes('535')) {
+        userMessage += "كلمة مرور التطبيق غير صحيحة. يرجى استخدام كلمة مرور مخصصة للتطبيقات مع Gmail.";
+      } else {
+        userMessage += "يرجى المحاولة مرة أخرى أو التواصل مع الدعم.";
+      }
+      
+      return res.status(500).json({ 
+        success: false, 
+        message: userMessage,
+        details: process.env.NODE_ENV === 'development' ? smtpError.message : undefined
+      });
+    }
+    
+  } catch (err) {
+    console.error("❌ خطأ في /api/admin/send-message:", err);
+    return res.status(500).json({ 
+      success: false, 
+      message: "حدث خطأ داخلي في الخادم. يرجى المحاولة لاحقاً." 
     });
-    res.json({ success: true });
-  } catch (e) {
-    console.error(e);
-    res.status(500).json({ success: false, message: "فشل إرسال الرسالة" });
   }
 });
 
