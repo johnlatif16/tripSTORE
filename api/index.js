@@ -270,7 +270,7 @@ app.post("/api/inquiry", async (req, res) => {
     const ref = await firestore().collection("inquiries").add(inquiryData);
 
     // إشعار تلغرام (لا ننتظر اكتماله ولا نسمح له بتعطيل العملية)
-    telegramNotify(`📩 استفسار جديد\nالاسم: ${name || "غير مذكور"}\nالبريد: ${email}\nالرسالة: ${message.substring(0, 100)}...`).catch(e => console.error("Telegram notify error:", e));
+    telegramNotify(`📩 استفسار جديد\nالاسم: ${name || "غير مذكور"}\nالبريد: ${email}\nالرسالة: ${message.substring(0, 100)}`).catch(e => console.error("Telegram notify error:", e));
 
     // إشعار إيميل (نحاول إرساله ولكن لا ننتظر اكتماله)
     const notifyTo = process.env.NOTIFICATION_EMAIL || process.env.SMTP_USER;
@@ -316,7 +316,7 @@ app.post("/api/suggestion", async (req, res) => {
     const ref = await firestore().collection("suggestions").add(suggestionData);
 
     // إشعارات (لا تؤثر على نجاح العملية)
-    telegramNotify(`💡 اقتراح جديد\nالاسم: ${name}\nوسيلة التواصل: ${contact}\nالاقتراح: ${message.substring(0, 100)}...`).catch(e => console.error(e));
+    telegramNotify(`💡 اقتراح جديد\nالاسم: ${name}\nوسيلة التواصل: ${contact}\nالاقتراح: ${message.substring(0, 100)}`).catch(e => console.error(e));
     
     const notifyTo = process.env.NOTIFICATION_EMAIL || process.env.SMTP_USER;
     if (notifyTo) {
