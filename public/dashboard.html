@@ -817,40 +817,72 @@
     }
 
     async function sendDirectMessage() { 
-      const email = document.getElementById('clientEmail').value.trim(); 
-      const subject = document.getElementById('emailSubject').value.trim(); 
-      const msg = document.getElementById('emailMessage').value.trim(); 
-      if(!email || !subject || !msg) { 
-        showAlert('warning', 'جميع الحقول مطلوبة'); 
-        return; 
-      } 
-      
-      const btn = event.target;
-      const originalText = btn.innerHTML;
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
-      
-      try { 
-        const res = await fetch("/api/admin/send-message", { 
-          method: "POST", 
-          headers: { 'Content-Type': 'application/json' }, 
-          credentials: "include", 
-          body: JSON.stringify({ email, subject, message: msg }) 
-        }); 
-        const d = await res.json(); 
-        if(d.success) { 
-          showAlert('success', 'تم الإرسال'); 
-          document.getElementById('clientEmail').value = ''; 
-          document.getElementById('emailSubject').value = ''; 
-          document.getElementById('emailMessage').value = ''; 
-        } else throw new Error(d.message); 
-      } catch(e) { 
-        showAlert('danger', 'خطأ في الإرسال: ' + e.message); 
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = originalText;
-      }
+  const email = document.getElementById('clientEmail').value.trim(); 
+  const subject = document.getElementById('emailSubject').value.trim(); 
+  const msg = document.getElementById('emailMessage').value.trim(); 
+  
+  // التحقق من الحقول
+  if (!email || !subject || !msg) { 
+    showAlert('warning', 'جميع الحقول مطلوبة (البريد الإلكتروني، العنوان، والرسالة)'); 
+    return; 
+  }
+  
+  // التحقق من صيغة البريد الإلكتروني
+  const emailPattern = /^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/;
+  if (!emailPattern.test(email)) {
+    showAlert('danger', 'صيغة البريد الإلكتروني غير صحيحة');
+    return;
+  }
+  
+  const button = event ? event.target : document.querySelector('#messagesTab .btn-primary');
+  if (!button) return;
+  
+  const originalText = button.innerHTML;
+  button.disabled = true;
+  button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
+  
+  try { 
+    const response = await fetch("/api/admin/send-message", { 
+      method: "POST", 
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }, 
+      credentials: "include", 
+      body: JSON.stringify({ 
+        email: email, 
+        subject: subject, 
+        message: msg 
+      }) 
+    }); 
+    
+    // محاولة قراءة الاستجابة حتى لو كانت خطأ
+    let data;
+    const responseText = await response.text();
+    try {
+      data = JSON.parse(responseText);
+    } catch(e) {
+      console.error("JSON parse error:", responseText);
+      throw new Error("استجابة غير صالحة من الخادم");
     }
+    
+    if (response.ok && data.success) { 
+      showAlert('success', data.message || 'تم إرسال الرسالة بنجاح'); 
+      // تفريغ الحقول فقط عند النجاح
+      document.getElementById('clientEmail').value = ''; 
+      document.getElementById('emailSubject').value = ''; 
+      document.getElementById('emailMessage').value = ''; 
+    } else {
+      throw new Error(data.message || "فشل إرسال الرسالة");
+    }
+  } catch(error) { 
+    console.error("Error sending message:", error);
+    showAlert('danger', error.message || 'حدث خطأ غير متوقع أثناء الإرسال'); 
+  } finally {
+    button.disabled = false;
+    button.innerHTML = originalText;
+  }
+}
 
     async function updateStatus(id, status) { 
       try { 
