@@ -196,9 +196,10 @@
   <div id="imageModal" class="image-modal"><div class="image-modal-content"><button class="close-image-modal" onclick="closeImageModal()">&times;</button><img id="modalImage" src="" alt="معاينة"></div></div>
 
   <script>
-    let currentInquiryId = null, currentInquiryEmail = null, currentInquiryMessage = null;
+        let currentInquiryId = null, currentInquiryEmail = null, currentInquiryMessage = null;
     let orders = [], inquiries = [], suggestions = [];
 
+    // التوافق مع الشاشات الصغيرة (القائمة الجانبية)
     const menuToggle = document.getElementById('menuToggleBtn');
     const sidebar = document.getElementById('mainSidebar');
     const overlay = document.getElementById('sidebarOverlay');
@@ -216,14 +217,6 @@
       if(window.innerWidth < 768) closeMobileMenu();
     }
 
-    function showAlert(type, message) {
-      const alertDiv = document.createElement('div');
-      alertDiv.className = `alert alert-${type}`;
-      alertDiv.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'danger' ? 'fa-exclamation-triangle' : 'fa-info-circle'}"></i> ${message}`;
-      document.body.appendChild(alertDiv);
-      setTimeout(() => alertDiv.remove(), 4000);
-    }
-
     async function loadOrders() {
       try {
         const res = await fetch("/api/admin/orders", { credentials: "include" });
@@ -236,18 +229,18 @@
         orders.forEach(order => {
           const imgUrl = order.screenshotUrl || order.screenshot || null;
           const row = `<tr>
-            <td><strong>${order.name || ''}</strong><br><small>${order.email || ''}</small></td>
-            <td>${order.playerId || ''}</td>
-            <td>${order.type || ''}<br><small>${order.ucAmount || order.bundle || ''}</small></td>
-            <td>${order.totalAmount || 0} ج.م</td>
-            <td><span class="badge ${order.status === 'تم الدفع' ? 'badge-success' : 'badge-warning'}">${order.status || 'قيد المراجعة'}</span></td>
-            <td>${order.transactionId || '-'}</td>
-            <td>${imgUrl ? `<img src="${imgUrl}" class="screenshot-preview" onclick="openImageModal('${imgUrl}')" style="cursor:pointer">` : 'لا توجد'}</td>
-            <td><div style="display:flex;gap:8px;"><button class="btn btn-sm btn-success" onclick="updateStatus('${order.id}','تم الدفع')"><i class="fas fa-check"></i></button><button class="btn btn-sm btn-danger" onclick="deleteOrder('${order.id}')"><i class="fas fa-trash"></i></button></div></td>
-          </tr>`;
+             <td><strong>${escapeHtml(order.name || '')}</strong><br><small>${escapeHtml(order.email || '')}</small></td>
+             <td>${escapeHtml(order.playerId || '')}</td>
+             <td>${escapeHtml(order.type || '')}<br><small>${escapeHtml(order.ucAmount || order.bundle || '')}</small></td>
+             <td>${order.totalAmount || 0} ج.م</td>
+             <td><span class="badge ${order.status === 'تم الدفع' ? 'badge-success' : 'badge-warning'}">${escapeHtml(order.status || 'قيد المراجعة')}</span></td>
+             <td>${escapeHtml(order.transactionId || '-')}</td>
+             <td>${imgUrl ? `<img src="${imgUrl}" class="screenshot-preview" onclick="openImageModal('${imgUrl}')" onerror="console.error('فشل تحميل الصورة:', this.src); this.style.display='none'">` : 'لا توجد'}</td>
+             <td><div style="display:flex;gap:8px;"><button class="btn btn-sm btn-success" onclick="updateStatus('${order.id}','تم الدفع')"><i class="fas fa-check"></i></button><button class="btn btn-sm btn-danger" onclick="deleteOrder('${order.id}')"><i class="fas fa-trash"></i></button></div></td>
+           </tr>`;
           tbody.insertAdjacentHTML('beforeend', row);
         });
-      } catch(e) { console.error(e); }
+      } catch(e) { console.error(e); document.getElementById('ordersList').innerHTML = `<tr><td colspan="8" class="alert-danger">خطأ في التحميل</td></tr>`; }
     }
 
     async function loadInquiries() {
@@ -259,15 +252,15 @@
         const tbody = document.getElementById('inquiriesList');
         tbody.innerHTML = inquiries.length ? "" : `<tr><td colspan="5">لا توجد استفسارات</td></tr>`;
         inquiries.forEach(i => {
-          let dateStr = "";
-          try {
-            if (i.created_at && i.created_at.toDate) dateStr = i.created_at.toDate().toLocaleString();
-            else if (i.created_at) dateStr = new Date(i.created_at).toLocaleString();
-          } catch(e) { dateStr = "-"; }
           tbody.insertAdjacentHTML('beforeend', `<tr>
-            <td>${i.email}</td><td>${dateStr}</td><td>${(i.message || '').substring(0,60)}</td>
-            <td><span class="badge ${i.status === 'تم الرد' ? 'badge-success' : 'badge-warning'}">${i.status || 'قيد الانتظار'}</span></td>
-            <td><button class="btn btn-sm btn-info" onclick="openReplyModal('${i.id}','${(i.email || '').replace(/'/g, "\\'")}','${(i.message || '').replace(/'/g, "\\'")}')"><i class="fas fa-reply"></i></button> <button class="btn btn-sm btn-danger" onclick="deleteInquiry('${i.id}')"><i class="fas fa-trash"></i></button></td>
+            <td>${escapeHtml(i.email)}</td>
+            <td>${new Date(i.created_at).toLocaleString()}</td>
+            <td>${escapeHtml(i.message.substring(0, 60))}</td>
+            <td><span class="badge ${i.status === 'تم الرد' ? 'badge-success' : 'badge-warning'}">${escapeHtml(i.status)}</span></td>
+            <td>
+              <button class="btn btn-sm btn-info" onclick="openReplyModal('${i.id}', '${escapeHtml(i.email)}', '${escapeHtml(i.message).replace(/'/g, "\\'")}')"><i class="fas fa-reply"></i></button>
+              <button class="btn btn-sm btn-danger" onclick="deleteInquiry('${i.id}')"><i class="fas fa-trash"></i></button>
+            </td>
           </tr>`);
         });
       } catch(e) { console.error(e); }
@@ -282,84 +275,236 @@
         const tbody = document.getElementById('suggestionsList');
         tbody.innerHTML = suggestions.length ? "" : `<tr><td colspan="5">لا توجد اقتراحات</td></tr>`;
         suggestions.forEach(s => {
-          let dateStr = "";
-          try {
-            if (s.created_at && s.created_at.toDate) dateStr = s.created_at.toDate().toLocaleString();
-            else if (s.created_at) dateStr = new Date(s.created_at).toLocaleString();
-          } catch(e) { dateStr = "-"; }
           tbody.insertAdjacentHTML('beforeend', `<tr>
-            <td>${s.name || ''}</td><td>${s.contact || ''}</td><td>${dateStr}</td><td>${(s.message || '').substring(0,60)}</td>
-            <td><button class="btn btn-sm btn-primary" onclick="contactSuggestion('${(s.contact || '').replace(/'/g, "\\'")}')"><i class="fas fa-envelope"></i></button> <button class="btn btn-sm btn-danger" onclick="deleteSuggestion('${s.id}')"><i class="fas fa-trash"></i></button></td>
+            <td>${escapeHtml(s.name)}</td>
+            <td>${escapeHtml(s.contact)}</td>
+            <td>${new Date(s.created_at).toLocaleString()}</td>
+            <td>${escapeHtml(s.message.substring(0, 60))}</td>
+            <td>
+              <button class="btn btn-sm btn-primary" onclick="contactSuggestion('${escapeHtml(s.contact)}')"><i class="fas fa-envelope"></i></button>
+              <button class="btn btn-sm btn-danger" onclick="deleteSuggestion('${s.id}')"><i class="fas fa-trash"></i></button>
+            </td>
           </tr>`);
         });
       } catch(e) { console.error(e); }
     }
 
-    async function loadMessages() {
-      try {
-        const res = await fetch("/api/admin/messages", { credentials: "include" });
-        if (!res.ok) throw new Error("فشل التحميل");
-        const data = await res.json();
-        const messages = data.data || [];
-        const tbody = document.getElementById('messagesList');
-        if (messages.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">لا توجد رسائل</td></tr>`; return; }
-        tbody.innerHTML = "";
-        messages.forEach(msg => {
-          let dateStr = "-";
-          try { if (msg.sent_at && msg.sent_at.toDate) dateStr = msg.sent_at.toDate().toLocaleString('ar-EG'); }
-          catch(e) {}
-          tbody.insertAdjacentHTML('beforeend', `<tr>
-            <td>${msg.to || '-'}</td><td>${msg.subject || '-'}</td><td style="max-width:250px; overflow:hidden; text-overflow:ellipsis;">${msg.message || '-'}</td>
-            <td>${dateStr}</td><td><button class="btn btn-sm btn-danger" onclick="deleteMessage('${msg.id}')"><i class="fas fa-trash"></i></button></td>
-          </tr>`);
-        });
-      } catch(e) { console.error(e); }
+    // ========== FUNCTIONS FIXED ==========
+    
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+      }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+        return c;
+      });
     }
 
-    async function deleteMessage(id) {
-      if (confirm("هل أنت متأكد من حذف هذه الرسالة؟")) {
-        try {
-          const res = await fetch("/api/admin/delete-message", { method: "DELETE", headers: { 'Content-Type': 'application/json' }, credentials: "include", body: JSON.stringify({ id }) });
-          const data = await res.json();
-          if (data.success) { showAlert('success', 'تم حذف الرسالة'); loadMessages(); }
-          else throw new Error(data.message);
-        } catch(e) { showAlert('danger', 'فشل حذف الرسالة'); }
+    function contactSuggestion(contact) {
+      const emailInput = document.getElementById('clientEmail');
+      if (emailInput) {
+        // Check if contact looks like an email
+        if (contact && contact.includes('@')) {
+          emailInput.value = contact;
+        } else {
+          emailInput.value = '';
+          showAlert('warning', 'رقم الهاتف غير مدعوم للبريد الإلكتروني، يمكنك نسخه ولصقه يدوياً');
+        }
+        document.getElementById('emailSubject').value = "رد على اقتراحك";
+        openTab('messagesTab', document.querySelectorAll('.nav-link')[4]);
       }
     }
 
-    function contactSuggestion(contact) { document.getElementById('clientEmail').value = contact.includes('@') ? contact : ''; document.getElementById('emailSubject').value = "رد على اقتراحك"; openTab('messagesTab', document.querySelectorAll('.nav-link')[4]); }
+    async function deleteSuggestion(id) {
+      if (!confirm("حذف الاقتراح؟")) return;
+      try {
+        const res = await fetch("/api/admin/delete-suggestion", {
+          method: "DELETE",
+          headers: { 'Content-Type': 'application/json' },
+          credentials: "include",
+          body: JSON.stringify({ id: id }) // تأكد من إرسال id كسترنج
+        });
+        const result = await res.json();
+        if (result.success) {
+          showAlert('success', 'تم الحذف');
+          loadSuggestions();
+        } else {
+          throw new Error(result.message || "فشل الحذف");
+        }
+      } catch(e) {
+        console.error(e);
+        showAlert('danger', 'حدث خطأ أثناء الحذف');
+      }
+    }
 
-    async function deleteSuggestion(id) { if(confirm("حذف الاقتراح؟")){ try{ await fetch("/api/admin/delete-suggestion",{method:"DELETE",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({id})}); showAlert('success','تم الحذف'); loadSuggestions();} catch(e){ showAlert('danger','حدث خطأ');} } }
+    async function deleteInquiry(id) {
+      if (!confirm("حذف الاستفسار؟")) return;
+      try {
+        const res = await fetch("/api/admin/delete-inquiry", {
+          method: "DELETE",
+          headers: { 'Content-Type': 'application/json' },
+          credentials: "include",
+          body: JSON.stringify({ id: id })
+        });
+        const result = await res.json();
+        if (result.success) {
+          showAlert('success', 'تم الحذف');
+          loadInquiries();
+        } else {
+          throw new Error(result.message || "فشل الحذف");
+        }
+      } catch(e) {
+        console.error(e);
+        showAlert('danger', 'حدث خطأ أثناء الحذف');
+      }
+    }
 
-    function openReplyModal(id, email, msg) { currentInquiryId = id; currentInquiryEmail = email; currentInquiryMessage = msg; document.getElementById('originalMessage').innerHTML = `<strong>من ${email}:</strong><br>${msg}`; document.getElementById('replyText').value = ''; document.getElementById('replyModal').classList.add('show'); }
-    function closeReplyModal() { document.getElementById('replyModal').classList.remove('show'); }
-    async function sendReply() { const txt = document.getElementById('replyText').value.trim(); if(!txt){ showAlert('warning','يرجى كتابة رد'); return; } try{ const res = await fetch("/api/admin/reply-inquiry", { method: "POST", headers: { 'Content-Type': 'application/json' }, credentials: "include", body: JSON.stringify({ inquiryId: currentInquiryId, email: currentInquiryEmail, message: currentInquiryMessage, reply: txt }) }); const result = await res.json(); if(result.success) { showAlert('success','تم الرد'); closeReplyModal(); loadInquiries(); } else throw new Error(result.message); } catch(e){ showAlert('danger','فشل الإرسال'); } }
+    function openReplyModal(id, email, msg) {
+      currentInquiryId = id;
+      currentInquiryEmail = email;
+      currentInquiryMessage = msg;
+      document.getElementById('originalMessage').innerHTML = `<i class="fas fa-info-circle"></i> <strong>من ${escapeHtml(email)}:</strong><br>${escapeHtml(msg)}`;
+      document.getElementById('replyText').value = '';
+      document.getElementById('replyModal').classList.add('show');
+    }
+
+    function closeReplyModal() {
+      document.getElementById('replyModal').classList.remove('show');
+    }
+
+    async function sendReply() {
+      const txt = document.getElementById('replyText').value.trim();
+      if (!txt) {
+        showAlert('warning', 'يرجى كتابة رد');
+        return;
+      }
+      try {
+        const res = await fetch("/api/admin/reply-inquiry", {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          credentials: "include",
+          body: JSON.stringify({
+            inquiryId: currentInquiryId,
+            email: currentInquiryEmail,
+            message: currentInquiryMessage,
+            reply: txt
+          })
+        });
+        const result = await res.json();
+        if (result.success) {
+          showAlert('success', 'تم الرد');
+          closeReplyModal();
+          loadInquiries();
+        } else {
+          throw new Error(result.message);
+        }
+      } catch(e) {
+        console.error(e);
+        showAlert('danger', 'فشل الإرسال');
+      }
+    }
 
     async function sendDirectMessage() {
       const email = document.getElementById('clientEmail').value.trim();
       const subject = document.getElementById('emailSubject').value.trim();
-      const message = document.getElementById('emailMessage').value.trim();
-      if (!email || !subject || !message) { showAlert('warning', 'جميع الحقول مطلوبة'); return; }
+      const msg = document.getElementById('emailMessage').value.trim();
+      
+      if (!email || !subject || !msg) {
+        showAlert('warning', 'جميع الحقول مطلوبة');
+        return;
+      }
+      
+      // التحقق من صحة البريد الإلكتروني
+      const emailRegex = /^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/;
+      if (!emailRegex.test(email)) {
+        showAlert('danger', 'البريد الإلكتروني غير صحيح');
+        return;
+      }
+      
       try {
-        const res = await fetch("/api/admin/send-message", { method: "POST", headers: { 'Content-Type': 'application/json' }, credentials: "include", body: JSON.stringify({ email, subject, message }) });
+        const res = await fetch("/api/admin/send-message", {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          credentials: "include",
+          body: JSON.stringify({ email, subject, message: msg })
+        });
         const d = await res.json();
-        if (d.success) { showAlert('success', 'تم إرسال الرسالة وحفظها'); document.getElementById('clientEmail').value = ''; document.getElementById('emailSubject').value = ''; document.getElementById('emailMessage').value = ''; loadMessages(); }
-        else throw new Error(d.message);
-      } catch(e) { showAlert('danger', 'خطأ في الإرسال: ' + e.message); }
+        if (d.success) {
+          showAlert('success', 'تم الإرسال');
+          document.getElementById('clientEmail').value = '';
+          document.getElementById('emailSubject').value = '';
+          document.getElementById('emailMessage').value = '';
+        } else {
+          throw new Error(d.message);
+        }
+      } catch(e) {
+        console.error(e);
+        showAlert('danger', 'خطأ في الإرسال: ' + e.message);
+      }
     }
 
-    async function updateStatus(id, status) { try{ await fetch("/api/admin/update-status", { method: "POST", headers: { 'Content-Type': 'application/json' }, credentials: "include", body: JSON.stringify({ id, status }) }); showAlert('success','تم التحديث'); loadOrders(); } catch(e){ showAlert('danger','فشل التحديث'); } }
+    async function updateStatus(id, status) {
+      try {
+        await fetch("/api/admin/update-status", {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          credentials: "include",
+          body: JSON.stringify({ id, status })
+        });
+        showAlert('success', 'تم التحديث');
+        loadOrders();
+      } catch(e) {
+        showAlert('danger', 'فشل التحديث');
+      }
+    }
 
-    async function deleteOrder(id) { if(confirm("حذف الطلب نهائياً؟")){ try{ await fetch("/api/admin/delete-order", { method: "DELETE", headers: { 'Content-Type': 'application/json' }, credentials: "include", body: JSON.stringify({ id }) }); showAlert('success','حذف الطلب'); loadOrders(); } catch(e){ showAlert('danger','خطأ'); } } }
+    async function deleteOrder(id) {
+      if (!confirm("حذف الطلب نهائياً؟")) return;
+      try {
+        await fetch("/api/admin/delete-order", {
+          method: "DELETE",
+          headers: { 'Content-Type': 'application/json' },
+          credentials: "include",
+          body: JSON.stringify({ id })
+        });
+        showAlert('success', 'حذف الطلب');
+        loadOrders();
+      } catch(e) {
+        showAlert('danger', 'خطأ');
+      }
+    }
 
-    async function deleteInquiry(id) { if(confirm("حذف الاستفسار؟")){ try{ await fetch("/api/admin/delete-inquiry", { method: "DELETE", headers: { 'Content-Type': 'application/json' }, credentials: "include", body: JSON.stringify({ id }) }); showAlert('success','تم الحذف'); loadInquiries(); } catch(e){ showAlert('danger','خطأ'); } } }
+    async function logout() {
+      try {
+        await fetch("/api/admin/logout", { method: "POST", credentials: "include" });
+        window.location.href = "login.html";
+      } catch(e) {
+        showAlert('danger', 'خطأ تسجيل الخروج');
+      }
+    }
 
-    async function logout() { try{ await fetch("/api/admin/logout", { method: "POST", credentials: "include" }); window.location.href = "login.html"; } catch(e){ showAlert('danger','خطأ تسجيل الخروج'); } }
+    function openImageModal(src) {
+      document.getElementById('modalImage').src = src;
+      document.getElementById('imageModal').style.display = 'flex';
+    }
 
-    function openImageModal(src) { document.getElementById('modalImage').src = src; document.getElementById('imageModal').style.display = 'flex'; }
-    function closeImageModal() { document.getElementById('imageModal').style.display = 'none'; }
+    function closeImageModal() {
+      document.getElementById('imageModal').style.display = 'none';
+    }
 
-    // Coupons
+    function showAlert(type, msg) {
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${type}`;
+      alertDiv.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i>${msg}`;
+      const firstSection = document.querySelector('.section');
+      if (firstSection) firstSection.parentNode.insertBefore(alertDiv, firstSection);
+      setTimeout(() => { if(alertDiv.remove) alertDiv.remove(); }, 4000);
+    }
+
+    // ========== COUPONS FUNCTIONS ==========
     async function loadCoupons() {
       try {
         const res = await fetch("/api/admin/coupons", { credentials: "include" });
@@ -367,36 +512,122 @@
         const data = await res.json();
         const coupons = data.data || [];
         const container = document.getElementById('couponsList');
-        if (!coupons.length) { container.innerHTML = `<tr><td colspan="7" style="text-align:center;">لا توجد كوبونات</td></tr>`; return; }
+        
+        if (!coupons.length) {
+          container.innerHTML = `<tr><td colspan="7" style="text-align:center;">لا توجد كوبونات</td></tr>`;
+          return;
+        }
+        
         container.innerHTML = "";
+        
         coupons.forEach(c => {
           let formattedExpiry = "-";
-          if (c.expiresAt) { try { const dateObj = new Date(c.expiresAt); if (!isNaN(dateObj.getTime())) formattedExpiry = dateObj.toLocaleDateString('ar-EG'); } catch(e) {} }
+          if (c.expiresAt) {
+            try {
+              const dateObj = new Date(c.expiresAt);
+              if (!isNaN(dateObj.getTime())) {
+                formattedExpiry = dateObj.toLocaleDateString('ar-EG');
+              }
+            } catch(e) {
+              formattedExpiry = "-";
+            }
+          }
+          
           const statusClass = c.isActive !== false ? 'badge-success' : 'badge-danger';
           const statusText = (c.isActive !== false) ? "مفعل" : "معطل";
-          container.insertAdjacentHTML('beforeend', `<tr><td><strong>${c.code}</strong></td><td>${c.discountPercent || 0}%</td><td>${c.description || '-'}</td><td>${formattedExpiry}</td><td>${c.usedCount || 0}</td><td><span class="badge ${statusClass}">${statusText}</span></td><td><button class="btn btn-sm btn-danger" onclick="deleteCoupon('${c.id}')"><i class="fas fa-trash"></i></button></td></tr>`);
+          
+          const row = `<tr>
+            <td><strong>${escapeHtml(c.code) || '-'}</strong></td>
+            <td>${c.discountPercent || 0}%</td>
+            <td>${escapeHtml(c.description) || '-'}</td>
+            <td>${formattedExpiry}</td>
+            <td>${c.usedCount || 0}</td>
+            <td><span class="badge ${statusClass}">${statusText}</span></td>
+            <td><button class="btn btn-sm btn-danger" onclick="deleteCoupon('${c.id}')"><i class="fas fa-trash"></i></button></td>
+          </tr>`;
+          container.insertAdjacentHTML('beforeend', row);
         });
-      } catch(e) { console.error(e); document.getElementById('couponsList').innerHTML = `<tr><td colspan="7" class="alert-danger">فشل تحميل الكوبونات</td></tr>`; }
+      } catch(e) {
+        console.error(e);
+        document.getElementById('couponsList').innerHTML = `<tr><td colspan="7" class="alert-danger">فشل تحميل الكوبونات</td></tr>`;
+      }
     }
 
-    function showAddCouponModal() { document.getElementById('couponCode').value = ''; document.getElementById('couponPercent').value = ''; document.getElementById('couponDesc').value = ''; document.getElementById('couponExpiry').value = ''; document.getElementById('addCouponModal').classList.add('show'); }
-    function closeAddCouponModal() { document.getElementById('addCouponModal').classList.remove('show'); }
+    function showAddCouponModal() {
+      document.getElementById('couponCode').value = '';
+      document.getElementById('couponPercent').value = '';
+      document.getElementById('couponDesc').value = '';
+      document.getElementById('couponExpiry').value = '';
+      document.getElementById('addCouponModal').classList.add('show');
+    }
+    
+    function closeAddCouponModal() {
+      document.getElementById('addCouponModal').classList.remove('show');
+    }
+    
     async function addCoupon() {
-      const code = document.getElementById('couponCode').value.trim();
+      const code = document.getElementById('couponCode').value.trim().toUpperCase();
       const percent = document.getElementById('couponPercent').value;
       const desc = document.getElementById('couponDesc').value.trim();
       const expiry = document.getElementById('couponExpiry').value;
-      if (!code || !percent || percent < 1 || percent > 100) { showAlert('danger', 'كود ونسبة خصم صحيحة مطلوبة'); return; }
+      
+      if (!code || !percent || percent < 1 || percent > 100) {
+        showAlert('danger', 'كود ونسبة خصم صحيحة مطلوبة');
+        return;
+      }
+      
       try {
-        const res = await fetch("/api/admin/coupons", { method: "POST", headers: { 'Content-Type': 'application/json' }, credentials: "include", body: JSON.stringify({ code, discountPercent: Number(percent), description: desc, expiresAt: expiry || null }) });
+        const res = await fetch("/api/admin/coupons", {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          credentials: "include",
+          body: JSON.stringify({
+            code,
+            discountPercent: Number(percent),
+            description: desc,
+            expiresAt: expiry || null
+          })
+        });
+        
         const data = await res.json();
-        if (data.success) { showAlert('success', 'تمت إضافة الكوبون'); closeAddCouponModal(); loadCoupons(); }
-        else throw new Error(data.message);
-      } catch(e) { showAlert('danger', e.message || 'فشل إضافة الكوبون'); }
+        if (data.success) {
+          showAlert('success', 'تمت إضافة الكوبون');
+          closeAddCouponModal();
+          loadCoupons();
+        } else {
+          throw new Error(data.message);
+        }
+      } catch(e) {
+        showAlert('danger', e.message || 'فشل إضافة الكوبون');
+      }
     }
-    async function deleteCoupon(couponId) { if (!confirm("حذف الكوبون نهائياً؟")) return; try { const res = await fetch(`/api/admin/coupons/${couponId}`, { method: "DELETE", credentials: "include" }); const data = await res.json(); if (data.success) { showAlert('success', 'تم الحذف'); loadCoupons(); } else throw new Error(data.message); } catch(e) { showAlert('danger', 'فشل الحذف'); } }
+    
+    async function deleteCoupon(couponId) {
+      if (!confirm("حذف الكوبون نهائياً؟")) return;
+      try {
+        const res = await fetch(`/api/admin/coupons/${couponId}`, {
+          method: "DELETE",
+          credentials: "include"
+        });
+        const data = await res.json();
+        if (data.success) {
+          showAlert('success', 'تم الحذف');
+          loadCoupons();
+        } else {
+          throw new Error(data.message);
+        }
+      } catch(e) {
+        showAlert('danger', 'فشل الحذف');
+      }
+    }
 
-    window.addEventListener('DOMContentLoaded', () => { loadOrders(); loadInquiries(); loadSuggestions(); loadCoupons(); loadMessages(); });
+    // load all data on page ready
+    window.addEventListener('DOMContentLoaded', () => {
+      loadOrders();
+      loadInquiries();
+      loadSuggestions();
+      loadCoupons();
+    });
   </script>
 </body>
 </html>
