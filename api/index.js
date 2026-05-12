@@ -249,60 +249,96 @@ app.post("/api/order/confirm-payment", upload.single("screenshot"), async (req, 
   }
 });
 
+//الاستفسار 
 app.post("/api/inquiry", async (req, res) => {
   try {
-    const { email, message } = req.body;
-    if (!email || !message) return res.status(400).json({ success: false, message: "البريد والرسالة مطلوبان" });
+    const { name, email, message } = req.body; // أضفنا name أيضاً
 
-    const ref = await firestore().collection("inquiries").add({
-      email, message, status: "قيد الانتظار",
-      created_at: admin.firestore.FieldValue.serverTimestamp()
-    });
-
-    await telegramNotify(`📩 استفسار جديد\nالبريد: ${email}\nID: ${ref.id}\n\n${message}`);
-    const notifyTo = process.env.NOTIFICATION_EMAIL || process.env.SMTP_USER || process.env.EMAIL_USER;
-    if (notifyTo) {
-      await transporter.sendMail({
-        from: `"فريق الدعم" <${process.env.SMTP_USER || process.env.EMAIL_USER}>`,
-        to: notifyTo,
-        subject: "استفسار جديد من العميل",
-        html: `<div dir="rtl"><h2>استفسار جديد</h2><p><b>البريد:</b> ${email}</p><p>${message}</p></div>`
-      });
+    // تحقق من وجود الحقول
+    if (!email || !message) {
+      return res.status(400).json({ success: false, message: "البريد الإلكتروني والرسالة مطلوبان" });
     }
-    return res.json({ success: true, id: ref.id });
+
+    // حفظ في Firebase
+    const inquiryData = {
+      name: name || "غير مذكور", // إذا لم يرسل name من الواجهة
+      email: email,
+      message: message,
+      status: "قيد الانتظار",
+      created_at: admin.firestore.FieldValue.serverTimestamp()
+    };
+    const ref = await firestore().collection("inquiries").add(inquiryData);
+
+    // إشعار تلغرام (لا ننتظر اكتماله ولا نسمح له بتعطيل العملية)
+    telegramNotify(`📩 استفسار جديد\nالاسم: ${name || "غير مذكور"}\nالبريد: ${email}\nالرسالة: ${message.substring(0, 100)}...`).catch(e => console.error("Telegram notify error:", e));
+
+    // إشعار إيميل (نحاول إرساله ولكن لا ننتظر اكتماله)
+    const notifyTo = process.env.NOTIFICATION_EMAIL || process.env.SMTP_USER;
+    if (notifyTo) {
+      transporter.sendMail({
+        from: `"فريق الدعم" <${process.env.SMTP_USER}>`,
+        to: notifyTo,
+        subject: "📩 استفسار جديد على الموقع",
+        html: `<div dir="rtl"><h3>استفسار جديد</h3>
+               <p><strong>الاسم:</strong> ${name || "غير مذكور"}</p>
+               <p><strong>البريد:</strong> ${email}</p>
+               <p><strong>الرسالة:</strong></p>
+               <p>${message.replace(/\n/g, "<br>")}</p>
+               <hr><p><a href="${process.env.DASHBOARD_URL || '#'}">عرض في لوحة التحكم</a></p></div>`
+      }).catch(e => console.error("Email notify error:", e));
+    }
+
+    // إرجاع نجاح للمستخدم حتى لو فشلت الإشعارات
+    return res.status(200).json({ success: true, id: ref.id, message: "تم استلام استفسارك بنجاح" });
+
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ success: false, message: "فشل إرسال الاستفسار" });
+    console.error("❌ خطأ في /api/inquiry:", err);
+    // خطأ محتمل من Firebase
+    return res.status(500).json({ success: false, message: "حدث خطأ في قاعدة البيانات. الرجاء المحاولة لاحقاً." });
   }
 });
 
+//الاقتراح
 app.post("/api/suggestion", async (req, res) => {
   try {
     const { name, contact, message } = req.body;
-    if (!name || !contact || !message) return res.status(400).json({ success: false, message: "جميع الحقول مطلوبة" });
 
-    const ref = await firestore().collection("suggestions").add({
-      name, contact, message,
-      created_at: admin.firestore.FieldValue.serverTimestamp()
-    });
-
-    await telegramNotify(`💡 اقتراح جديد\nالاسم: ${name}\nتواصل: ${contact}\nID: ${ref.id}\n\n${message}`);
-    const notifyTo = process.env.NOTIFICATION_EMAIL || process.env.SMTP_USER || process.env.EMAIL_USER;
-    if (notifyTo) {
-      await transporter.sendMail({
-        from: `"اقتراح جديد" <${process.env.SMTP_USER || process.env.EMAIL_USER}>`,
-        to: notifyTo,
-        subject: "اقتراح جديد للموقع",
-        html: `<div dir="rtl"><h2>اقتراح جديد</h2><p><b>الاسم:</b> ${name}</p><p><b>طريقة التواصل:</b> ${contact}</p><p>${message}</p></div>`
-      });
+    if (!name || !contact || !message) {
+      return res.status(400).json({ success: false, message: "جميع الحقول (الاسم، وسيلة التواصل، الرسالة) مطلوبة" });
     }
-    return res.json({ success: true, id: ref.id });
+
+    const suggestionData = {
+      name: name,
+      contact: contact,
+      message: message,
+      created_at: admin.firestore.FieldValue.serverTimestamp()
+    };
+    const ref = await firestore().collection("suggestions").add(suggestionData);
+
+    // إشعارات (لا تؤثر على نجاح العملية)
+    telegramNotify(`💡 اقتراح جديد\nالاسم: ${name}\nوسيلة التواصل: ${contact}\nالاقتراح: ${message.substring(0, 100)}...`).catch(e => console.error(e));
+    
+    const notifyTo = process.env.NOTIFICATION_EMAIL || process.env.SMTP_USER;
+    if (notifyTo) {
+      transporter.sendMail({
+        from: `"اقتراحات الموقع" <${process.env.SMTP_USER}>`,
+        to: notifyTo,
+        subject: "💡 اقتراح جديد",
+        html: `<div dir="rtl"><h3>اقتراح جديد لتطوير الموقع</h3>
+               <p><strong>الاسم:</strong> ${name}</p>
+               <p><strong>للتواصل:</strong> ${contact}</p>
+               <p><strong>الاقتراح:</strong></p>
+               <p>${message.replace(/\n/g, "<br>")}</p></div>`
+      }).catch(e => console.error(e));
+    }
+
+    return res.status(200).json({ success: true, id: ref.id, message: "شكراً لك! تم استلام اقتراحك" });
+
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ success: false, message: "فشل إرسال الاقتراح" });
+    console.error("❌ خطأ في /api/suggestion:", err);
+    return res.status(500).json({ success: false, message: "حدث خطأ في الخادم. يرجى المحاولة مرة أخرى." });
   }
 });
-
 // ====== Admin APIs ======
 app.post("/api/admin/login", async (req, res) => {
   const { username, password } = req.body;
