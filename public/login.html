@@ -371,7 +371,7 @@
 
         if (data.success) {
           showAlert('success', 'تم تسجيل الدخول بنجاح، جاري التوجيه...');
-          setTimeout(() => { window.location.href = "dashboard.html"; }, 1500);
+          setTimeout(() => { window.location.href = "dashboard"; }, 1500);
         } else {
           throw new Error(data.message || "بيانات الاعتماد غير صحيحة");
         }
