@@ -8,13 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
       --primary: #1a1a2e;
       --secondary: #ff7a00;
@@ -27,29 +21,12 @@
       --info: #2196F3;
       --border-radius: 12px;
       --box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-      --transition: all 0.25s ease;
     }
-
-    body {
-      font-family: 'Tajawal', sans-serif;
-      background: #f5f7fb;
-      color: #1e293b;
-      line-height: 1.5;
-      overflow-x: hidden;
-    }
-
-    /* ========== مرنة بالكامل ========== */
-    .admin-container {
-      display: flex;
-      min-height: 100vh;
-      position: relative;
-    }
-
-    /* سايدبار ريسبونسيف */
+    body { font-family: 'Tajawal', sans-serif; background: #f5f7fb; color: #1e293b; line-height: 1.5; }
+    .admin-container { display: flex; min-height: 100vh; position: relative; }
     .sidebar {
       width: 280px;
       background: linear-gradient(145deg, #0f172a, #0a0f1f);
-      backdrop-filter: blur(2px);
       color: white;
       position: fixed;
       right: 0;
@@ -61,8 +38,6 @@
       border-left: 1px solid rgba(255,255,255,0.08);
       box-shadow: -5px 0 25px rgba(0,0,0,0.2);
     }
-
-    /* زر القائمة للشاشات الصغيرة */
     .mobile-menu-toggle {
       display: none;
       position: fixed;
@@ -78,435 +53,69 @@
       z-index: 1100;
       cursor: pointer;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      transition: transform 0.2s;
     }
-
-    .mobile-menu-toggle:hover {
-      transform: scale(1.02);
-    }
-
-    /* تغطية خلف القائمة (overlay) */
-    .sidebar-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.5);
-      backdrop-filter: blur(3px);
-      z-index: 999;
-    }
-
-    .sidebar-header {
-      text-align: center;
-      padding: 1.8rem 1.2rem 1.5rem;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .sidebar-header img {
-      width: 85px;
-      height: 85px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid rgba(255,122,0,0.4);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-      margin-bottom: 12px;
-    }
-
-    .sidebar-header h2 {
-      background: linear-gradient(135deg, #ff9a3c, var(--secondary));
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-size: 1.6rem;
-    }
-
-    .nav-menu {
-      padding: 1rem 1rem;
-      list-style: none;
-    }
-
-    .nav-item {
-      margin-bottom: 6px;
-    }
-
-    .nav-link {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 18px;
-      color: #e2e8f0;
-      text-decoration: none;
-      border-radius: 14px;
-      transition: all 0.2s;
-      cursor: pointer;
-      font-weight: 500;
-    }
-
-    .nav-link i {
-      width: 26px;
-      font-size: 1.2rem;
-      text-align: center;
-    }
-
-    .nav-link:hover, .nav-link.active {
-      background: rgba(255,122,0,0.18);
-      color: white;
-      transform: translateX(-5px);
-    }
-
-    .logout-btn {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      width: calc(100% - 2rem);
-      margin: 1.5rem 1rem;
-      padding: 12px 18px;
-      background: rgba(255,77,79,0.12);
-      border: none;
-      border-radius: 14px;
-      color: #fecaca;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: inherit;
-    }
-
-    .logout-btn i {
-      font-size: 1.2rem;
-    }
-
-    .logout-btn:hover {
-      background: rgba(255,77,79,0.35);
-      color: white;
-    }
-
-    /* المحتوى الرئيسي */
-    .main-content {
-      flex: 1;
-      margin-right: 280px;
-      padding: 1.8rem 2rem;
-      transition: margin 0.25s;
-      width: 100%;
-    }
-
-    /* رأس responsive */
-    .header {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 2rem;
-      padding-bottom: 0.8rem;
-      border-bottom: 2px solid rgba(0,0,0,0.05);
-    }
-
-    .header h1 {
-      font-size: 1.7rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: var(--primary);
-    }
-
-    .user-info {
-      background: white;
-      padding: 6px 18px 6px 12px;
-      border-radius: 60px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    /* بطاقات الإحصائيات */
-    .stats-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .stat-card {
-      background: white;
-      border-radius: 24px;
-      padding: 1.4rem 1.8rem;
-      box-shadow: var(--box-shadow);
-      transition: transform 0.2s, box-shadow 0.2s;
-      border-top: 5px solid var(--primary);
-    }
-
+    .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); z-index: 999; }
+    .sidebar-header { text-align: center; padding: 1.8rem 1.2rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .sidebar-header img { width: 85px; height: 85px; border-radius: 50%; object-fit: cover; border: 3px solid rgba(255,122,0,0.4); margin-bottom: 12px; }
+    .sidebar-header h2 { background: linear-gradient(135deg, #ff9a3c, var(--secondary)); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 1.6rem; }
+    .nav-menu { padding: 1rem 1rem; list-style: none; }
+    .nav-item { margin-bottom: 6px; }
+    .nav-link { display: flex; align-items: center; gap: 12px; padding: 12px 18px; color: #e2e8f0; text-decoration: none; border-radius: 14px; transition: all 0.2s; cursor: pointer; font-weight: 500; }
+    .nav-link i { width: 26px; font-size: 1.2rem; text-align: center; }
+    .nav-link:hover, .nav-link.active { background: rgba(255,122,0,0.18); color: white; transform: translateX(-5px); }
+    .logout-btn { display: flex; align-items: center; gap: 12px; width: calc(100% - 2rem); margin: 1.5rem 1rem; padding: 12px 18px; background: rgba(255,77,79,0.12); border: none; border-radius: 14px; color: #fecaca; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .logout-btn:hover { background: rgba(255,77,79,0.35); color: white; }
+    .main-content { flex: 1; margin-right: 280px; padding: 1.8rem 2rem; transition: margin 0.25s; width: 100%; }
+    .header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 2rem; padding-bottom: 0.8rem; border-bottom: 2px solid rgba(0,0,0,0.05); }
+    .header h1 { font-size: 1.7rem; display: flex; align-items: center; gap: 10px; color: var(--primary); }
+    .user-info { background: white; padding: 6px 18px 6px 12px; border-radius: 60px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; align-items: center; gap: 10px; }
+    .stats-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .stat-card { background: white; border-radius: 24px; padding: 1.4rem 1.8rem; box-shadow: var(--box-shadow); transition: transform 0.2s; border-top: 5px solid var(--primary); }
     .stat-card.orders { border-top-color: var(--info); }
     .stat-card.inquiries { border-top-color: var(--warning); }
     .stat-card.suggestions { border-top-color: var(--success); }
-
-    .stat-card .value {
-      font-size: 2.3rem;
-      font-weight: 800;
-      margin: 10px 0 6px;
-    }
-
-    /* الأقسام الرئيسية */
-    .section {
-      background: white;
-      border-radius: 28px;
-      padding: 1.6rem 1.8rem;
-      margin-bottom: 2rem;
-      box-shadow: var(--box-shadow);
-    }
-
-    .section-header {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 1.3rem;
-      padding-bottom: 0.8rem;
-      border-bottom: 1px solid #eef2f6;
-    }
-
-    /* جداول متجاوبة */
-    .table-responsive {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      border-radius: 20px;
-    }
-
-    .data-table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 620px;
-    }
-
-    .data-table th {
-      background: #f8fafc;
-      padding: 14px 12px;
-      font-weight: 700;
-      color: #1e293b;
-    }
-
-    .data-table td {
-      padding: 14px 12px;
-      border-bottom: 1px solid #ecf3f9;
-      vertical-align: middle;
-    }
-
-    /* نماذج وأزرار حديثة */
-    .btn {
-      padding: 8px 18px;
-      border-radius: 40px;
-      border: none;
-      font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.85rem;
-    }
-
-    .btn-sm {
-      padding: 6px 12px;
-      font-size: 0.8rem;
-    }
-
+    .stat-card .value { font-size: 2.3rem; font-weight: 800; margin: 10px 0 6px; }
+    .section { background: white; border-radius: 28px; padding: 1.6rem 1.8rem; margin-bottom: 2rem; box-shadow: var(--box-shadow); display: none; }
+    .section.active { display: block; }
+    .section-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 1.3rem; padding-bottom: 0.8rem; border-bottom: 1px solid #eef2f6; }
+    .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 20px; }
+    .data-table { width: 100%; border-collapse: collapse; min-width: 620px; }
+    .data-table th { background: #f8fafc; padding: 14px 12px; font-weight: 700; color: #1e293b; }
+    .data-table td { padding: 14px 12px; border-bottom: 1px solid #ecf3f9; vertical-align: middle; }
+    .btn { padding: 8px 18px; border-radius: 40px; border: none; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; }
+    .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
     .btn-primary { background: linear-gradient(120deg, #1a2a3a, #0f172a); color: white; }
     .btn-success { background: var(--success); color: white; }
-    .btn-danger  { background: var(--danger); color: white; }
-    .btn-info    { background: var(--info); color: white; }
+    .btn-danger { background: var(--danger); color: white; }
+    .btn-info { background: var(--info); color: white; }
     .btn-outline { background: transparent; border: 1px solid #cbd5e1; color: #334155; }
-
-    .badge {
-      padding: 5px 12px;
-      border-radius: 50px;
-      font-size: 0.75rem;
-      font-weight: 700;
-    }
-
+    .badge { padding: 5px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 700; }
     .badge-success { background: #e0f2e9; color: #15803d; }
     .badge-warning { background: #fff3e3; color: #b45309; }
-
-    /* مودال أنيق لإضافة الكوبون */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(6px);
-      z-index: 1200;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .modal.show {
-      display: flex;
-    }
-
-    .modal-content {
-      background: white;
-      max-width: 550px;
-      width: 90%;
-      border-radius: 32px;
-      overflow: hidden;
-      box-shadow: 0 25px 45px rgba(0,0,0,0.3);
-      animation: fadeSlideUp 0.2s ease;
-    }
-
-    @keyframes fadeSlideUp {
-      from { opacity: 0; transform: translateY(18px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .modal-header {
-      padding: 1.2rem 1.8rem;
-      background: #fef9f0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #ffe5cc;
-    }
-
-    .modal-body {
-      padding: 1.5rem 1.8rem;
-    }
-
-    .form-group {
-      margin-bottom: 1.2rem;
-    }
-
-    .form-group label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: #1e293b;
-    }
-
-    .form-control {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 24px;
-      font-family: inherit;
-      transition: 0.2s;
-      font-size: 0.95rem;
-    }
-
-    .form-control:focus {
-      outline: none;
-      border-color: var(--secondary);
-      box-shadow: 0 0 0 3px rgba(255,122,0,0.1);
-    }
-
-    .modal-footer {
-      padding: 1rem 1.8rem;
-      background: #fefefe;
-      display: flex;
-      justify-content: flex-end;
-      gap: 12px;
-      border-top: 1px solid #edf2f7;
-    }
-
-    /* صورة مصغرة */
-    .screenshot-preview {
-      width: 52px;
-      height: 52px;
-      object-fit: cover;
-      border-radius: 12px;
-      border: 1px solid #e2e8f0;
-      cursor: pointer;
-    }
-
-    .alert {
-      padding: 12px 20px;
-      border-radius: 20px;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .image-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.92);
-      z-index: 1300;
-      display: none;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* استجابات كاملة */
-    @media (max-width: 1024px) {
-      .main-content {
-        padding: 1.2rem;
-      }
-    }
-
+    .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(6px); z-index: 1200; align-items: center; justify-content: center; }
+    .modal.show { display: flex; }
+    .modal-content { background: white; max-width: 550px; width: 90%; border-radius: 32px; overflow: hidden; box-shadow: 0 25px 45px rgba(0,0,0,0.3); animation: fadeSlideUp 0.2s ease; }
+    @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+    .modal-header { padding: 1.2rem 1.8rem; background: #fef9f0; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ffe5cc; }
+    .modal-body { padding: 1.5rem 1.8rem; }
+    .form-group { margin-bottom: 1.2rem; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 6px; color: #1e293b; }
+    .form-control { width: 100%; padding: 12px 16px; border: 1.5px solid #e2e8f0; border-radius: 24px; font-family: inherit; transition: 0.2s; font-size: 0.95rem; }
+    .form-control:focus { outline: none; border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(255,122,0,0.1); }
+    .screenshot-preview { width: 52px; height: 52px; object-fit: cover; border-radius: 12px; border: 1px solid #e2e8f0; cursor: pointer; }
+    .alert { padding: 12px 20px; border-radius: 20px; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 12px; position: fixed; top: 20px; left: 20px; right: 20px; z-index: 2000; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .alert-success { background: #d4edda; color: #155724; border-right: 4px solid var(--success); }
+    .alert-danger { background: #f8d7da; color: #721c24; border-right: 4px solid var(--danger); }
+    .alert-warning { background: #fff3cd; color: #856404; border-right: 4px solid var(--warning); }
+    .image-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.92); z-index: 1300; display: none; align-items: center; justify-content: center; }
+    .image-modal img { max-width: 90%; max-height: 90%; border-radius: 12px; }
+    .close-image-modal { position: absolute; top: 20px; right: 20px; background: white; border: none; font-size: 30px; cursor: pointer; width: 50px; height: 50px; border-radius: 50%; }
     @media (max-width: 768px) {
-      .mobile-menu-toggle {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .sidebar {
-        transform: translateX(100%);
-        width: 280px;
-        box-shadow: none;
-      }
-
-      .sidebar.open {
-        transform: translateX(0);
-      }
-
-      .sidebar-overlay.active {
-        display: block;
-      }
-
-      .main-content {
-        margin-right: 0;
-        padding-top: 70px;
-      }
-
-      .header {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .section-header {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .stat-card .value {
-        font-size: 1.9rem;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .btn {
-        padding: 6px 14px;
-        font-size: 0.75rem;
-      }
-
-      .section {
-        padding: 1.2rem;
-      }
-    }
-
-    /* تأثير دوران loader */
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+      .mobile-menu-toggle { display: flex; align-items: center; justify-content: center; }
+      .sidebar { transform: translateX(100%); width: 280px; }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay.active { display: block; }
+      .main-content { margin-right: 0; padding-top: 70px; }
     }
   </style>
 </head>
@@ -521,7 +130,6 @@
         <h2>TRIPxESPORTS</h2>
         <p>لوحة إدارة متكاملة</p>
       </div>
-
       <ul class="nav-menu">
         <li class="nav-item"><a class="nav-link active" onclick="openTab('ordersTab', this)"><i class="fas fa-shopping-cart"></i><span>الطلبات</span></a></li>
         <li class="nav-item"><a class="nav-link" onclick="openTab('inquiriesTab', this)"><i class="fas fa-question-circle"></i><span>الاستفسارات</span></a></li>
@@ -529,7 +137,6 @@
         <li class="nav-item"><a class="nav-link" onclick="openTab('couponsTab', this)"><i class="fas fa-tags"></i><span>الكوبونات</span></a></li>
         <li class="nav-item"><a class="nav-link" onclick="openTab('messagesTab', this)"><i class="fas fa-envelope"></i><span>الرسائل المباشرة</span></a></li>
       </ul>
-
       <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>تسجيل الخروج</span></button>
     </div>
 
@@ -543,62 +150,55 @@
       </div>
 
       <div class="stats-cards">
-        <div class="stat-card orders"><h3><i class="fas fa-shopping-cart"></i> الطلبات</h3><div class="value" id="ordersCount">0</div><div class="change positive"><i class="fas fa-arrow-up"></i> شهريًا</div></div>
+        <div class="stat-card orders"><h3><i class="fas fa-shopping-cart"></i> الطلبات</h3><div class="value" id="ordersCount">0</div></div>
         <div class="stat-card inquiries"><h3><i class="fas fa-question-circle"></i> الاستفسارات</h3><div class="value" id="inquiriesCount">0</div></div>
         <div class="stat-card suggestions"><h3><i class="fas fa-lightbulb"></i> الاقتراحات</h3><div class="value" id="suggestionsCount">0</div></div>
       </div>
 
-      <!-- الطلبات -->
-      <div id="ordersTab" class="section tab-content active">
-        <div class="section-header"><h2><i class="fas fa-shopping-cart"></i> إدارة الطلبات</h2><div class="actions"><button class="btn btn-outline"><i class="fas fa-filter"></i> تصفية</button></div></div>
+      <div id="ordersTab" class="section active">
+        <div class="section-header"><h2><i class="fas fa-shopping-cart"></i> إدارة الطلبات</h2></div>
         <div class="table-responsive"><table class="data-table"><thead><tr><th>العميل</th><th>ID اللاعب</th><th>النوع</th><th>المبلغ</th><th>الحالة</th><th>رقم التحويل</th><th>إثبات الدفع</th><th>الإجراءات</th></tr></thead><tbody id="ordersList"></tbody></table></div>
       </div>
 
-      <!-- الاستفسارات -->
-      <div id="inquiriesTab" class="section tab-content">
+      <div id="inquiriesTab" class="section">
         <div class="section-header"><h2><i class="fas fa-question-circle"></i> إدارة الاستفسارات</h2></div>
         <div class="table-responsive"><table class="data-table"><thead><tr><th>البريد الإلكتروني</th><th>التاريخ</th><th>الرسالة</th><th>الحالة</th><th>الإجراءات</th></tr></thead><tbody id="inquiriesList"></tbody></table></div>
       </div>
 
-      <!-- الكوبونات بشكل محسن -->
-      <div id="couponsTab" class="section tab-content">
+      <div id="couponsTab" class="section">
         <div class="section-header"><h2><i class="fas fa-tags"></i> كوبونات الخصم</h2><button class="btn btn-primary" onclick="showAddCouponModal()"><i class="fas fa-plus"></i> إضافة كوبون جديد</button></div>
         <div class="table-responsive"><table class="data-table"><thead><tr><th>الكود</th><th>الخصم (%)</th><th>الوصف</th><th>تاريخ الانتهاء</th><th>الاستخدام</th><th>الحالة</th><th>حذف</th></tr></thead><tbody id="couponsList"></tbody></table></div>
       </div>
 
-      <!-- الاقتراحات -->
-      <div id="suggestionsTab" class="section tab-content">
+      <div id="suggestionsTab" class="section">
         <div class="section-header"><h2><i class="fas fa-lightbulb"></i> الاقتراحات</h2></div>
         <div class="table-responsive"><table class="data-table"><thead><tr><th>الاسم</th><th>طريقة التواصل</th><th>التاريخ</th><th>الاقتراح</th><th>الإجراءات</th></tr></thead><tbody id="suggestionsList"></tbody></table></div>
       </div>
 
-      <!-- الرسائل المباشرة -->
-      <div id="messagesTab" class="section tab-content">
+      <div id="messagesTab" class="section">
         <div class="section-header"><h2><i class="fas fa-envelope"></i> إرسال رسالة مباشرة</h2></div>
-        <div class="message-form">
+        <div class="message-form" style="margin-bottom: 30px;">
           <div class="form-group"><label>بريد العميل:</label><input type="email" id="clientEmail" class="form-control" placeholder="example@domain.com"></div>
           <div class="form-group"><label>عنوان الرسالة:</label><input type="text" id="emailSubject" class="form-control" placeholder="العنوان"></div>
           <div class="form-group"><label>نص الرسالة:</label><textarea id="emailMessage" class="form-control" rows="3" placeholder="محتوى الرسالة"></textarea></div>
           <button class="btn btn-primary" onclick="sendDirectMessage()"><i class="fas fa-paper-plane"></i> إرسال</button>
         </div>
+        <div class="section-header" style="margin-top: 30px;"><h2><i class="fas fa-history"></i> سجل الرسائل المرسلة</h2></div>
+        <div class="table-responsive"><table class="data-table"><thead><tr><th>إلى</th><th>الموضوع</th><th>الرسالة</th><th>تاريخ الإرسال</th><th>الإجراءات</th></tr></thead><tbody id="messagesList"></tbody></table></div>
       </div>
     </div>
   </div>
 
-  <!-- مودال الرد على الاستفسار -->
-  <div id="replyModal" class="modal"><div class="modal-content"><div class="modal-header"><h3><i class="fas fa-reply"></i> رد على الاستفسار</h3><button class="close" onclick="closeReplyModal()">&times;</button></div><div class="modal-body"><div id="originalMessage" class="alert alert-info"></div><div class="form-group"><label>الرد:</label><textarea id="replyText" class="form-control" rows="4"></textarea></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="closeReplyModal()">إلغاء</button><button class="btn btn-primary" onclick="sendReply()">إرسال الرد</button></div></div></div>
+  <div id="replyModal" class="modal"><div class="modal-content"><div class="modal-header"><h3><i class="fas fa-reply"></i> رد على الاستفسار</h3><button onclick="closeReplyModal()">&times;</button></div><div class="modal-body"><div id="originalMessage" class="alert alert-info"></div><div class="form-group"><label>الرد:</label><textarea id="replyText" class="form-control" rows="4"></textarea></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="closeReplyModal()">إلغاء</button><button class="btn btn-primary" onclick="sendReply()">إرسال الرد</button></div></div></div>
 
-  <!-- مودال إضافة كوبون بتصميم محسن -->
-  <div id="addCouponModal" class="modal"><div class="modal-content"><div class="modal-header"><h3><i class="fas fa-ticket-alt"></i> إضافة كوبون جديد</h3><button class="close" onclick="closeAddCouponModal()">&times;</button></div><div class="modal-body"><div class="form-group"><label>كود الخصم *</label><input type="text" id="couponCode" class="form-control" placeholder="مثال: SUMMER20" maxlength="20"></div><div class="form-group"><label>نسبة الخصم (%) *</label><input type="number" id="couponPercent" class="form-control" placeholder="10" min="1" max="100"></div><div class="form-group"><label>الوصف (اختياري)</label><input type="text" id="couponDesc" class="form-control" placeholder="عرض خاص"></div><div class="form-group"><label>تاريخ الانتهاء (اختياري)</label><input type="date" id="couponExpiry" class="form-control"></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="closeAddCouponModal()">إلغاء</button><button class="btn btn-primary" onclick="addCoupon()">إضافة الكوبون</button></div></div></div>
+  <div id="addCouponModal" class="modal"><div class="modal-content"><div class="modal-header"><h3><i class="fas fa-ticket-alt"></i> إضافة كوبون جديد</h3><button onclick="closeAddCouponModal()">&times;</button></div><div class="modal-body"><div class="form-group"><label>كود الخصم *</label><input type="text" id="couponCode" class="form-control" placeholder="مثال: SUMMER20" maxlength="20"></div><div class="form-group"><label>نسبة الخصم (%) *</label><input type="number" id="couponPercent" class="form-control" placeholder="10" min="1" max="100"></div><div class="form-group"><label>الوصف (اختياري)</label><input type="text" id="couponDesc" class="form-control" placeholder="عرض خاص"></div><div class="form-group"><label>تاريخ الانتهاء (اختياري)</label><input type="date" id="couponExpiry" class="form-control"></div></div><div class="modal-footer"><button class="btn btn-outline" onclick="closeAddCouponModal()">إلغاء</button><button class="btn btn-primary" onclick="addCoupon()">إضافة الكوبون</button></div></div></div>
 
-  <!-- مودال الصورة -->
   <div id="imageModal" class="image-modal"><div class="image-modal-content"><button class="close-image-modal" onclick="closeImageModal()">&times;</button><img id="modalImage" src="" alt="معاينة"></div></div>
 
   <script>
     let currentInquiryId = null, currentInquiryEmail = null, currentInquiryMessage = null;
     let orders = [], inquiries = [], suggestions = [];
 
-    // التوافق مع الشاشات الصغيرة (القائمة الجانبية)
     const menuToggle = document.getElementById('menuToggleBtn');
     const sidebar = document.getElementById('mainSidebar');
     const overlay = document.getElementById('sidebarOverlay');
@@ -614,6 +214,14 @@
       document.getElementById(tabId).classList.add('active');
       if(el) el.classList.add('active');
       if(window.innerWidth < 768) closeMobileMenu();
+    }
+
+    function showAlert(type, message) {
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${type}`;
+      alertDiv.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'danger' ? 'fa-exclamation-triangle' : 'fa-info-circle'}"></i> ${message}`;
+      document.body.appendChild(alertDiv);
+      setTimeout(() => alertDiv.remove(), 4000);
     }
 
     async function loadOrders() {
@@ -634,35 +242,124 @@
             <td>${order.totalAmount || 0} ج.م</td>
             <td><span class="badge ${order.status === 'تم الدفع' ? 'badge-success' : 'badge-warning'}">${order.status || 'قيد المراجعة'}</span></td>
             <td>${order.transactionId || '-'}</td>
-            <td>${imgUrl ? `<img src="${imgUrl}" class="screenshot-preview" onclick="openImageModal('${imgUrl}')" onerror="console.error('فشل تحميل الصورة:', this.src); this.style.display='none'">` : 'لا توجد'}</td>
+            <td>${imgUrl ? `<img src="${imgUrl}" class="screenshot-preview" onclick="openImageModal('${imgUrl}')" style="cursor:pointer">` : 'لا توجد'}</td>
             <td><div style="display:flex;gap:8px;"><button class="btn btn-sm btn-success" onclick="updateStatus('${order.id}','تم الدفع')"><i class="fas fa-check"></i></button><button class="btn btn-sm btn-danger" onclick="deleteOrder('${order.id}')"><i class="fas fa-trash"></i></button></div></td>
           </tr>`;
           tbody.insertAdjacentHTML('beforeend', row);
         });
-      } catch(e) { console.error(e); document.getElementById('ordersList').innerHTML = `<tr><td colspan="8" class="alert-danger">خطأ في التحميل</td></tr>`; }
+      } catch(e) { console.error(e); }
     }
 
-    async function loadInquiries() { /* مشابهة */ 
-      try { const res=await fetch("/api/admin/inquiries",{credentials:"include"}); const d=await res.json(); inquiries=d.data||[]; document.getElementById('inquiriesCount').innerText=inquiries.length; const tbody=document.getElementById('inquiriesList'); tbody.innerHTML=inquiries.length?"":`<tr><td colspan="5">لا توجد استفسارات</td></tr>`; inquiries.forEach(i=>{tbody.insertAdjacentHTML('beforeend',`<tr><td>${i.email}</td><td>${new Date(i.created_at).toLocaleString()}</td><td>${i.message.substring(0,60)}</td><td><span class="badge ${i.status==='تم الرد'?'badge-success':'badge-warning'}">${i.status}</span></td><td><button class="btn btn-sm btn-info" onclick="openReplyModal(${i.id},'${i.email.replace(/'/g,"\\'")}','${i.message.replace(/'/g,"\\'")}')"><i class="fas fa-reply"></i></button> <button class="btn btn-sm btn-danger" onclick="deleteInquiry(${i.id})"><i class="fas fa-trash"></i></button></td></tr>`);});}catch(e){console.error(e);} }
+    async function loadInquiries() {
+      try {
+        const res = await fetch("/api/admin/inquiries", { credentials: "include" });
+        const d = await res.json();
+        inquiries = d.data || [];
+        document.getElementById('inquiriesCount').innerText = inquiries.length;
+        const tbody = document.getElementById('inquiriesList');
+        tbody.innerHTML = inquiries.length ? "" : `<tr><td colspan="5">لا توجد استفسارات</td></tr>`;
+        inquiries.forEach(i => {
+          let dateStr = "";
+          try {
+            if (i.created_at && i.created_at.toDate) dateStr = i.created_at.toDate().toLocaleString();
+            else if (i.created_at) dateStr = new Date(i.created_at).toLocaleString();
+          } catch(e) { dateStr = "-"; }
+          tbody.insertAdjacentHTML('beforeend', `<tr>
+            <td>${i.email}</td><td>${dateStr}</td><td>${(i.message || '').substring(0,60)}</td>
+            <td><span class="badge ${i.status === 'تم الرد' ? 'badge-success' : 'badge-warning'}">${i.status || 'قيد الانتظار'}</span></td>
+            <td><button class="btn btn-sm btn-info" onclick="openReplyModal('${i.id}','${(i.email || '').replace(/'/g, "\\'")}','${(i.message || '').replace(/'/g, "\\'")}')"><i class="fas fa-reply"></i></button> <button class="btn btn-sm btn-danger" onclick="deleteInquiry('${i.id}')"><i class="fas fa-trash"></i></button></td>
+          </tr>`);
+        });
+      } catch(e) { console.error(e); }
+    }
+
     async function loadSuggestions() {
-      try { const res=await fetch("/api/admin/suggestions",{credentials:"include"}); const d=await res.json(); suggestions=d.data||[]; document.getElementById('suggestionsCount').innerText=suggestions.length; const tbody=document.getElementById('suggestionsList'); tbody.innerHTML=suggestions.length?"":`<tr><td colspan="5">لا توجد اقتراحات</td></tr>`; suggestions.forEach(s=>{tbody.insertAdjacentHTML('beforeend',`<tr><td>${s.name}</td><td>${s.contact}</td><td>${new Date(s.created_at).toLocaleString()}</td><td>${s.message.substring(0,60)}</td><td><button class="btn btn-sm btn-primary" onclick="contactSuggestion('${s.contact.replace(/'/g,"\\'")}')"><i class="fas fa-envelope"></i></button> <button class="btn btn-sm btn-danger" onclick="deleteSuggestion(${s.id})"><i class="fas fa-trash"></i></button></td></tr>`);});}catch(e){console.error(e);} }
-    
-    function contactSuggestion(contact){ document.getElementById('clientEmail').value=contact.includes('@')?contact:''; document.getElementById('emailSubject').value="رد على اقتراحك"; openTab('messagesTab', document.querySelectorAll('.nav-link')[4]); }
-    async function deleteSuggestion(id){ if(confirm("حذف الاقتراح؟")){ try{ await fetch("/api/admin/delete-suggestion",{method:"DELETE",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({id})}); showAlert('success','تم الحذف'); loadSuggestions();}catch(e){showAlert('danger','حدث خطأ');} } }
-    function openReplyModal(id,email,msg){ currentInquiryId=id; currentInquiryEmail=email; currentInquiryMessage=msg; document.getElementById('originalMessage').innerHTML=`<i class="fas fa-info-circle"></i> <strong>من ${email}:</strong><br>${msg}`; document.getElementById('replyText').value=''; document.getElementById('replyModal').classList.add('show'); }
-    function closeReplyModal(){ document.getElementById('replyModal').classList.remove('show'); }
-    async function sendReply(){ const txt=document.getElementById('replyText').value.trim(); if(!txt){ showAlert('warning','يرجى كتابة رد'); return; } try{ const res=await fetch("/api/admin/reply-inquiry",{method:"POST",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({inquiryId:currentInquiryId,email:currentInquiryEmail,message:currentInquiryMessage,reply:txt})}); const result=await res.json(); if(result.success){ showAlert('success','تم الرد'); closeReplyModal(); loadInquiries();} else throw new Error(result.message); }catch(e){ showAlert('danger','فشل الإرسال'); } }
-    async function sendDirectMessage(){ const email=document.getElementById('clientEmail').value.trim(), subject=document.getElementById('emailSubject').value.trim(), msg=document.getElementById('emailMessage').value.trim(); if(!email||!subject||!msg){ showAlert('warning','جميع الحقول مطلوبة'); return; } try{ const res=await fetch("/api/admin/send-message",{method:"POST",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({email,subject,message:msg})}); const d=await res.json(); if(d.success){ showAlert('success','تم الإرسال'); document.getElementById('clientEmail').value=''; document.getElementById('emailSubject').value=''; document.getElementById('emailMessage').value=''; } else throw new Error(d.message); }catch(e){ showAlert('danger','خطأ في الإرسال'); } }
-    async function updateStatus(id,status){ try{ await fetch("/api/admin/update-status",{method:"POST",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({id,status})}); showAlert('success','تم التحديث'); loadOrders(); }catch(e){ showAlert('danger','فشل التحديث'); } }
-    async function deleteOrder(id){ if(confirm("حذف الطلب نهائياً؟")){ try{ await fetch("/api/admin/delete-order",{method:"DELETE",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({id})}); showAlert('success','حذف الطلب'); loadOrders();}catch(e){showAlert('danger','خطأ');} } }
-    async function deleteInquiry(id){ if(confirm("حذف الاستفسار؟")){ try{ await fetch("/api/admin/delete-inquiry",{method:"DELETE",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({id})}); showAlert('success','تم الحذف'); loadInquiries();}catch(e){showAlert('danger','خطأ');} } }
-    async function logout(){ try{ await fetch("/api/admin/logout",{method:"POST",credentials:"include"}); window.location.href="login.html"; }catch(e){ showAlert('danger','خطأ تسجيل الخروج'); } }
-    function openImageModal(src){ document.getElementById('modalImage').src=src; document.getElementById('imageModal').style.display='flex'; }
-    function closeImageModal(){ document.getElementById('imageModal').style.display='none'; }
-    function showAlert(type,msg){ const alertDiv=document.createElement('div'); alertDiv.className=`alert alert-${type}`; alertDiv.innerHTML=`<i class="fas ${type==='success'?'fa-check-circle':'fa-exclamation-triangle'}"></i>${msg}`; const firstSection=document.querySelector('.section'); if(firstSection) firstSection.parentNode.insertBefore(alertDiv,firstSection); setTimeout(()=>{alertDiv.remove();},4000); }
-    
-    // الكوبونات 
-    // الكوبونات - نسخة العميل (المتصفح)
+      try {
+        const res = await fetch("/api/admin/suggestions", { credentials: "include" });
+        const d = await res.json();
+        suggestions = d.data || [];
+        document.getElementById('suggestionsCount').innerText = suggestions.length;
+        const tbody = document.getElementById('suggestionsList');
+        tbody.innerHTML = suggestions.length ? "" : `<tr><td colspan="5">لا توجد اقتراحات</td></tr>`;
+        suggestions.forEach(s => {
+          let dateStr = "";
+          try {
+            if (s.created_at && s.created_at.toDate) dateStr = s.created_at.toDate().toLocaleString();
+            else if (s.created_at) dateStr = new Date(s.created_at).toLocaleString();
+          } catch(e) { dateStr = "-"; }
+          tbody.insertAdjacentHTML('beforeend', `<tr>
+            <td>${s.name || ''}</td><td>${s.contact || ''}</td><td>${dateStr}</td><td>${(s.message || '').substring(0,60)}</td>
+            <td><button class="btn btn-sm btn-primary" onclick="contactSuggestion('${(s.contact || '').replace(/'/g, "\\'")}')"><i class="fas fa-envelope"></i></button> <button class="btn btn-sm btn-danger" onclick="deleteSuggestion('${s.id}')"><i class="fas fa-trash"></i></button></td>
+          </tr>`);
+        });
+      } catch(e) { console.error(e); }
+    }
+
+    async function loadMessages() {
+      try {
+        const res = await fetch("/api/admin/messages", { credentials: "include" });
+        if (!res.ok) throw new Error("فشل التحميل");
+        const data = await res.json();
+        const messages = data.data || [];
+        const tbody = document.getElementById('messagesList');
+        if (messages.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">لا توجد رسائل</td></tr>`; return; }
+        tbody.innerHTML = "";
+        messages.forEach(msg => {
+          let dateStr = "-";
+          try { if (msg.sent_at && msg.sent_at.toDate) dateStr = msg.sent_at.toDate().toLocaleString('ar-EG'); }
+          catch(e) {}
+          tbody.insertAdjacentHTML('beforeend', `<tr>
+            <td>${msg.to || '-'}</td><td>${msg.subject || '-'}</td><td style="max-width:250px; overflow:hidden; text-overflow:ellipsis;">${msg.message || '-'}</td>
+            <td>${dateStr}</td><td><button class="btn btn-sm btn-danger" onclick="deleteMessage('${msg.id}')"><i class="fas fa-trash"></i></button></td>
+          </tr>`);
+        });
+      } catch(e) { console.error(e); }
+    }
+
+    async function deleteMessage(id) {
+      if (confirm("هل أنت متأكد من حذف هذه الرسالة؟")) {
+        try {
+          const res = await fetch("/api/admin/delete-message", { method: "DELETE", headers: { 'Content-Type': 'application/json' }, credentials: "include", body: JSON.stringify({ id }) });
+          const data = await res.json();
+          if (data.success) { showAlert('success', 'تم حذف الرسالة'); loadMessages(); }
+          else throw new Error(data.message);
+        } catch(e) { showAlert('danger', 'فشل حذف الرسالة'); }
+      }
+    }
+
+    function contactSuggestion(contact) { document.getElementById('clientEmail').value = contact.includes('@') ? contact : ''; document.getElementById('emailSubject').value = "رد على اقتراحك"; openTab('messagesTab', document.querySelectorAll('.nav-link')[4]); }
+
+    async function deleteSuggestion(id) { if(confirm("حذف الاقتراح؟")){ try{ await fetch("/api/admin/delete-suggestion",{method:"DELETE",headers:{'Content-Type':'application/json'},credentials:"include",body:JSON.stringify({id})}); showAlert('success','تم الحذف'); loadSuggestions();} catch(e){ showAlert('danger','حدث خطأ');} } }
+
+    function openReplyModal(id, email, msg) { currentInquiryId = id; currentInquiryEmail = email; currentInquiryMessage = msg; document.getElementById('originalMessage').innerHTML = `<strong>من ${email}:</strong><br>${msg}`; document.getElementById('replyText').value = ''; document.getElementById('replyModal').classList.add('show'); }
+    function closeReplyModal() { document.getElementById('replyModal').classList.remove('show'); }
+    async function sendReply() { const txt = document.getElementById('replyText').value.trim(); if(!txt){ showAlert('warning','يرجى كتابة رد'); return; } try{ const res = await fetch("/api/admin/reply-inquiry", { method: "POST", headers: { 'Content-Type': 'application/json' }, credentials: "include", body: JSON.stringify({ inquiryId: currentInquiryId, email: currentInquiryEmail, message: currentInquiryMessage, reply: txt }) }); const result = await res.json(); if(result.success) { showAlert('success','تم الرد'); closeReplyModal(); loadInquiries(); } else throw new Error(result.message); } catch(e){ showAlert('danger','فشل الإرسال'); } }
+
+    async function sendDirectMessage() {
+      const email = document.getElementById('clientEmail').value.trim();
+      const subject = document.getElementById('emailSubject').value.trim();
+      const message = document.getElementById('emailMessage').value.trim();
+      if (!email || !subject || !message) { showAlert('warning', 'جميع الحقول مطلوبة'); return; }
+      try {
+        const res = await fetch("/api/admin/send-message", { method: "POST", headers: { 'Content-Type': 'application/json' }, credentials: "include", body: JSON.stringify({ email, subject, message }) });
+        const d = await res.json();
+        if (d.success) { showAlert('success', 'تم إرسال الرسالة وحفظها'); document.getElementById('clientEmail').value = ''; document.getElementById('emailSubject').value = ''; document.getElementById('emailMessage').value = ''; loadMessages(); }
+        else throw new Error(d.message);
+      } catch(e) { showAlert('danger', 'خطأ في الإرسال: ' + e.message); }
+    }
+
+    async function updateStatus(id, status) { try{ await fetch("/api/admin/update-status", { method: "POST", headers: { 'Content-Type': 'application/json' }, credentials: "include", body: JSON.stringify({ id, status }) }); showAlert('success','تم التحديث'); loadOrders(); } catch(e){ showAlert('danger','فشل التحديث'); } }
+
+    async function deleteOrder(id) { if(confirm("حذف الطلب نهائياً؟")){ try{ await fetch("/api/admin/delete-order", { method: "DELETE", headers: { 'Content-Type': 'application/json' }, credentials: "include", body: JSON.stringify({ id }) }); showAlert('success','حذف الطلب'); loadOrders(); } catch(e){ showAlert('danger','خطأ'); } } }
+
+    async function deleteInquiry(id) { if(confirm("حذف الاستفسار؟")){ try{ await fetch("/api/admin/delete-inquiry", { method: "DELETE", headers: { 'Content-Type': 'application/json' }, credentials: "include", body: JSON.stringify({ id }) }); showAlert('success','تم الحذف'); loadInquiries(); } catch(e){ showAlert('danger','خطأ'); } } }
+
+    async function logout() { try{ await fetch("/api/admin/logout", { method: "POST", credentials: "include" }); window.location.href = "login.html"; } catch(e){ showAlert('danger','خطأ تسجيل الخروج'); } }
+
+    function openImageModal(src) { document.getElementById('modalImage').src = src; document.getElementById('imageModal').style.display = 'flex'; }
+    function closeImageModal() { document.getElementById('imageModal').style.display = 'none'; }
+
+    // Coupons
     async function loadCoupons() {
       try {
         const res = await fetch("/api/admin/coupons", { credentials: "include" });
@@ -670,129 +367,36 @@
         const data = await res.json();
         const coupons = data.data || [];
         const container = document.getElementById('couponsList');
-        
-        if (!coupons.length) {
-          container.innerHTML = `<tr><td colspan="7" style="text-align:center;">لا توجد كوبونات</td></tr>`;
-          return;
-        }
-        
+        if (!coupons.length) { container.innerHTML = `<tr><td colspan="7" style="text-align:center;">لا توجد كوبونات</td></tr>`; return; }
         container.innerHTML = "";
-        
         coupons.forEach(c => {
-          // تنسيق التاريخ - إذا كان موجوداً
           let formattedExpiry = "-";
-          if (c.expiresAt) {
-            try {
-              const dateObj = new Date(c.expiresAt);
-              if (!isNaN(dateObj.getTime())) {
-                formattedExpiry = dateObj.toLocaleDateString('ar-EG');
-              }
-            } catch(e) {
-              formattedExpiry = "-";
-            }
-          }
-          
+          if (c.expiresAt) { try { const dateObj = new Date(c.expiresAt); if (!isNaN(dateObj.getTime())) formattedExpiry = dateObj.toLocaleDateString('ar-EG'); } catch(e) {} }
           const statusClass = c.isActive !== false ? 'badge-success' : 'badge-danger';
           const statusText = (c.isActive !== false) ? "مفعل" : "معطل";
-          
-          const row = `
-            <tr>
-              <td><strong>${escapeHtml(c.code) || '-'}</strong></td>
-              <td>${c.discountPercent || 0}%</td>
-              <td>${escapeHtml(c.description) || '-'}</td>
-              <td>${formattedExpiry}</td>
-              <td>${c.usedCount || 0}</td>
-              <td><span class="badge ${statusClass}">${statusText}</span></td>
-              <td><button class="btn btn-sm btn-danger" onclick="deleteCoupon('${c.id}')"><i class="fas fa-trash"></i></button></td>
-            </tr>
-          `;
-          container.insertAdjacentHTML('beforeend', row);
+          container.insertAdjacentHTML('beforeend', `<tr><td><strong>${c.code}</strong></td><td>${c.discountPercent || 0}%</td><td>${c.description || '-'}</td><td>${formattedExpiry}</td><td>${c.usedCount || 0}</td><td><span class="badge ${statusClass}">${statusText}</span></td><td><button class="btn btn-sm btn-danger" onclick="deleteCoupon('${c.id}')"><i class="fas fa-trash"></i></button></td></tr>`);
         });
-      } catch(e) {
-        console.error(e);
-        document.getElementById('couponsList').innerHTML = `<tr><td colspan="7" class="alert-danger">فشل تحميل الكوبونات</td></tr>`;
-      }
+      } catch(e) { console.error(e); document.getElementById('couponsList').innerHTML = `<tr><td colspan="7" class="alert-danger">فشل تحميل الكوبونات</td></tr>`; }
     }
 
-    // دالة مساعدة لتنظيف النصوص
-    function escapeHtml(str) {
-      if (!str) return '';
-      return str
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    }
-
-    function showAddCouponModal() {
-      document.getElementById('couponCode').value = '';
-      document.getElementById('couponPercent').value = '';
-      document.getElementById('couponDesc').value = '';
-      document.getElementById('couponExpiry').value = '';
-      document.getElementById('addCouponModal').classList.add('show');
-    }
-    
-    function closeAddCouponModal() {
-      document.getElementById('addCouponModal').classList.remove('show');
-    }
-    
+    function showAddCouponModal() { document.getElementById('couponCode').value = ''; document.getElementById('couponPercent').value = ''; document.getElementById('couponDesc').value = ''; document.getElementById('couponExpiry').value = ''; document.getElementById('addCouponModal').classList.add('show'); }
+    function closeAddCouponModal() { document.getElementById('addCouponModal').classList.remove('show'); }
     async function addCoupon() {
       const code = document.getElementById('couponCode').value.trim();
       const percent = document.getElementById('couponPercent').value;
       const desc = document.getElementById('couponDesc').value.trim();
       const expiry = document.getElementById('couponExpiry').value;
-      
-      if (!code || !percent || percent < 1 || percent > 100) {
-        showAlert('danger', 'كود ونسبة خصم صحيحة مطلوبة');
-        return;
-      }
-      
+      if (!code || !percent || percent < 1 || percent > 100) { showAlert('danger', 'كود ونسبة خصم صحيحة مطلوبة'); return; }
       try {
-        const res = await fetch("/api/admin/coupons", {
-          method: "POST",
-          headers: { 'Content-Type': 'application/json' },
-          credentials: "include",
-          body: JSON.stringify({
-            code,
-            discountPercent: Number(percent),
-            description: desc,
-            expiresAt: expiry || null
-          })
-        });
-        
+        const res = await fetch("/api/admin/coupons", { method: "POST", headers: { 'Content-Type': 'application/json' }, credentials: "include", body: JSON.stringify({ code, discountPercent: Number(percent), description: desc, expiresAt: expiry || null }) });
         const data = await res.json();
-        if (data.success) {
-          showAlert('success', 'تمت إضافة الكوبون');
-          closeAddCouponModal();
-          loadCoupons();
-        } else {
-          throw new Error(data.message);
-        }
-      } catch(e) {
-        showAlert('danger', e.message || 'فشل إضافة الكوبون');
-      }
+        if (data.success) { showAlert('success', 'تمت إضافة الكوبون'); closeAddCouponModal(); loadCoupons(); }
+        else throw new Error(data.message);
+      } catch(e) { showAlert('danger', e.message || 'فشل إضافة الكوبون'); }
     }
-    
-    async function deleteCoupon(couponId) {
-      if (!confirm("حذف الكوبون نهائياً؟")) return;
-      try {
-        const res = await fetch(`/api/admin/coupons/${couponId}`, {
-          method: "DELETE",
-          credentials: "include"
-        });
-        const data = await res.json();
-        if (data.success) {
-          showAlert('success', 'تم الحذف');
-          loadCoupons();
-        } else {
-          throw new Error(data.message);
-        }
-      } catch(e) {
-        showAlert('danger', 'فشل الحذف');
-      }
-    }
-    window.addEventListener('DOMContentLoaded',()=>{ loadOrders(); loadInquiries(); loadSuggestions(); loadCoupons(); });
+    async function deleteCoupon(couponId) { if (!confirm("حذف الكوبون نهائياً؟")) return; try { const res = await fetch(`/api/admin/coupons/${couponId}`, { method: "DELETE", credentials: "include" }); const data = await res.json(); if (data.success) { showAlert('success', 'تم الحذف'); loadCoupons(); } else throw new Error(data.message); } catch(e) { showAlert('danger', 'فشل الحذف'); } }
+
+    window.addEventListener('DOMContentLoaded', () => { loadOrders(); loadInquiries(); loadSuggestions(); loadCoupons(); loadMessages(); });
   </script>
 </body>
 </html>
