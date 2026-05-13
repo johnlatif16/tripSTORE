@@ -193,7 +193,7 @@ app.post("/api/order", upload.single("screenshot"), async (req, res) => {
 
     telegramNotify(`🧾 طلب جديد
     \nالاسم: ${name}
-    \nاايدي اللاعب: ${playerId}
+    \nايدي اللاعب: ${playerId}
     \nالبريد: ${email}
     \nالنوع: ${type}
     \nالإجمالي: ${totalAmount}
@@ -208,7 +208,7 @@ app.post("/api/order", upload.single("screenshot"), async (req, res) => {
         html: `<div dir="rtl">
         <h2>طلب جديد</h2>
         <p><b>الاسم:</b> ${name}</p>
-        <p><b>ايدي اللاعب:</b> ${playerId}</p>
+        <p><b>ايدي-اللاعب:</b> ${playerId}</p>
         <p><b>البريد:</b> ${email}</p>
         <p><b>النوع:</b> ${type}</p>
         <p><b>الإجمالي:</b> ${totalAmount}</p>${screenshotUrl ? `<p><a href="${screenshotUrl}">صورة التحويل</a></p>` : ""}</div>`
