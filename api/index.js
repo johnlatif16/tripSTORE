@@ -191,7 +191,13 @@ app.post("/api/order", upload.single("screenshot"), async (req, res) => {
 
     const ref = await firestore().collection("orders").add(orderData);
 
-    telegramNotify(`🧾 طلب جديد\nالاسم: ${name}\nالبريد: ${email}\nالنوع: ${type}\nالإجمالي: ${totalAmount}\nID: ${ref.id}`).catch(e => console.error(e));
+    telegramNotify(`🧾 طلب جديد
+    \nالاسم: ${name}
+    \nاايدي اللاعب: ${playerId}
+    \nالبريد: ${email}
+    \nالنوع: ${type}
+    \nالإجمالي: ${totalAmount}
+    \nID: ${ref.id}`).catch(e => console.error(e));
 
     const notifyTo = process.env.NOTIFICATION_EMAIL || process.env.SMTP_USER || process.env.EMAIL_USER;
     if (notifyTo) {
@@ -199,7 +205,13 @@ app.post("/api/order", upload.single("screenshot"), async (req, res) => {
         from: `"Trip Store" <${process.env.SMTP_USER || process.env.EMAIL_USER}>`,
         to: notifyTo,
         subject: "طلب جديد",
-        html: `<div dir="rtl"><h2>طلب جديد</h2><p><b>الاسم:</b> ${name}</p><p><b>البريد:</b> ${email}</p><p><b>النوع:</b> ${type}</p><p><b>الإجمالي:</b> ${totalAmount}</p>${screenshotUrl ? `<p><a href="${screenshotUrl}">صورة التحويل</a></p>` : ""}</div>`
+        html: `<div dir="rtl">
+        <h2>طلب جديد</h2>
+        <p><b>الاسم:</b> ${name}</p>
+        <p><b>ايدي اللاعب:</b> ${playerId}</p>
+        <p><b>البريد:</b> ${email}</p>
+        <p><b>النوع:</b> ${type}</p>
+        <p><b>الإجمالي:</b> ${totalAmount}</p>${screenshotUrl ? `<p><a href="${screenshotUrl}">صورة التحويل</a></p>` : ""}</div>`
       }).catch(e => console.error(e));
     }
 
