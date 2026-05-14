@@ -1055,12 +1055,26 @@
       }
     }
 
-    window.addEventListener('DOMContentLoaded', () => { 
-      loadOrders(); 
-      loadInquiries(); 
-      loadSuggestions(); 
-      loadCoupons(); 
-    });
+window.addEventListener('DOMContentLoaded', () => { 
+  loadOrders(); 
+  loadInquiries(); 
+  loadSuggestions(); 
+  loadCoupons();
+
+  // تحديث تلقائي كل 3 ثواني
+  setInterval(async () => {
+    try {
+      await Promise.all([
+        loadOrders(),
+        loadInquiries(),
+        loadSuggestions(),
+        loadCoupons()
+      ]);
+    } catch (e) {
+      console.error("Auto refresh error:", e);
+    }
+  }, 3000);
+});
   </script>
 </body>
 </html>
