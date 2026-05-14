@@ -915,7 +915,7 @@
     async function logout() { 
       try { 
         await fetch("/api/admin/logout", { method: "POST", credentials: "include" }); 
-        window.location.href = "login.html"; 
+        window.location.href = "login"; 
       } catch(e) { showAlert('danger', 'خطأ تسجيل الخروج'); } 
     }
 
