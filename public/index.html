@@ -20,1364 +20,1370 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
     :root {
-      --primary: #1a1a2e;
-      --secondary: #ff7a00;
-      --accent: #00b4d8;
-      --dark: #16213e;
-      --light: #f8f9fa;
-      --success: #25D366;
-      --danger: #ff4d4f;
-      --warning: #ffc107;
-      --gray: #6c757d;
+      --gold: #f5a623;
+      --gold-light: #ffd166;
+      --gold-dark: #c47d0e;
+      --bg: #080a10;
+      --bg2: #0d1018;
+      --bg3: #131720;
+      --card: #111520;
+      --border: rgba(245, 166, 35, 0.18);
+      --border-hover: rgba(245, 166, 35, 0.6);
+      --text: #e8e0d0;
+      --text-muted: #7a7060;
+      --red: #e63946;
+      --green: #2ec4b6;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
 
     body {
       font-family: 'Tajawal', sans-serif;
-      background-color: #0f0f1a;
-      background-image: radial-gradient(circle at 25% 25%, rgba(22, 33, 62, 0.8) 0%, rgba(10, 10, 20, 1) 100%);
-      color: #fff;
-      line-height: 1.6;
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      overflow-x: hidden;
     }
 
-    .container { max-width: 1200px; margin: 0 auto; padding: 20px; width: 100%; }
+    /* ── Noise Texture ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
 
+    /* ── Glowing Lines Background ── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        linear-gradient(180deg, rgba(245,166,35,0.04) 0%, transparent 30%),
+        repeating-linear-gradient(90deg, transparent, transparent 79px, rgba(245,166,35,0.03) 80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── HEADER ── */
     header {
-      background: linear-gradient(135deg, var(--primary), var(--dark));
-      padding: 20px 0;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      position: relative;
-      overflow: hidden;
-      text-align: center;
-      border-bottom: 1px solid rgba(255, 122, 0, 0.2);
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(8,10,16,0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
     }
 
-    header::before {
-      content: '';
-      position: absolute; top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: url('https://i.postimg.cc/j5xyytm6/TRIPx-ESPORTS.jpg') center/cover no-repeat;
-      opacity: 0.05; z-index: 1;
-    }
-
-    .header-content {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      z-index: 2;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .logo-container {
-      display: flex; align-items: center; gap: 15px;
-      transition: transform 0.3s;
-    }
-
-    .logo-container:hover { transform: scale(1.05); }
-
-    .logo-container img {
-      width: 60px; height: 60px;
-      border-radius: 15px;
-      object-fit: cover;
-      border: 2px solid var(--secondary);
-      box-shadow: 0 4px 15px rgba(255, 122, 0, 0.3);
-    }
-
-    .logo-title {
-      font-size: 24px;
-      font-weight: bold;
-      color: var(--light);
-      background: linear-gradient(to right, var(--secondary), #ff9e00);
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
-
-    .clan-link {
-      background-color: var(--accent);
-      color: #000;
-      padding: 12px 25px;
-      border-radius: 30px;
-      text-decoration: none;
-      font-weight: 700;
-      transition: all 0.3s;
-      display: inline-flex;
-      align-items: center;
-      box-shadow: 0 4px 8px rgba(0,180,216,0.3);
-      position: relative;
-      overflow: hidden;
-      z-index: 1;
-    }
-
-    .clan-link::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: linear-gradient(to right, var(--accent), #00d4ff);
-      z-index: -1;
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-
-    .clan-link:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 12px rgba(0,180,216,0.4);
-    }
-
-    .clan-link:hover::before { opacity: 1; }
-
-    .clan-link i { margin-right: 8px; transition: transform 0.3s; }
-    .clan-link:hover i { transform: translateX(-3px); }
-
-    .main-title { text-align: center; margin: 40px 0; position: relative; }
-    .main-title h1 {
-      font-size: 2.8rem;
-      color: var(--secondary);
-      margin-bottom: 15px;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-      font-weight: 900;
-    }
-    .main-title p {
-      color: rgba(255,255,255,0.8);
-      font-size: 1.2rem;
-      max-width: 700px;
-      margin: 0 auto;
-    }
-    .main-title::after {
-      content: '';
-      display: block;
-      width: 120px;
-      height: 4px;
-      background: linear-gradient(to right, var(--secondary), transparent);
-      margin: 25px auto;
-      border-radius: 2px;
-    }
-
-    .order-container { display: flex; flex-wrap: wrap; gap: 30px; margin-bottom: 50px; justify-content: center; }
-
-    .form-section {
-      flex: 1;
-      min-width: 300px;
-      background: rgba(26, 26, 46, 0.7);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-radius: 15px;
-      padding: 30px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-      border: 1px solid rgba(255,255,255,0.1);
-      transition: transform 0.3s, box-shadow 0.3s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .form-section:hover { transform: translateY(-5px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
-
-    .form-section::before {
-      content: '';
-      position: absolute;
-      top: 0; right: 0;
-      width: 100%; height: 5px;
-      background: linear-gradient(to right, var(--secondary), var(--accent));
-    }
-
-    .form-section h2 {
-      color: var(--secondary);
-      margin-bottom: 25px;
-      font-size: 1.6rem;
-      position: relative;
-      padding-bottom: 15px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .form-section h2::after {
-      content: '';
-      position: absolute;
-      bottom: 0; right: 0;
-      width: 60px;
-      height: 3px;
-      background: var(--secondary);
-      border-radius: 3px;
-    }
-
-    .form-group { margin-bottom: 25px; position: relative; }
-    .form-group label { display: block; margin-bottom: 10px; color: rgba(255,255,255,0.9); font-weight: 500; font-size: 1.05rem; }
-
-    .form-control {
-      width: 100%;
-      padding: 14px 18px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 10px;
-      color: #fff;
-      font-family: 'Tajawal', sans-serif;
-      transition: all 0.3s;
-      font-size: 1rem;
-    }
-
-    .form-control:focus {
-      outline: none;
-      border-color: var(--secondary);
-      box-shadow: 0 0 0 3px rgba(255, 122, 0, 0.2);
-      background: rgba(255,255,255,0.12);
-    }
-
-    .form-control::placeholder { color: rgba(255,255,255,0.4); font-size: 0.95rem; }
-
-    .options-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 18px;
-      margin-top: 25px;
-    }
-
-    .option-card {
-      background: rgba(255,255,255,0.05);
-      border-radius: 12px;
-      padding: 18px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.3s;
-      border: 2px solid transparent;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 180px;
-    }
-
-    .option-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: linear-gradient(135deg, rgba(255,122,0,0.1), transparent);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-
-    .option-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 12px 24px rgba(0,0,0,0.25);
-      border-color: rgba(255, 122, 0, 0.3);
-      background: rgba(255,255,255,0.08);
-    }
-
-    .option-card:hover::before { opacity: 1; }
-
-    .option-card.selected {
-      border-color: var(--secondary);
-      background: rgba(255, 122, 0, 0.1);
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(255, 122, 0, 0.25);
-    }
-
-    .option-card.selected::before {
-      content: '\f00c';
-      font-family: 'Font Awesome 6 Free';
-      font-weight: 900;
-      position: absolute;
-      top: 8px; left: 8px;
-      color: var(--secondary);
-      background: rgba(0,0,0,0.7);
-      width: 24px; height: 24px;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px;
-      z-index: 2;
-      opacity: 1;
-    }
-
-    .option-img { width: 70px; height: 70px; object-fit: contain; margin-bottom: 15px; transition: transform 0.3s; }
-    .option-card:hover .option-img { transform: scale(1.1); }
-    .option-title { font-weight: 700; margin-bottom: 8px; font-size: 1rem; color: #fff; }
-    .option-price { color: var(--secondary); font-weight: 800; font-size: 1.2rem; margin-top: 5px; }
-
-    .btn {
-      display: inline-block;
-      background: var(--secondary);
-      color: #000;
-      padding: 15px 30px;
-      border-radius: 30px;
-      text-decoration: none;
-      font-weight: 700;
-      border: none;
-      cursor: pointer;
-      transition: all 0.3s;
-      width: 100%;
-      text-align: center;
-      font-size: 1.1rem;
-      margin-top: 15px;
-      position: relative;
-      overflow: hidden;
-      z-index: 1;
-    }
-
-    .btn::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: linear-gradient(to right, var(--secondary), #ff9e00);
-      z-index: -1;
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-
-    .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255, 122, 0, 0.3); }
-    .btn:hover::before { opacity: 1; }
-
-    .spinner {
-      display: inline-block;
-      width: 20px; height: 20px;
-      border: 3px solid rgba(255,255,255,0.3);
-      border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 1s ease-in-out infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    footer {
-      background: var(--primary);
-      padding: 40px 0 30px;
-      margin-top: 60px;
-      text-align: center;
-      border-top: 1px solid rgba(255,255,255,0.1);
-    }
-    .footer-content { display: flex; flex-direction: column; align-items: center; }
-    .social-links { display: flex; flex-wrap: wrap; gap: 20px; margin: 25px 0; justify-content: center; }
-    .social-link { color: #fff; font-size: 1.1rem; text-decoration: none; display: flex; align-items: center; gap: 8px; transition: all 0.3s; }
-    .social-link i { font-size: 1.4rem; transition: transform 0.3s; }
-    .social-link:hover { color: var(--secondary); }
-    .social-link:hover i { transform: scale(1.2); }
-    .copyright { color: rgba(255,255,255,0.6); font-size: 0.95rem; margin-top: 10px; }
-
-    .special-btn {
-      height: 55px;
-      width: 100%;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      transition: all 0.5s ease-in-out;
-      background: transparent;
-      margin-top: 20px;
-      font-family: 'Tajawal', sans-serif;
-      font-weight: 700;
-      font-size: 1.1rem;
-    }
-
-    .special-btn:hover { box-shadow: 0 5px 20px rgba(255, 122, 0, 0.3); }
-
-    .special-btn.type1::after {
-      content: "تسلم يكبير";
-      height: 100%;
-      width: 100%;
-      background-color: var(--accent);
-      color: #000;
-      position: absolute;
-      top: 0%;
-      left: 0%;
-      transform: translateY(55px);
-      font-size: 1.2rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.5s ease-in-out;
-      border-radius: 12px;
-    }
-
-    .special-btn.type1::before {
-      content: "ارسال الطلب";
-      height: 100%;
-      width: 100%;
-      background-color: var(--secondary);
-      color: #000;
-      position: absolute;
-      top: 0%;
-      left: 0%;
-      transform: translateY(0px) scale(1);
-      font-size: 1.2rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.5s ease-in-out;
-      border-radius: 12px;
-    }
-
-    .special-btn.type1:hover::after { transform: translateY(0) scale(1); }
-    .special-btn.type1:hover::before { transform: translateY(-55px) scale(0) rotate(120deg); }
-
-    .contact-section {
-      background: rgba(26, 26, 46, 0.7);
-      border-radius: 15px;
-      padding: 30px;
-      margin-top: 50px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .contact-toggle-btn {
-      background: linear-gradient(135deg, var(--secondary), #ff5e00);
-      color: #000;
-      padding: 16px 30px;
-      border-radius: 50px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 15px;
-      cursor: pointer;
-      transition: all 0.3s;
-      margin: 0 auto;
-      max-width: 320px;
-      box-shadow: 0 4px 15px rgba(255, 122, 0, 0.3);
-      border: none;
-      font-size: 1.1rem;
-      position: relative;
-      overflow: hidden;
-      z-index: 1;
-    }
-
-    .contact-options-modal {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      opacity: 0;
-      transition: all 0.3s;
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
-    }
-    .contact-options-modal.active { display: flex; opacity: 1; }
-
-    .modal-content {
-      background: var(--primary);
-      border-radius: 15px;
-      padding: 30px;
-      width: 90%;
-      max-width: 500px;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      transform: translateY(20px);
-      transition: transform 0.3s;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-    .contact-options-modal.active .modal-content { transform: translateY(0); }
-
-    .contact-option {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 25px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 15px;
-      cursor: pointer;
-      transition: all 0.3s;
-      border: 2px solid transparent;
-      position: relative;
-      overflow: hidden;
-    }
-    #inquiryOption { border-color: var(--accent); }
-    #suggestionOption { border-color: var(--success); }
-
-    .form-container {
-      position: fixed;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      background: var(--primary);
-      border-radius: 15px;
-      padding: 30px;
-      width: 90%;
-      max-width: 600px;
-      z-index: 1001;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s;
-      border: 1px solid rgba(255,255,255,0.1);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
-    .form-container.active { opacity: 1; visibility: visible; }
-    .hidden { display: none; }
-
-    .form-header {
+    .header-inner {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 25px;
-      color: #fff;
-    }
-    .form-header h2 {
-      margin: 0;
-      font-size: 1.8rem;
-      color: var(--secondary);
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      padding: 14px 20px;
+      max-width: 1100px;
+      margin: 0 auto;
     }
 
-    .close-form-btn {
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo img {
+      width: 42px; height: 42px;
+      border-radius: 10px;
+      border: 1.5px solid var(--gold);
+      object-fit: cover;
+    }
+
+    .logo-text {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: var(--gold);
+      text-shadow: 0 0 20px rgba(245,166,35,0.5);
+    }
+
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      padding: 8px 18px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
       background: transparent;
-      border: none;
-      color: #aaa;
-      font-size: 1.5rem;
+      color: var(--text-muted);
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.9rem;
       cursor: pointer;
-      transition: all 0.3s;
-      width: 40px;
-      height: 40px;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .nav-btn:hover, .nav-btn.active {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(245,166,35,0.07);
+    }
+
+    .clan-link-btn {
+      padding: 8px 18px;
+      border-radius: 8px;
+      background: var(--gold);
+      color: #000;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .clan-link-btn:hover {
+      background: var(--gold-light);
+      transform: translateY(-1px);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 70px 20px 50px;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(245,166,35,0.1);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      padding: 6px 18px;
+      font-size: 0.8rem;
+      color: var(--gold);
+      letter-spacing: 1px;
+      margin-bottom: 24px;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 .gold { color: var(--gold); }
+
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 500px;
+      margin: 0 auto 36px;
+      line-height: 1.7;
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: var(--gold);
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 0 20px;
+      opacity: 0.3;
+    }
+
+    /* ── SECTION TITLES ── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .section-header h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .section-header::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── ORDER LAYOUT ── */
+    .order-layout {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 24px;
+      padding: 40px 20px 60px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 860px) {
+      .order-layout { grid-template-columns: 1fr; }
+    }
+
+    /* ── PRODUCTS PANEL ── */
+    .products-panel {
+      order: 1;
+    }
+
+    .tab-switcher {
+      display: flex;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 24px;
+      gap: 4px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--gold);
+      color: #000;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .products-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .product-card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 0%, rgba(245,166,35,0.08), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .product-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-3px);
+    }
+
+    .product-card:hover::before { opacity: 1; }
+
+    .product-card.selected {
+      border-color: var(--gold);
+      background: rgba(245,166,35,0.06);
+    }
+
+    .product-card.selected::before { opacity: 1; }
+
+    .selected-check {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--gold);
+      color: #000;
+      font-size: 0.65rem;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .product-card.selected .selected-check { display: flex; }
+
+    .product-img {
+      width: 60px; height: 60px;
+      object-fit: contain;
+      margin: 0 auto 10px;
+      filter: drop-shadow(0 4px 12px rgba(245,166,35,0.3));
+      transition: transform 0.3s;
+    }
+
+    .product-card:hover .product-img { transform: scale(1.08); }
+
+    .product-name {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .product-price {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    /* ── ORDER FORM PANEL ── */
+    .form-panel {
+      order: 2;
+      position: sticky;
+      top: 80px;
+      height: fit-content;
+    }
+
+    .form-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px;
+    }
+
+    .form-card h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.9rem;
+      color: var(--gold);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 7px;
+      letter-spacing: 0.5px;
+    }
+
+    .field input, .field textarea {
+      width: 100%;
+      padding: 11px 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+
+    .field input:focus, .field textarea:focus {
+      outline: none;
+      border-color: var(--gold);
+      background: rgba(245,166,35,0.04);
+    }
+
+    .field input::placeholder { color: rgba(255,255,255,0.2); }
+
+    .coupon-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .coupon-row input { flex: 1; }
+
+    .coupon-apply-btn {
+      padding: 11px 14px;
+      background: rgba(245,166,35,0.12);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--gold);
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .coupon-apply-btn:hover {
+      background: rgba(245,166,35,0.22);
+      border-color: var(--gold);
+    }
+
+    .coupon-msg {
+      font-size: 0.78rem;
+      margin-top: 5px;
+      min-height: 16px;
+    }
+
+    .coupon-msg.success { color: var(--green); }
+    .coupon-msg.error { color: var(--red); }
+
+    .total-display {
+      background: rgba(245,166,35,0.06);
+      border: 1px solid rgba(245,166,35,0.2);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 18px 0;
+    }
+
+    .total-label { font-size: 0.85rem; color: var(--text-muted); }
+
+    .total-amount {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
+      color: #000;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(245,166,35,0.35);
+    }
+
+    .submit-btn:active { transform: translateY(0); }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .selected-info {
+      margin-bottom: 16px;
+      padding: 12px 14px;
+      background: rgba(46,196,182,0.07);
+      border: 1px solid rgba(46,196,182,0.2);
+      border-radius: 10px;
+      font-size: 0.85rem;
+      color: var(--green);
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .selected-info.show { display: flex; }
+
+    /* ── CONTACT SECTION (Hidden/Reveal) ── */
+    .contact-details {
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--card);
+      overflow: hidden;
+    }
+    
+    .contact-details summary {
+      padding: 18px 24px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--gold);
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: background 0.2s;
+      background: rgba(245,166,35,0.03);
+    }
+    
+    .contact-details summary::-webkit-details-marker {
+      display: none;
+    }
+    
+    .contact-details summary::before {
+      content: '\f054';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      font-size: 0.9rem;
+      transition: transform 0.3s ease;
+      display: inline-block;
+    }
+    
+    .contact-details[open] summary::before {
+      transform: rotate(90deg);
+    }
+    
+    .contact-details summary:hover {
+      background: rgba(245,166,35,0.08);
+    }
+    
+    .contact-inner {
+      padding: 24px;
+      border-top: 1px solid var(--border);
+      background: rgba(0,0,0,0.2);
+    }
+    
+    .contact-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .contact-tab-btn {
+      flex: 1;
+      padding: 13px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text-muted);
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
       display: flex;
       align-items: center;
       justify-content: center;
+      gap: 8px;
+    }
+
+    .contact-tab-btn.active, .contact-tab-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(245,166,35,0.06);
+    }
+
+    .contact-form-wrap { display: none; }
+    .contact-form-wrap.active { display: block; }
+
+    .contact-form-card {
+      background: transparent;
+      padding: 0;
+    }
+
+    .contact-submit-btn {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 10px;
+      background: var(--gold);
+      color: #000;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: all 0.2s;
+    }
+
+    .contact-submit-btn:hover {
+      background: var(--gold-light);
+      transform: translateY(-1px);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 20px 30px;
+      text-align: center;
+    }
+
+    .footer-logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.2rem;
+      color: var(--gold);
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--gold); }
+
+    .footer-copy {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      opacity: 0.6;
+    }
+
+    /* ── TOAST ALERTS ── */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 18px;
+      min-width: 280px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: toastIn 0.35s ease;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    .toast.success { border-color: rgba(46,196,182,0.5); }
+    .toast.error { border-color: rgba(230,57,70,0.5); }
+
+    .toast-icon { font-size: 1.2rem; }
+    .toast.success .toast-icon { color: var(--green); }
+    .toast.error .toast-icon { color: var(--red); }
+
+    .toast-text { flex: 1; }
+    .toast-title { font-weight: 700; font-size: 0.9rem; }
+    .toast-msg { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+
+    .toast-close {
+      background: none; border: none; color: var(--text-muted);
+      cursor: pointer; font-size: 1rem; padding: 2px;
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ── SPINNER ── */
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(0,0,0,0.3);
+      border-top-color: #000;
       border-radius: 50%;
-    }
-    .close-form-btn:hover {
-      color: #fff;
-      transform: rotate(90deg);
-      background: rgba(255,255,255,0.1);
+      animation: spin 0.8s linear infinite;
+      vertical-align: middle;
     }
 
-    .input-with-icon { position: relative; margin-bottom: 20px; }
-    .input-with-icon i { position: absolute; top: 15px; right: 15px; color: var(--secondary); font-size: 1.1rem; }
-    .input-with-icon textarea + i { top: 20px; right: 15px; }
-    .input-with-icon .form-control { padding-right: 45px; }
-    .btn-inquiry { background: var(--accent); color: #000; }
-    .btn-suggestion { background: var(--success); color: #fff; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    @media (max-width: 576px) {
-      .options-grid { grid-template-columns: repeat(2, 1fr); }
-      .social-links { flex-direction: column; gap: 15px; }
+    /* ── EXTRAS ── */
+    .policy-block {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 12px;
     }
 
-    body { margin: 0; direction: rtl; }
-    .sidebar { height: 100vh; width: 250px; position: fixed; top: 0; right: 0; background-color: #111; padding-top: 20px; transition: transform 0.3s ease; }
-    .sidebar a { padding: 15px 25px; text-decoration: none; font-size: 18px; color: #ddd; display: block; transition: background 0.2s; }
-    .sidebar a:hover { background-color: #575757; color: white; }
+    .policy-summary {
+      padding: 16px 20px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      list-style: none;
+      transition: color 0.2s;
+    }
+
+    .policy-summary:hover { color: var(--gold); }
+
+    .policy-body {
+      padding: 0 20px 20px;
+      font-size: 0.87rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      border-top: 1px solid var(--border);
+    }
+
+    .policy-body h3 { color: var(--text); margin: 14px 0 6px; font-size: 0.9rem; }
+    .policy-body ul { padding-right: 20px; }
+    .policy-body li { margin-bottom: 4px; }
+
+    .policies-section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+    }
+
+    /* Mobile fixes */
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 1.8rem; }
+      .hero-stats { gap: 20px; }
+      .header-inner { padding: 10px 16px; }
+      .logo-text { font-size: 0.85rem; }
+      .form-panel { position: relative; top: 0; }
+    }
   </style>
 </head>
 <body>
+
+  <!-- HEADER -->
   <header>
-    <div class="container header-content">
-      <div class="logo-container">
-        <img src="https://i.postimg.cc/j5xyytm6/TRIPx-ESPORTS.jpg" alt="TRIPxESPORTS Logo" class="floating">
-        <span class="logo-title">TRIPxESPORTS</span>
-        <span class="logo-title"><i class="fas fa-crown"></i></span>
-      </div>
-      <a href="https://clan-tripxesports.up.railway.app" class="clan-link">
-        <i class="fas fa-arrow-left"></i>
-        موقع الكلان
+    <div class="header-inner">
+      <a href="#" class="logo">
+        <img src="https://i.postimg.cc/j5xyytm6/TRIPx-ESPORTS.jpg" alt="TRIPxESPORTS">
+        <span class="logo-text">TRIPxESPORTS</span>
       </a>
+      <div class="header-nav">
+        <a href="https://clan-tripxesports.up.railway.app" class="clan-link-btn">
+          <i class="fas fa-arrow-left"></i> موقع الكلان
+        </a>
+      </div>
     </div>
   </header>
-  <main class="container">
-    <div class="main-title">
-      <h1>متجر TRIPxESPORTS</h1>
-      <p>أحصل على شدات ببجي بأفضل الأسعار وبأسرع وقت وأرخص سعر</p>
+
+  <!-- HERO -->
+  <section class="hero container">
+    <div class="hero-badge">
+      <i class="fas fa-bolt"></i>
+      شحن فوري وآمن
+    </div>
+    <h1>متجر <span class="gold">TRIPxESPORTS</span></h1>
+    <p>أحصل على شدات ببجي بأفضل الأسعار وأسرع وقت ممكن</p>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">+500</div>
+        <div class="stat-label">عميل راضي</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">دقائق</div>
+        <div class="stat-label">وقت التنفيذ</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">ضمان الاستلام</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- MAIN ORDER SECTION -->
+  <div class="order-layout">
+
+    <!-- PRODUCTS PANEL -->
+    <div class="products-panel">
+      <div class="section-header">
+        <h2>اختر المنتج</h2>
+      </div>
+
+      <!-- Tab Switcher -->
+      <div class="tab-switcher">
+        <button class="tab-btn active" onclick="switchTab('uc', this)">
+          <i class="fas fa-coins"></i> شدات UC
+        </button>
+        <button class="tab-btn" onclick="switchTab('bundles', this)">
+          <i class="fas fa-gift"></i> حزم ازدهار
+        </button>
+      </div>
+
+      <!-- UC Tab -->
+      <div class="tab-content active" id="tab-uc">
+        <div class="products-grid" id="ucOptions">
+          <div class="product-card" data-value="60" data-price="50" onclick="selectProduct(this, 'uc')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/zBbk300s/level1-cb11b2cd.png" class="product-img" alt="60 UC">
+            <div class="product-name">60 UC</div>
+            <div class="product-price">50 ج.م</div>
+          </div>
+          <div class="product-card" data-value="325" data-price="235" onclick="selectProduct(this, 'uc')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/RVzTV1KZ/level2-f2b27a84.png" class="product-img" alt="325 UC">
+            <div class="product-name">325 UC</div>
+            <div class="product-price">235 ج.م</div>
+          </div>
+          <div class="product-card" data-value="660" data-price="460" onclick="selectProduct(this, 'uc')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/hGhL32WX/level3-6e2a3de7.png" class="product-img" alt="660 UC">
+            <div class="product-name">660 UC</div>
+            <div class="product-price">460 ج.م</div>
+          </div>
+          <div class="product-card" data-value="1800" data-price="1200" onclick="selectProduct(this, 'uc')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/nzDvnMLM/level4-5662a174.png" class="product-img" alt="1800 UC">
+            <div class="product-name">1800 UC</div>
+            <div class="product-price">1200 ج.م</div>
+          </div>
+          <div class="product-card" data-value="3850" data-price="2400" onclick="selectProduct(this, 'uc')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/Wp0MKDKM/level5-5a6a7af6.png" class="product-img" alt="3850 UC">
+            <div class="product-name">3850 UC</div>
+            <div class="product-price">2400 ج.م</div>
+          </div>
+          <div class="product-card" data-value="8100" data-price="4600" onclick="selectProduct(this, 'uc')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/90NV1XGm/level6-03ebac0d.png" class="product-img" alt="8100 UC">
+            <div class="product-name">8100 UC</div>
+            <div class="product-price">4600 ج.م</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bundles Tab -->
+      <div class="tab-content" id="tab-bundles">
+        <div class="products-grid" id="bundleOptions">
+          <div class="product-card" data-value="حزمة الازدهار الاولى" data-price="50" onclick="selectProduct(this, 'bundle')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/wTcn6jtD/First-Purchase-Pack-bacd265b.jpg" class="product-img" alt="حزمة 1">
+            <div class="product-name">ازدهار أولى</div>
+            <div class="product-price">50 ج.م</div>
+          </div>
+          <div class="product-card" data-value="حزمة الازدهار الثانية" data-price="150" onclick="selectProduct(this, 'bundle')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/762QjH8Y/Upgradable-Pack-8b6dc3a7.jpg" class="product-img" alt="حزمة 2">
+            <div class="product-name">ازدهار ثانية</div>
+            <div class="product-price">150 ج.م</div>
+          </div>
+          <div class="product-card" data-value="حزمة الازدهار الثالثة" data-price="250" onclick="selectProduct(this, 'bundle')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/gjytkg0m/Mythic-Pack-25332821.jpg" class="product-img" alt="حزمة 3">
+            <div class="product-name">ازدهار ثالثة</div>
+            <div class="product-price">250 ج.م</div>
+          </div>
+          <div class="product-card" data-value="Prime 3 Month" data-price="150" onclick="selectProduct(this, 'bundle')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/gcKKjXDY/3-ar-c9a3ebd6.jpg" class="product-img" alt="Prime 3">
+            <div class="product-name">برايم 3 أشهر</div>
+            <div class="product-price">150 ج.م</div>
+          </div>
+          <div class="product-card" data-value="Prime 6 Month" data-price="300" onclick="selectProduct(this, 'bundle')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/qMMx3Jb5/6-ar-02ac5793.jpg" class="product-img" alt="Prime 6">
+            <div class="product-name">برايم 6 أشهر</div>
+            <div class="product-price">300 ج.م</div>
+          </div>
+          <div class="product-card" data-value="Prime 12 Month" data-price="600" onclick="selectProduct(this, 'bundle')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/xTxyGwBn/12-ar-471c9625.jpg" class="product-img" alt="Prime 12">
+            <div class="product-name">برايم 12 شهر</div>
+            <div class="product-price">600 ج.م</div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="order-container">
-      <section class="form-section">
-        <h2><i class="fas fa-shopping-cart"></i> معلومات الطلب</h2>
+    <!-- FORM PANEL -->
+    <div class="form-panel">
+      <div class="form-card">
+        <h3><i class="fas fa-shopping-bag"></i> &nbsp;تفاصيل الطلب</h3>
+
+        <div class="selected-info" id="selectedInfo">
+          <i class="fas fa-check-circle"></i>
+          <span id="selectedInfoText">تم اختيار المنتج</span>
+        </div>
+
         <form id="orderForm">
-          <div class="form-group">
-            <label for="name">الاسم داخل اللعبة</label>
-            <input type="text" id="name" class="form-control" placeholder="اكتب اسمك في اللعبة" required>
+          <div class="field">
+            <label>الاسم داخل اللعبة</label>
+            <input type="text" id="name" placeholder="اسمك في اللعبة" required>
+          </div>
+          <div class="field">
+            <label>ID اللاعب</label>
+            <input type="text" id="playerId" placeholder="Player ID" required>
+          </div>
+          <div class="field">
+            <label>البريد الإلكتروني</label>
+            <input type="email" id="email" placeholder="للتواصل عند الحاجة" required>
+          </div>
+          <div class="field">
+            <label>كود الخصم (اختياري)</label>
+            <div class="coupon-row">
+              <input type="text" id="couponCode" placeholder="أدخل الكود">
+              <button type="button" class="coupon-apply-btn" id="applyCouponBtn" onclick="applyCoupon()">
+                تطبيق
+              </button>
+            </div>
+            <div class="coupon-msg" id="couponMessage"></div>
           </div>
 
-          <div class="form-group">
-            <label for="playerId">ID اللاعب</label>
-            <input type="text" id="playerId" class="form-control" placeholder="اكتب ID اللاعب" required>
+          <div class="total-display">
+            <span class="total-label">الإجمالي</span>
+            <span class="total-amount" id="totalDisplay">0 ج.م</span>
           </div>
 
-          <div class="form-group">
-            <label for="email">البريد الإلكتروني</label>
-            <input type="email" id="email" class="form-control" placeholder="لتواصل في حالة وجود مشكلة" required>
-          </div>
-          
-<div class="form-group">
-  <label for="couponCode">كود الخصم</label>
-  <div style="display: flex; gap: 10px;">
-    <input type="text" id="couponCode" class="form-control" placeholder="أدخل كود الخصم" style="flex: 1;">
-    <button type="button" class="btn" id="applyCouponBtn" style="width: auto; margin-top: 0; padding: 0 20px; background: var(--accent);">
-      <i class="fas fa-check"></i> تطبيق
-    </button>
+          <button type="submit" class="submit-btn" id="submitBtn">
+            إرسال الطلب &nbsp;<i class="fas fa-arrow-left"></i>
+          </button>
+        </form>
+      </div>
+    </div>
   </div>
-  <small id="couponMessage" style="display: block; margin-top: 5px; font-size: 0.8rem;"></small>
-</div>
-          
-          <div class="form-group">
-            <label for="totalAmount">المبلغ الإجمالي</label>
-            <input type="text" id="totalAmount" class="form-control" placeholder="سيتم حسابه تلقائياً" readonly>
-          </div>
 
-          <button class="special-btn type1" type="submit"></button>
+  <div class="divider"></div>
 
-          <details style="
-  background-color: rgba(255, 255, 255, 0.05);
-  color: #f0f0f0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  padding: 15px 20px;
-  margin: 40px auto;
-  max-width: 800px;
-  border-radius: 12px;
-  border: 1px solid #333;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-">
-  <summary style="
-    cursor: pointer;
-    font-size: 18px;
-    font-weight: bold;
-    color: #ffd700;
-  ">
-    اضغط هنا لعرض معلومات عن المتجر (SEO)
-  </summary>
+  <!-- CONTACT SECTION (Hidden by default, expands on click) -->
+  <div class="contact-section container">
+    <div class="section-header">
+      <h2>تواصل معنا</h2>
+    </div>
+    
+    <details class="contact-details">
+      <summary><i class="fas fa-headset"></i> مركز الدعم والمساعدة</summary>
+      <div class="contact-inner">
+        <div class="contact-tabs">
+          <button class="contact-tab-btn active" onclick="switchContactTab('inquiry', this)">
+            <i class="fas fa-question-circle"></i> استفسار
+          </button>
+          <button class="contact-tab-btn" onclick="switchContactTab('suggestion', this)">
+            <i class="fas fa-lightbulb"></i> اقتراح
+          </button>
+        </div>
 
-<section class="seo-section" style="padding: 20px; color: #fff; text-align: right;">
-  <h1>شحن شدات PUBG UC بأسعار مميزة - متجر TRIPxESPORTS
-</h1>
-  <p>
-    إذا كنت تبحث عن <strong>أفضل متجر لشحن شدات ببجي</strong> بسرعة وأمان، فأنت في المكان الصحيح. في <strong>TRIPxESPORTS
-</strong> نوفر لك تجربة فريدة في <strong>شحن UC ببجي</strong> عبر وسائل دفع محدودة حتى الان و هي فودافون كاش
-  </p>
-  <p>
-    نحن نضمن تنفيذ الطلبات بشكل فوري وآمن، مع دعم فني متوفر على مدار الساعة. كل عملية شراء تتم بموثوقية تامة، والبيانات الخاصة بك في أمان كامل.
-  </p>
-  <p>
-    لا حاجة لتسجيل الدخول بحساب ببجي الخاص بك. فقط قدّم ID اللاعب، وسيتم شحن UC إلى حسابك مباشرة. اختبر الخدمة الآن وتمتع بأفضل الأسعار والعروض المستمرة على الشدات.
-  </p>
-  <h2>لماذا تختار TRIPxESPORTS</h2>
-  <ul>
-    <li>سرعة تنفيذ عالية خلال دقائق</li>
-    <li>دفع آمن وسهل</li>
-    <li>دعم مباشر عبر واتساب أو تليجرام</li>
-    <li>ضمان استلام الشدات 100%</li>
-  </ul>
-  <p>
-    جرب الخدمة الآن ولا تفوّت أي عرض! نحن في خدمتك دائمًا لتقديم أفضل تجربة شحن لـ <strong>UC PUBG</strong>.
-  </p>
-</section>
-
-</details>
-          
-<details style="
-  background-color: rgba(255, 255, 255, 0.05);
-  color: #f0f0f0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  padding: 15px 20px;
-  margin: 40px auto;
-  max-width: 800px;
-  border-radius: 12px;
-  border: 1px solid #333;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-">
-  <summary style="
-    cursor: pointer;
-    font-size: 18px;
-    font-weight: bold;
-    color: #008000;
-  ">
-    سياسة الخصوصية - TRIPxESPORTS
-  </summary>
-
-<section style="padding: 20px; color: #fff; text-align: right;">
-  <p><strong>آخر تحديث:</strong> 12 أغسطس 2025</p>
-  <p>في <strong>TRIPxESPORTS</strong> نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية. هذه السياسة توضح كيف نقوم بجمع واستخدام وحماية بياناتك عند استخدام موقعنا وخدمات الشحن.</p>
-
-  <h3>1. البيانات التي نجمعها:</h3>
-  <ul>
-    <li>اسم الاكونت.</li>
-    <li>رقم الهاتف أو البريد الإلكتروني للتواصل.</li>
-    <li>معرّف اللاعب (Player ID) أو أي بيانات لعبة مطلوبة للشحن.</li>
-    <li>بيانات الدفع اللازمة لإتمام عملية الشراء.</li>
-  </ul>
-
-  <h3>2. كيفية استخدام البيانات:</h3>
-  <ul>
-    <li>تنفيذ طلبات الشحن.</li>
-    <li>التواصل معك بخصوص حالة الطلب.</li>
-    <li>تحسين خدماتنا وتجربة العملاء.</li>
-  </ul>
-
-  <h3>3. حماية البيانات:</h3>
-  <p>نحافظ على بياناتك بسرية تامة ولا نشاركها مع أي طرف ثاني إلا في حدود تنفيذ عملية الشحن أو الدفع، مع اتخاذ إجراءات أمان مناسبة.</p>
-
-  <h3>4. حقوقك:</h3>
-  <p>يمكنك طلب تعديل أو حذف بياناتك في أي وقت عبر التواصل معنا على:</p>
-  <p>الموقع في قسم الاستفسار
-    <br>
-    <br>
-  <a href="https://wa.me/201274445091" class="social-link"><i class="fab fa-whatsapp"></i>الواتساب</a></p>
-</section>
-</details>
-
-<details style="
-  background-color: rgba(255, 255, 255, 0.05);
-  color: #f0f0f0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  padding: 15px 20px;
-  margin: 40px auto;
-  max-width: 800px;
-  border-radius: 12px;
-  border: 1px solid #333;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-">
-  <summary style="
-    cursor: pointer;
-    font-size: 18px;
-    font-weight: bold;
-    color: #8D918D;
-  ">
-    سياسة الاسترجاع - TRIPxESPORTS
-  </summary>
-
-<section style="padding: 20px; color: #fff; text-align: right;">
-  <p><strong>آخر تحديث:</strong> 12 أغسطس 2025</p>
-  <p>نحن نقدم خدمات شحن فوري للألعاب. بمجرد إتمام عملية الشحن بنجاح لا يمكن استرجاع المبلغ المدفوع، إلا في الحالات الموضحة أدناه:</p>
-
-  <h3>1. الحالات المؤهلة للاسترجاع:</h3>
-  <ul>
-    <li>فشل عملية الشحن خلال 48 ساعة من الدفع.</li>
-    <li>حدوث خطأ فني من طرفنا.</li>
-  </ul>
-
-  <h3>2. الحالات غير المؤهلة للاسترجاع:</h3>
-  <ul>
-    <li>إدخال Player ID خاطئ من قبل العميل.</li>
-    <li>مشكلات داخل اللعبة أو حظر الحساب.</li>
-  </ul>
-</details>
-
-
-        </form>
-      </section>
-
-      <section class="form-section">
-        <h2><i class="fas fa-coins"></i> اختر عدد الشدات</h2>
-        <div class="options-grid" id="ucOptions">
-          <div class="option-card" data-value="60" data-price="50">
-            <img src="https://i.postimg.cc/zBbk300s/level1-cb11b2cd.png" class="option-img" alt="60 UC" loading="lazy">
-            <div class="option-title">60 UC</div>
-            <div class="option-price">50 ج.م</div>
-          </div>
-
-          <div class="option-card" data-value="325" data-price="235">
-            <img src="https://i.postimg.cc/RVzTV1KZ/level2-f2b27a84.png" class="option-img" alt="325 UC" loading="lazy">
-            <div class="option-title">325 UC</div>
-            <div class="option-price">235 ج.م</div>
-          </div>
-
-          <div class="option-card" data-value="660" data-price="460">
-            <img src="https://i.postimg.cc/hGhL32WX/level3-6e2a3de7.png" class="option-img" alt="660 UC" loading="lazy">
-            <div class="option-title">660 UC</div>
-            <div class="option-price">460 ج.م</div>
-          </div>
-
-          <div class="option-card" data-value="1800" data-price="1200">
-            <img src="https://i.postimg.cc/nzDvnMLM/level4-5662a174.png" class="option-img" alt="1800 UC" loading="lazy">
-            <div class="option-title">1800 UC</div>
-            <div class="option-price">1200 ج.م</div>
-          </div>
-
-          <div class="option-card" data-value="3850" data-price="2400">
-            <img src="https://i.postimg.cc/Wp0MKDKM/level5-5a6a7af6.png" class="option-img" alt="3850 UC" loading="lazy">
-            <div class="option-title">3850 UC</div>
-            <div class="option-price">2400 ج.م</div>
-          </div>
-
-          <div class="option-card" data-value="8100" data-price="4600">
-            <img src="https://i.postimg.cc/90NV1XGm/level6-03ebac0d.png" class="option-img" alt="8100 UC" loading="lazy">
-            <div class="option-title">8100 UC</div>
-            <div class="option-price">4600 ج.م</div>
+        <!-- Inquiry -->
+        <div class="contact-form-wrap active" id="contact-inquiry">
+          <div class="contact-form-card">
+            <form id="contactForm">
+              <div class="field">
+                <label>الاسم</label>
+                <input type="text" id="contactName" placeholder="اسمك" required>
+              </div>
+              <div class="field">
+                <label>البريد الإلكتروني</label>
+                <input type="email" id="contactEmail" placeholder="بريدك الإلكتروني" required>
+              </div>
+              <div class="field">
+                <label>الرسالة</label>
+                <textarea id="contactMessage" rows="4" placeholder="اكتب استفسارك..." required style="resize:none;"></textarea>
+              </div>
+              <button type="submit" class="contact-submit-btn">
+                <i class="fas fa-paper-plane"></i> إرسال
+              </button>
+            </form>
           </div>
         </div>
 
-        <h2 style="margin-top: 30px;"><i class="fas fa-gift"></i> حزم ازدهار</h2>
-        <div class="options-grid" id="bundleOptions">
-          <div class="option-card" data-value="حزمة الازدهار الاولى" data-price="50">
-            <img src="https://i.postimg.cc/wTcn6jtD/First-Purchase-Pack-bacd265b.jpg" class="option-img" loading="lazy">
-            <div class="option-title">حزمة الازدهار الاولى</div>
-            <div class="option-price">50 ج.م</div>
-          </div>
-
-          <div class="option-card" data-value="حزمة الازدهار الثانية" data-price="150">
-            <img src="https://i.postimg.cc/762QjH8Y/Upgradable-Pack-8b6dc3a7.jpg" class="option-img" loading="lazy">
-            <div class="option-title">حزمة الازدهار الثانية</div>
-            <div class="option-price">150 ج.م</div>
-          </div>
-
-          <div class="option-card" data-value="حزمة الازدهار الثالثة" data-price="250">
-            <img src="https://i.postimg.cc/gjytkg0m/Mythic-Pack-25332821.jpg" class="option-img" loading="lazy">
-            <div class="option-title">حزمة الازدهار الثالثة</div>
-            <div class="option-price">250 ج.م</div>
-          </div>
-
-          <div class="option-card" data-value="Prime 3 Month" data-price="150">
-            <img src="https://i.postimg.cc/gcKKjXDY/3-ar-c9a3ebd6.jpg" class="option-img" loading="lazy">
-            <div class="option-title">برايم 3 أشهر</div>
-            <div class="option-price">150 ج.م</div>
-          </div>
-
-          <div class="option-card" data-value="Prime 6 Month" data-price="300">
-            <img src="https://i.postimg.cc/qMMx3Jb5/6-ar-02ac5793.jpg" class="option-img" loading="lazy">
-            <div class="option-title">برايم 6 أشهر</div>
-            <div class="option-price">300 ج.م</div>
-          </div>
-
-          <div class="option-card" data-value="Prime 12 Month" data-price="600">
-            <img src="https://i.postimg.cc/xTxyGwBn/12-ar-471c9625.jpg" class="option-img" loading="lazy">
-            <div class="option-title">برايم 12 شهر</div>
-            <div class="option-price">600 ج.م</div>
+        <!-- Suggestion -->
+        <div class="contact-form-wrap" id="contact-suggestion">
+          <div class="contact-form-card">
+            <form id="suggestionFormContent">
+              <div class="field">
+                <label>الاسم</label>
+                <input type="text" id="suggestionName" placeholder="اسمك" required>
+              </div>
+              <div class="field">
+                <label>رقم الهاتف أو البريد</label>
+                <input type="text" id="suggestionContact" placeholder="للتواصل معك" required>
+              </div>
+              <div class="field">
+                <label>الاقتراح</label>
+                <textarea id="suggestionMessage" rows="4" placeholder="اكتب اقتراحك..." required style="resize:none;"></textarea>
+              </div>
+              <button type="submit" class="contact-submit-btn">
+                <i class="fas fa-lightbulb"></i> إرسال
+              </button>
+            </form>
           </div>
         </div>
-      </section>
+      </div>
+    </details>
+  </div>
+
+  <!-- POLICIES -->
+  <div class="policies-section">
+    <div class="section-header">
+      <h2>السياسات</h2>
     </div>
 
-    <section class="contact-section">
-      <div class="contact-toggle-btn" id="contactToggleBtn">
-        <i class="fas fa-comments"></i>
-        <span>اتصل بنا / قدم اقتراحًا</span>
-        <i class="fas fa-chevron-down"></i>
+    <details class="policy-block">
+      <summary class="policy-summary"><i class="fas fa-info-circle"></i> معلومات عن المتجر</summary>
+      <div class="policy-body">
+        <p>في <strong>TRIPxESPORTS</strong> نوفر أفضل تجربة لشحن UC ببجي عبر فودافون كاش. نضمن تنفيذ الطلبات بشكل فوري وآمن، مع دعم فني متوفر. لا حاجة لتسجيل الدخول — فقط قدّم ID اللاعب.</p>
+        <h3>لماذا TRIPxESPORTS؟</h3>
+        <ul>
+          <li>سرعة تنفيذ خلال دقائق</li>
+          <li>دفع آمن وسهل</li>
+          <li>دعم مباشر عبر واتساب</li>
+          <li>ضمان استلام الشدات 100%</li>
+        </ul>
       </div>
+    </details>
 
-      <div class="contact-options-modal" id="contactOptionsModal">
-        <div class="modal-content">
-          <div class="contact-option" id="inquiryOption">
-            <i class="fas fa-question-circle"></i>
-            <span>استفسار</span>
-          </div>
-          <div class="contact-option" id="suggestionOption">
-            <i class="fas fa-lightbulb"></i>
-            <span>اقتراح</span>
-          </div>
-        </div>
+    <details class="policy-block">
+      <summary class="policy-summary"><i class="fas fa-shield-alt"></i> سياسة الخصوصية</summary>
+      <div class="policy-body">
+        <p><strong>آخر تحديث:</strong> 12 أغسطس 2025</p>
+        <p>نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية.</p>
+        <h3>البيانات التي نجمعها:</h3>
+        <ul>
+          <li>اسم الاكونت ومعرف اللاعب</li>
+          <li>رقم الهاتف أو البريد الإلكتروني</li>
+          <li>بيانات الدفع اللازمة لإتمام الشراء</li>
+        </ul>
+        <h3>حماية البيانات:</h3>
+        <p>نحافظ على بياناتك بسرية تامة ولا نشاركها مع أي طرف ثالث.</p>
       </div>
+    </details>
 
-      <div class="form-container hidden" id="inquiryFormContainer">
-        <div class="form-header">
-          <h2><i class="fas fa-question-circle"></i> استفسار</h2>
-          <button class="close-form-btn" id="closeInquiryForm">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <form id="contactForm" class="elegant-form">
-          <div class="form-group">
-            <div class="input-with-icon">
-              <i class="fas fa-user"></i>
-              <input type="text" id="contactName" class="form-control" placeholder="اسمك" required>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <div class="input-with-icon">
-              <i class="fas fa-envelope"></i>
-              <input type="email" id="contactEmail" class="form-control" placeholder="بريدك الإلكتروني" required>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <div class="input-with-icon">
-              <i class="fas fa-comment-dots"></i>
-              <textarea id="contactMessage" class="form-control" rows="4" placeholder="اكتب استفسارك هنا..." required></textarea>
-            </div>
-          </div>
-
-          <button type="submit" class="btn btn-inquiry">
-            <i class="fas fa-paper-plane"></i> إرسال الاستفسار
-          </button>
-        </form>
+    <details class="policy-block">
+      <summary class="policy-summary"><i class="fas fa-undo"></i> سياسة الاسترجاع</summary>
+      <div class="policy-body">
+        <p>بمجرد إتمام عملية الشحن بنجاح لا يمكن استرجاع المبلغ، إلا في:</p>
+        <h3>حالات الاسترجاع:</h3>
+        <ul>
+          <li>فشل عملية الشحن خلال 48 ساعة</li>
+          <li>حدوث خطأ فني من طرفنا</li>
+        </ul>
+        <h3>حالات غير مؤهلة:</h3>
+        <ul>
+          <li>إدخال Player ID خاطئ من قبل العميل</li>
+          <li>مشكلات داخل اللعبة أو حظر الحساب</li>
+        </ul>
       </div>
+    </details>
+  </div>
 
-      <div class="form-container hidden" id="suggestionFormContainer">
-        <div class="form-header">
-          <h2><i class="fas fa-lightbulb"></i> اقتراح لتحسين الموقع</h2>
-          <button class="close-form-btn" id="closeSuggestionForm">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <form id="suggestionFormContent" class="elegant-form">
-          <div class="form-group">
-            <div class="input-with-icon">
-              <i class="fas fa-user"></i>
-              <input type="text" id="suggestionName" class="form-control" placeholder="اسمك" required>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <div class="input-with-icon">
-              <i class="fas fa-phone-alt"></i>
-              <input type="text" id="suggestionContact" class="form-control" placeholder="رقم الهاتف أو البريد الإلكتروني" required>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <div class="input-with-icon">
-              <i class="fas fa-edit"></i>
-              <textarea id="suggestionMessage" class="form-control" rows="4" placeholder="اكتب اقتراحك هنا..." required></textarea>
-            </div>
-          </div>
-
-          <button type="submit" class="btn btn-suggestion">
-            <i class="fas fa-lightbulb"></i> إرسال الاقتراح
-          </button>
-        </form>
-      </div>
-    </section>
-  </main>
-
+  <!-- FOOTER -->
   <footer>
-    <div class="container footer-content">
-      <div class="social-links">
-        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i> غير متاح الان</a>
-        <a href="#" class="social-link"><i class="fab fa-instagram"></i> غير متاح الان</a>
-        <a href="https://wa.me/201274445091" class="social-link"><i class="fab fa-whatsapp"></i>JOHN</a>
-        <a href="#" class="social-link"><i class="fab fa-telegram"></i> غير متاح الان</a>
-      </div>
-      <p class="copyright">© 2026 TRIPxESPORTS. جميع الحقوق محفوظة</p>
+    <div class="footer-logo">TRIPxESPORTS</div>
+    <div class="footer-links">
+      <a href="https://wa.me/201274445091"><i class="fab fa-whatsapp"></i> JOHN</a>
+      <a href="#"><i class="fab fa-telegram"></i> Telegram</a>
+      <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
     </div>
+    <div class="footer-copy">© 2026 TRIPxESPORTS — جميع الحقوق محفوظة</div>
   </footer>
 
+  <!-- TOAST CONTAINER -->
+  <div class="toast-container" id="toastContainer"></div>
+
   <script>
-    document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
-
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I') ||
-          (e.ctrlKey && e.shiftKey && e.key === 'J') || (e.ctrlKey && e.key === 'U')) {
-        e.preventDefault();
-        alert('غير مسموح بالوصول إلى أدوات المطور');
-      }
-    });
-
-    const ucOptions = document.querySelectorAll('#ucOptions .option-card');
-    const bundleOptions = document.querySelectorAll('#bundleOptions .option-card');
+    // ── State ──
     let selectedUC = null;
     let selectedBundle = null;
+    let appliedCoupon = null;
     let currentOrderId = null;
 
-    function updateTotal() {
-      const total = (selectedUC?.dataset.price || 0) * 1 + (selectedBundle?.dataset.price || 0) * 1;
-      document.getElementById('totalAmount').value = total + " ج.م";
+    // ── Tab Switcher for Products ──
+    function switchTab(tab, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + tab).classList.add('active');
+      clearSelection();
     }
 
-    ucOptions.forEach(option => {
-      option.addEventListener('click', () => {
-        ucOptions.forEach(o => o.classList.remove('selected'));
-        option.classList.add('selected');
-        selectedUC = option;
+    // ── Tab Switcher for Contact inside details ──
+    function switchContactTab(tab, btn) {
+      document.querySelectorAll('.contact-tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.contact-form-wrap').forEach(f => f.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('contact-' + tab).classList.add('active');
+    }
 
-        bundleOptions.forEach(o => o.classList.remove('selected'));
+    // ── Product Selection ──
+    function selectProduct(card, type) {
+      if (type === 'uc') {
+        document.querySelectorAll('#ucOptions .product-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        selectedUC = card;
         selectedBundle = null;
-
-        updateTotal();
-      });
-    });
-
-    bundleOptions.forEach(option => {
-      option.addEventListener('click', () => {
-        bundleOptions.forEach(o => o.classList.remove('selected'));
-        option.classList.add('selected');
-        selectedBundle = option;
-
-        ucOptions.forEach(o => o.classList.remove('selected'));
+      } else {
+        document.querySelectorAll('#bundleOptions .product-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        selectedBundle = card;
         selectedUC = null;
-
-        updateTotal();
-      });
-    });
-
-document.getElementById('orderForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  if (selectedUC && selectedBundle) {
-    showAlert("لا يمكن اختيار شدات وحزمة ازدهار معاً", "يرجى اختيار نوع واحد فقط", "error");
-    return;
-  }
-
-  if (!selectedUC && !selectedBundle) {
-    showAlert("خطأ في الاختيار", "يجب اختيار شدات أو حزمة ازدهار واحدة على الأقل", "error");
-    return;
-  }
-
-  // التحقق من الحقول الأساسية
-  const name = document.getElementById('name').value;
-  const playerId = document.getElementById('playerId').value;
-  const email = document.getElementById('email').value;
-  const totalAmount = document.getElementById('totalAmount').value.replace(" ج.م", "");
-
-  if (!name || !playerId || !email || !totalAmount) {
-    showAlert("خطأ", "الرجاء تعبئة جميع الحقول", "error");
-    return;
-  }
-
-  const orderData = {
-    name: name,
-    playerId: playerId,
-    email: email,
-    ucAmount: selectedUC ? selectedUC.dataset.value : "",
-    bundle: selectedBundle ? selectedBundle.dataset.value : "",
-    totalAmount: totalAmount
-  };
-
-  console.log("Sending order data:", orderData); // للتتبع
-
-  const btn = e.target.querySelector('button');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> جاري إنشاء الطلب...';
-
-  try {
-    const response = await fetch("/api/order", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify(orderData)
-    });
-
-    console.log("Response status:", response.status); // للتتبع
-    
-    const result = await response.json();
-    console.log("Response result:", result); // للتتبع
-
-    if (!response.ok) {
-      throw new Error(result.message || "حدث خطأ في الخادم");
+      }
+      clearCoupon();
+      updateTotal();
+      updateSelectedInfo();
     }
 
-    if (result.success) {
-      currentOrderId = result.id;
-      showAlert("تم إنشاء الطلب بنجاح", "جاري توجيهك لصفحة الدفع...", "success");
-
-      setTimeout(() => {
-        window.location.href = `pay.html?orderId=${encodeURIComponent(currentOrderId)}`;
-      }, 1500);
-    } else {
-      throw new Error(result.message || "حدث خطأ غير معروف");
+    function clearSelection() {
+      selectedUC = null;
+      selectedBundle = null;
+      document.querySelectorAll('.product-card').forEach(c => c.classList.remove('selected'));
+      clearCoupon();
+      updateTotal();
+      updateSelectedInfo();
     }
-  } catch (error) {
-    console.error("Error details:", error);
-    showAlert("حدث خطأ", error.message || "فشل إرسال الطلب", "error");
-  } finally {
-    btn.innerHTML = '';
-    btn.classList.add('type1');
-    btn.disabled = false;
-  }
-});
 
-    const contactToggleBtn = document.getElementById('contactToggleBtn');
-    const contactOptionsModal = document.getElementById('contactOptionsModal');
-    const inquiryOption = document.getElementById('inquiryOption');
-    const suggestionOption = document.getElementById('suggestionOption');
-    const inquiryFormContainer = document.getElementById('inquiryFormContainer');
-    const suggestionFormContainer = document.getElementById('suggestionFormContainer');
-    const closeInquiryForm = document.getElementById('closeInquiryForm');
-    const closeSuggestionForm = document.getElementById('closeSuggestionForm');
+    function updateSelectedInfo() {
+      const info = document.getElementById('selectedInfo');
+      const txt = document.getElementById('selectedInfoText');
+      const sel = selectedUC || selectedBundle;
+      if (sel) {
+        txt.textContent = sel.querySelector('.product-name').textContent + ' — ' + sel.querySelector('.product-price').textContent;
+        info.classList.add('show');
+      } else {
+        info.classList.remove('show');
+      }
+    }
 
-    contactToggleBtn.addEventListener('click', () => {
-      contactOptionsModal.classList.add('active');
-    });
+    // ── Total ──
+    function getBaseTotal() {
+      const sel = selectedUC || selectedBundle;
+      return sel ? parseInt(sel.dataset.price) : 0;
+    }
 
-    inquiryOption.addEventListener('click', () => {
-      contactOptionsModal.classList.remove('active');
-      inquiryFormContainer.classList.remove('hidden');
-      inquiryFormContainer.classList.add('active');
-    });
+    function updateTotal() {
+      const total = appliedCoupon ? parseFloat(appliedCoupon.newTotal) : getBaseTotal();
+      document.getElementById('totalDisplay').textContent = (total || 0) + ' ج.م';
+    }
 
-    suggestionOption.addEventListener('click', () => {
-      contactOptionsModal.classList.remove('active');
-      suggestionFormContainer.classList.remove('hidden');
-      suggestionFormContainer.classList.add('active');
-    });
+    // ── Coupon ──
+    function clearCoupon() {
+      appliedCoupon = null;
+      document.getElementById('couponCode').value = '';
+      document.getElementById('couponMessage').textContent = '';
+      document.getElementById('couponMessage').className = 'coupon-msg';
+    }
 
-    closeInquiryForm.addEventListener('click', () => {
-      inquiryFormContainer.classList.remove('active');
-    });
+    async function applyCoupon() {
+      const code = document.getElementById('couponCode').value.trim();
+      const msgEl = document.getElementById('couponMessage');
+      if (!code) { showToast('خطأ', 'أدخل كود الخصم أولاً', 'error'); return; }
+      const originalAmount = getBaseTotal();
+      if (!originalAmount) { showToast('خطأ', 'اختر منتجاً أولاً', 'error'); return; }
 
-    closeSuggestionForm.addEventListener('click', () => {
-      suggestionFormContainer.classList.remove('active');
-    });
+      const btn = document.getElementById('applyCouponBtn');
+      btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>';
+      try {
+        const res = await fetch('/api/verify-coupon', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code, originalAmount })
+        });
+        const result = await res.json();
+        if (result.success) {
+          appliedCoupon = result;
+          msgEl.textContent = `✔ خصم ${result.discountPercent}% — وفرت ${result.discount} ج.م`;
+          msgEl.className = 'coupon-msg success';
+          updateTotal();
+        } else {
+          appliedCoupon = null;
+          msgEl.textContent = '✘ ' + (result.message || 'كود غير صالح');
+          msgEl.className = 'coupon-msg error';
+          updateTotal();
+        }
+      } catch {
+        msgEl.textContent = '✘ حدث خطأ، حاول مرة أخرى';
+        msgEl.className = 'coupon-msg error';
+      } finally {
+        btn.disabled = false; btn.textContent = 'تطبيق';
+      }
+    }
 
-    contactOptionsModal.addEventListener('click', (e) => {
-      if (e.target === contactOptionsModal) {
-        contactOptionsModal.classList.remove('active');
+    // ── Order Submit ──
+    document.getElementById('orderForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (!selectedUC && !selectedBundle) {
+        showToast('خطأ', 'اختر منتجاً أولاً', 'error'); return;
+      }
+
+      const name = document.getElementById('name').value.trim();
+      const playerId = document.getElementById('playerId').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const totalAmount = String(appliedCoupon ? parseFloat(appliedCoupon.newTotal) : getBaseTotal());
+
+      const orderData = {
+        name, playerId, email,
+        ucAmount: selectedUC ? selectedUC.dataset.value : '',
+        bundle: selectedBundle ? selectedBundle.dataset.value : '',
+        totalAmount,
+        couponCode: appliedCoupon ? appliedCoupon.couponCode : null,
+        discountAmount: appliedCoupon ? appliedCoupon.discount : null
+      };
+
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> جاري الإرسال...';
+
+      try {
+        const response = await fetch('/api/order', {
+          method: 'POST', credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderData)
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.message || 'خطأ في الخادم');
+        if (result.success) {
+          currentOrderId = result.id;
+          showToast('تم بنجاح', 'جاري التوجيه لصفحة الدفع...', 'success');
+          setTimeout(() => {
+            window.location.href = `pay.html?orderId=${encodeURIComponent(currentOrderId)}`;
+          }, 1500);
+        } else {
+          throw new Error(result.message || 'خطأ غير معروف');
+        }
+      } catch (err) {
+        showToast('خطأ', err.message || 'فشل إرسال الطلب', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'إرسال الطلب &nbsp;<i class="fas fa-arrow-left"></i>';
       }
     });
 
-    window.addEventListener('click', (e) => {
-      if (e.target === inquiryFormContainer) inquiryFormContainer.classList.remove('active');
-      if (e.target === suggestionFormContainer) suggestionFormContainer.classList.remove('active');
-    });
-
+    // ── Contact Forms ──
     document.getElementById('contactForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-
-      const contact = {
-        name: document.getElementById('contactName').value,
-        email: document.getElementById('contactEmail').value,
-        message: document.getElementById('contactMessage').value
-      };
-
       const btn = e.target.querySelector('button');
-      btn.innerHTML = '<span class="spinner"></span> جاري الإرسال...';
       btn.disabled = true;
-
+      btn.innerHTML = '<span class="spinner"></span> جاري الإرسال...';
       try {
-        const response = await fetch("/api/inquiry", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify(contact)
+        const res = await fetch('/api/inquiry', {
+          method: 'POST', credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: document.getElementById('contactName').value,
+            email: document.getElementById('contactEmail').value,
+            message: document.getElementById('contactMessage').value
+          })
         });
-
-        const result = await response.json();
-        if (!response.ok) throw new Error(result.message || "حدث خطأ في الخادم");
-
+        const result = await res.json();
         if (result.success) {
-          showAlert("تم ارسال الاستفسار", "سيتم التواصل معك قريباً", "success");
-          document.getElementById('contactForm').reset();
-          inquiryFormContainer.classList.remove('active');
-        } else {
-          throw new Error(result.message || "حدث خطأ غير معروف");
-        }
-      } catch (error) {
-        console.error("Error:", error);
-        showAlert("حدث خطأ", error.message || "فشل إرسال الاستفسار", "error");
+          showToast('تم الإرسال', 'سيتم التواصل معك قريباً', 'success');
+          e.target.reset();
+        } else throw new Error(result.message);
+      } catch (err) {
+        showToast('خطأ', err.message || 'فشل الإرسال', 'error');
       } finally {
-        btn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال الاستفسار';
         btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال';
       }
     });
 
     document.getElementById('suggestionFormContent').addEventListener('submit', async (e) => {
       e.preventDefault();
-
-      const suggestion = {
-        name: document.getElementById('suggestionName').value,
-        contact: document.getElementById('suggestionContact').value,
-        message: document.getElementById('suggestionMessage').value
-      };
-
       const btn = e.target.querySelector('button');
-      btn.innerHTML = '<span class="spinner"></span> جاري الإرسال...';
       btn.disabled = true;
-
+      btn.innerHTML = '<span class="spinner"></span> جاري الإرسال...';
       try {
-        const response = await fetch("/api/suggestion", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify(suggestion)
+        const res = await fetch('/api/suggestion', {
+          method: 'POST', credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: document.getElementById('suggestionName').value,
+            contact: document.getElementById('suggestionContact').value,
+            message: document.getElementById('suggestionMessage').value
+          })
         });
-
-        const result = await response.json();
-        if (!response.ok) throw new Error(result.message || "حدث خطأ في الخادم");
-
+        const result = await res.json();
         if (result.success) {
-          showAlert("تم ارسال الاقتراح", "شكراً لك على اقتراحك، سنقوم بدراسته", "success");
-          document.getElementById('suggestionFormContent').reset();
-          suggestionFormContainer.classList.remove('active');
-        } else {
-          throw new Error(result.message || "حدث خطأ غير معروف");
-        }
-      } catch (error) {
-        console.error("Error:", error);
-        showAlert("حدث خطأ", error.message || "فشل إرسال الاقتراح", "error");
+          showToast('شكراً!', 'تم استلام اقتراحك بنجاح', 'success');
+          e.target.reset();
+        } else throw new Error(result.message);
+      } catch (err) {
+        showToast('خطأ', err.message || 'فشل الإرسال', 'error');
       } finally {
-        btn.innerHTML = '<i class="fas fa-lightbulb"></i> إرسال الاقتراح';
         btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-lightbulb"></i> إرسال';
       }
     });
 
-    function showAlert(title, message, type) {
-      const alertBox = document.createElement('div');
-      alertBox.className = `custom-alert ${type}`;
-      alertBox.innerHTML = `
-        <div class="alert-header">
-          <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
-          <h3>${title}</h3>
-          <button class="close-alert"><i class="fas fa-times"></i></button>
+    // ── Toast System ──
+    function showToast(title, msg, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `
+        <div class="toast-icon"><i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i></div>
+        <div class="toast-text">
+          <div class="toast-title">${title}</div>
+          <div class="toast-msg">${msg}</div>
         </div>
-        <div class="alert-body">
-          <p>${message}</p>
-        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
       `;
-      document.body.appendChild(alertBox);
-
-      const closeBtn = alertBox.querySelector('.close-alert');
-      closeBtn.addEventListener('click', () => {
-        alertBox.classList.add('fade-out');
-        setTimeout(() => alertBox.remove(), 300);
-      });
-
-      setTimeout(() => {
-        if (document.body.contains(alertBox)) {
-          alertBox.classList.add('fade-out');
-          setTimeout(() => alertBox.remove(), 300);
-        }
-      }, 5000);
+      container.appendChild(toast);
+      setTimeout(() => { if (toast.parentElement) toast.remove(); }, 5000);
     }
 
-    const style = document.createElement('style');
-    style.textContent = `
-      .custom-alert {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        width: 350px;
-        background: var(--primary);
-        border-radius: 10px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-        border-left: 5px solid;
-        z-index: 9999;
-        overflow: hidden;
-        transform: translateX(120%);
-        animation: slideIn 0.5s forwards;
-        border: 1px solid rgba(255,255,255,0.1);
+    // Prevent dev tools
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', e => {
+      if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J'].includes(e.key)) || (e.ctrlKey && e.key === 'U')) {
+        e.preventDefault();
       }
-      .custom-alert.success { border-left-color: var(--success); }
-      .custom-alert.error { border-left-color: var(--danger); }
-      .alert-header { display: flex; align-items: center; padding: 15px 20px; background: rgba(0,0,0,0.2); }
-      .alert-header h3 { margin: 0; flex: 1; font-size: 1.2rem; }
-      .alert-header i { font-size: 1.5rem; margin-left: 15px; }
-      .success .alert-header i { color: var(--success); }
-      .error .alert-header i { color: var(--danger); }
-      .close-alert {
-        background: transparent;
-        border: none;
-        color: rgba(255,255,255,0.6);
-        font-size: 1.2rem;
-        cursor: pointer;
-        transition: all 0.3s;
-        width: 30px; height: 30px;
-        display: flex; align-items: center; justify-content: center;
-        border-radius: 50%;
-      }
-      .close-alert:hover { color: #fff; background: rgba(255,255,255,0.1); }
-      .alert-body { padding: 20px; }
-      .alert-body p { margin: 0; line-height: 1.6; }
-      .fade-out { animation: slideOut 0.5s forwards; }
-      @keyframes slideIn { to { transform: translateX(0); } }
-      @keyframes slideOut { from { transform: translateX(0); } to { transform: translateX(120%); } }
-    `;
-    document.head.appendChild(style);
-    // Coupon functionality
-let appliedCoupon = null;
-let originalTotalBeforeCoupon = 0;
-
-function calculateOriginalTotal() {
-  const total = (selectedUC?.dataset.price || 0) * 1 + (selectedBundle?.dataset.price || 0) * 1;
-  originalTotalBeforeCoupon = total;
-  return total;
-}
-
-function updateTotalWithCoupon() {
-  let total = calculateOriginalTotal();
-  if (appliedCoupon && appliedCoupon.newTotal) {
-    total = parseFloat(appliedCoupon.newTotal);
-    document.getElementById('totalAmount').value = total + " ج.م";
-    document.getElementById('couponMessage').innerHTML = `<span style="color: var(--success);">✔ تم تطبيق الخصم ${appliedCoupon.discountPercent}% - وفرت ${appliedCoupon.discount} ج.م</span>`;
-  } else {
-    document.getElementById('totalAmount').value = total + " ج.م";
-  }
-}
-
-async function applyCoupon() {
-  const code = document.getElementById('couponCode').value.trim();
-  if (!code) {
-    showAlert("خطأ", "يرجى إدخال كود الخصم", "error");
-    return;
-  }
-
-  const originalAmount = calculateOriginalTotal();
-  if (originalAmount <= 0) {
-    showAlert("خطأ", "يرجى اختيار منتج أولاً", "error");
-    return;
-  }
-
-  const applyBtn = document.getElementById('applyCouponBtn');
-  applyBtn.disabled = true;
-  applyBtn.innerHTML = '<span class="spinner"></span>';
-
-  try {
-    const response = await fetch("/api/verify-coupon", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code, originalAmount })
     });
-
-    const result = await response.json();
-    if (result.success) {
-      appliedCoupon = result;
-      updateTotalWithCoupon();
-    } else {
-      appliedCoupon = null;
-      document.getElementById('couponMessage').innerHTML = `<span style="color: var(--danger);">✘ ${result.message}</span>`;
-      updateTotalWithCoupon();
-    }
-  } catch (error) {
-    console.error("Coupon error:", error);
-    document.getElementById('couponMessage').innerHTML = `<span style="color: var(--danger);">✘ حدث خطأ أثناء التحقق من الكوبون</span>`;
-  } finally {
-    applyBtn.disabled = false;
-    applyBtn.innerHTML = '<i class="fas fa-check"></i> تطبيق';
-  }
-}
-
-// Modify updateTotal function to reset coupon when product changes
-const originalUpdateTotal = updateTotal;
-window.updateTotal = function() {
-  appliedCoupon = null;
-  document.getElementById('couponCode').value = '';
-  document.getElementById('couponMessage').innerHTML = '';
-  originalUpdateTotal();
-};
-updateTotal = window.updateTotal;
-
-// Add event listener for apply button
-document.getElementById('applyCouponBtn').addEventListener('click', applyCoupon);
-
-// Modify order submission to include coupon code
-const originalOrderSubmit = document.getElementById('orderForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  // ... existing validation code ...
-
-  const orderData = {
-    name: name,
-    playerId: playerId,
-    email: email,
-    ucAmount: selectedUC ? selectedUC.dataset.value : "",
-    bundle: selectedBundle ? selectedBundle.dataset.value : "",
-    totalAmount: totalAmount,
-    couponCode: appliedCoupon ? appliedCoupon.couponCode : null,
-    discountAmount: appliedCoupon ? appliedCoupon.discount : null
-  };
-  // ... rest of your submit code ...
-});
-
-// Note: You'll need to merge this with your existing submit handler
   </script>
 </body>
 </html>
