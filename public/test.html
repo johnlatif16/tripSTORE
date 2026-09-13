@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <title>Store PUBG - متجر شحن شدات ببجي | JOHN STORE</title>
+ <link rel="icon" href="https://i.postimg.cc/x8xtX2KR/john-store.png" type="image/png">
+  <meta name="description" content="متجر تريب لشحن شدات ببجي بأسعار منافسة. شحن مباشر، دعم سريع، وطرق دفع متعددة. جرب الآن!" />
+  <meta name="keywords" content="شدات ببجي, شحن PUBG, متجر ببجي, شحن UC, store pubg, uc pubg, uc شدات, pubg uc, uc متجر" />
+  <meta name="author" content="JOHN STORE" />
+  <meta name="robots" content="index, follow" />
+  <meta http-equiv="Content-Language" content="ar" />
+
+  <!-- Open Graph for social sharing -->
+  <meta property="og:title" content="Store PUBG - متجر شحن شدات ببجي | JOHN STORE" />
+  <meta property="og:description" content="شحن سريع وآمن لشدات ببجي. طرق دفع متنوعة ودعم متواصل من JOHN STORE." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://trip-store.vercel.app" />
+  <meta property="og:image" content="https://trip-store.vercel.app/logo.png" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --gold: #f5a623;
+      --gold-light: #ffd166;
+      --gold-dark: #c47d0e;
+      --bg: #080a10;
+      --bg2: #0d1018;
+      --bg3: #131720;
+      --card: #111520;
+      --border: rgba(245, 166, 35, 0.18);
+      --border-hover: rgba(245, 166, 35, 0.6);
+      --text: #e8e0d0;
+      --text-muted: #7a7060;
+      --red: #e63946;
+      --green: #2ec4b6;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Noise Texture ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Glowing Lines Background ── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        linear-gradient(180deg, rgba(245,166,35,0.04) 0%, transparent 30%),
+        repeating-linear-gradient(90deg, transparent, transparent 79px, rgba(245,166,35,0.03) 80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(8,10,16,0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo img {
+      width: 42px; height: 42px;
+      border-radius: 10px;
+      border: 1.5px solid var(--gold);
+      object-fit: cover;
+    }
+
+    .logo-text {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: var(--gold);
+      text-shadow: 0 0 20px rgba(245,166,35,0.5);
+    }
+
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      padding: 8px 18px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .nav-btn:hover, .nav-btn.active {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(245,166,35,0.07);
+    }
+
+    .clan-link-btn {
+      padding: 8px 18px;
+      border-radius: 8px;
+      background: var(--gold);
+      color: #000;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .clan-link-btn:hover {
+      background: var(--gold-light);
+      transform: translateY(-1px);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 70px 20px 50px;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(245,166,35,0.1);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      padding: 6px 18px;
+      font-size: 0.8rem;
+      color: var(--gold);
+      letter-spacing: 1px;
+      margin-bottom: 24px;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 .gold { color: var(--gold); }
+
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 500px;
+      margin: 0 auto 36px;
+      line-height: 1.7;
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: var(--gold);
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 0 20px;
+      opacity: 0.3;
+    }
+
+    /* ── SECTION TITLES ── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .section-header h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .section-header::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── ORDER LAYOUT ── */
+    .order-layout {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 24px;
+      padding: 40px 20px 60px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 860px) {
+      .order-layout { grid-template-columns: 1fr; }
+    }
+
+    /* ── PRODUCTS PANEL ── */
+    .products-panel {
+      order: 1;
+    }
+
+    .tab-switcher {
+      display: flex;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 24px;
+      gap: 4px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--gold);
+      color: #000;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .products-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .product-card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 0%, rgba(245,166,35,0.08), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .product-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-3px);
+    }
+
+    .product-card:hover::before { opacity: 1; }
+
+    .product-card.selected {
+      border-color: var(--gold);
+      background: rgba(245,166,35,0.06);
+    }
+
+    .product-card.selected::before { opacity: 1; }
+
+    .selected-check {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--gold);
+      color: #000;
+      font-size: 0.65rem;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .product-card.selected .selected-check { display: flex; }
+
+    .product-img {
+      width: 60px; height: 60px;
+      object-fit: contain;
+      margin: 0 auto 10px;
+      filter: drop-shadow(0 4px 12px rgba(245,166,35,0.3));
+      transition: transform 0.3s;
+    }
+
+    .product-card:hover .product-img { transform: scale(1.08); }
+
+    .product-name {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .product-price {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    /* ── ORDER FORM PANEL ── */
+    .form-panel {
+      order: 2;
+      position: sticky;
+      top: 80px;
+      height: fit-content;
+    }
+
+    .form-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px;
+    }
+
+    .form-card h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.9rem;
+      color: var(--gold);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 7px;
+      letter-spacing: 0.5px;
+    }
+
+    .field input, .field textarea {
+      width: 100%;
+      padding: 11px 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+
+    .field input:focus, .field textarea:focus {
+      outline: none;
+      border-color: var(--gold);
+      background: rgba(245,166,35,0.04);
+    }
+
+    .field input::placeholder { color: rgba(255,255,255,0.2); }
+
+    .coupon-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .coupon-row input { flex: 1; }
+
+    .coupon-apply-btn {
+      padding: 11px 14px;
+      background: rgba(245,166,35,0.12);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--gold);
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .coupon-apply-btn:hover {
+      background: rgba(245,166,35,0.22);
+      border-color: var(--gold);
+    }
+
+    .coupon-msg {
+      font-size: 0.78rem;
+      margin-top: 5px;
+      min-height: 16px;
+    }
+
+    .coupon-msg.success { color: var(--green); }
+    .coupon-msg.error { color: var(--red); }
+
+    .total-display {
+      background: rgba(245,166,35,0.06);
+      border: 1px solid rgba(245,166,35,0.2);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 18px 0;
+    }
+
+    .total-label { font-size: 0.85rem; color: var(--text-muted); }
+
+    .total-amount {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
+      color: #000;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(245,166,35,0.35);
+    }
+
+    .submit-btn:active { transform: translateY(0); }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .selected-info {
+      margin-bottom: 16px;
+      padding: 12px 14px;
+      background: rgba(46,196,182,0.07);
+      border: 1px solid rgba(46,196,182,0.2);
+      border-radius: 10px;
+      font-size: 0.85rem;
+      color: var(--green);
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .selected-info.show { display: flex; }
+
+    /* ── CONTACT SECTION (Hidden/Reveal) ── */
+    .contact-details {
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--card);
+      overflow: hidden;
+    }
+    
+    .contact-details summary {
+      padding: 18px 24px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--gold);
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: background 0.2s;
+      background: rgba(245,166,35,0.03);
+    }
+    
+    .contact-details summary::-webkit-details-marker {
+      display: none;
+    }
+    
+    .contact-details summary::before {
+      content: '\f054';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      font-size: 0.9rem;
+      transition: transform 0.3s ease;
+      display: inline-block;
+    }
+    
+    .contact-details[open] summary::before {
+      transform: rotate(90deg);
+    }
+    
+    .contact-details summary:hover {
+      background: rgba(245,166,35,0.08);
+    }
+    
+    .contact-inner {
+      padding: 24px;
+      border-top: 1px solid var(--border);
+      background: rgba(0,0,0,0.2);
+    }
+    
+    .contact-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .contact-tab-btn {
+      flex: 1;
+      padding: 13px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text-muted);
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .contact-tab-btn.active, .contact-tab-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(245,166,35,0.06);
+    }
+
+    .contact-form-wrap { display: none; }
+    .contact-form-wrap.active { display: block; }
+
+    .contact-form-card {
+      background: transparent;
+      padding: 0;
+    }
+
+    .contact-submit-btn {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 10px;
+      background: var(--gold);
+      color: #000;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: all 0.2s;
+    }
+
+    .contact-submit-btn:hover {
+      background: var(--gold-light);
+      transform: translateY(-1px);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 20px 30px;
+      text-align: center;
+    }
+
+    .footer-logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.2rem;
+      color: var(--gold);
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--gold); }
+
+    .footer-copy {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      opacity: 0.6;
+    }
+
+    /* ── TOAST ALERTS ── */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 18px;
+      min-width: 280px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: toastIn 0.35s ease;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    .toast.success { border-color: rgba(46,196,182,0.5); }
+    .toast.error { border-color: rgba(230,57,70,0.5); }
+
+    .toast-icon { font-size: 1.2rem; }
+    .toast.success .toast-icon { color: var(--green); }
+    .toast.error .toast-icon { color: var(--red); }
+
+    .toast-text { flex: 1; }
+    .toast-title { font-weight: 700; font-size: 0.9rem; }
+    .toast-msg { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+
+    .toast-close {
+      background: none; border: none; color: var(--text-muted);
+      cursor: pointer; font-size: 1rem; padding: 2px;
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ── SPINNER ── */
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(0,0,0,0.3);
+      border-top-color: #000;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      vertical-align: middle;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── EXTRAS ── */
+    .policy-block {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .policy-summary {
+      padding: 16px 20px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      list-style: none;
+      transition: color 0.2s;
+    }
+
+    .policy-summary:hover { color: var(--gold); }
+
+    .policy-body {
+      padding: 0 20px 20px;
+      font-size: 0.87rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      border-top: 1px solid var(--border);
+    }
+
+    .policy-body h3 { color: var(--text); margin: 14px 0 6px; font-size: 0.9rem; }
+    .policy-body ul { padding-right: 20px; }
+    .policy-body li { margin-bottom: 4px; }
+
+    .policies-section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+    }
+
+    /* Mobile fixes */
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 1.8rem; }
+      .hero-stats { gap: 20px; }
+      .header-inner { padding: 10px 16px; }
+      .logo-text { font-size: 0.85rem; }
+      .form-panel { position: relative; top: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-inner">
+      <a href="#" class="logo">
+        <img src="https://i.postimg.cc/x8xtX2KR/john-store.png" alt="JOHN STORE">
+        <span class="logo-text">JOHN STORE</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero container">
+    <div class="hero-badge">
+      <i class="fas fa-bolt"></i>
+      شحن فوري وآمن
+    </div>
+    <h1>متجر <span class="gold">JOHN STORE</span></h1>
+    <p>أحصل على شدات ببجي بأفضل الأسعار وأسرع وقت ممكن</p>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">+500</div>
+        <div class="stat-label">عميل راضي</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">دقائق</div>
+        <div class="stat-label">وقت التنفيذ</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">ضمان الاستلام</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- MAIN ORDER SECTION -->
+  <div class="order-layout">
+
+    <!-- PRODUCTS PANEL -->
+    <div class="products-panel">
+      <div class="section-header">
+        <h2>اختر المنتج</h2>
+      </div>
+
+      <!-- Tab Switcher -->
+      <div class="tab-switcher">
+        <button class="tab-btn active" onclick="switchTab('uc', this)">
+          <i class="fas fa-coins"></i> شدات UC
+        </button>
+        <button class="tab-btn" onclick="switchTab('bundles', this)">
+          <i class="fas fa-gift"></i> حزم ازدهار
+        </button>
+      </div>
+
+      <!-- UC Tab -->
+      <div class="tab-content active" id="tab-uc">
+        <div class="products-grid" id="ucOptions">
+          <div class="product-card" data-value="60" data-price="54" onclick="selectProduct(this, 'uc')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/zBbk300s/level1-cb11b2cd.png" class="product-img" alt="60 UC">
+            <div class="product-name">60 UC</div>
+            <div class="product-price">54 ج.م</div>
+          </div>
+          <div class="product-card" data-value="325" data-price="267" onclick="selectProduct(this, 'uc')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/RVzTV1KZ/level2-f2b27a84.png" class="product-img" alt="325 UC">
+            <div class="product-name">325 UC</div>
+            <div class="product-price">267 ج.م</div>
+          </div>
+          <div class="product-card" data-value="660" data-price="534" onclick="selectProduct(this, 'uc')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/hGhL32WX/level3-6e2a3de7.png" class="product-img" alt="660 UC">
+            <div class="product-name">660 UC</div>
+            <div class="product-price">534 ج.م</div>
+          </div>
+          <div class="product-card" data-value="1800" data-price="1334" onclick="selectProduct(this, 'uc')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/nzDvnMLM/level4-5662a174.png" class="product-img" alt="1800 UC">
+            <div class="product-name">1800 UC</div>
+            <div class="product-price">1334 ج.م</div>
+          </div>
+          <div class="product-card" data-value="3850" data-price="2667" onclick="selectProduct(this, 'uc')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/Wp0MKDKM/level5-5a6a7af6.png" class="product-img" alt="3850 UC">
+            <div class="product-name">3850 UC</div>
+            <div class="product-price">2667 ج.م</div>
+          </div>
+          <div class="product-card" data-value="8100" data-price="5334" onclick="selectProduct(this, 'uc')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/90NV1XGm/level6-03ebac0d.png" class="product-img" alt="8100 UC">
+            <div class="product-name">8100 UC</div>
+            <div class="product-price">5334 ج.م</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bundles Tab -->
+      <div class="tab-content" id="tab-bundles">
+        <div class="products-grid" id="bundleOptions">
+          <div class="product-card" data-value="حزمة الازدهار الاولى" data-price="50" onclick="selectProduct(this, 'bundle')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/wTcn6jtD/First-Purchase-Pack-bacd265b.jpg" class="product-img" alt="حزمة 1">
+            <div class="product-name">ازدهار أول</div>
+            <div class="product-price">50 ج.م</div>
+          </div>
+          <div class="product-card" data-value="حزمة الازدهار الثانية" data-price="150" onclick="selectProduct(this, 'bundle')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/762QjH8Y/Upgradable-Pack-8b6dc3a7.jpg" class="product-img" alt="حزمة 2">
+            <div class="product-name">ازدهار ثاني</div>
+            <div class="product-price">150 ج.م</div>
+          </div>
+          <div class="product-card" data-value="حزمة الازدهار الثالثة" data-price="250" onclick="selectProduct(this, 'bundle')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/gjytkg0m/Mythic-Pack-25332821.jpg" class="product-img" alt="حزمة 3">
+            <div class="product-name">ازدهار ثالث</div>
+            <div class="product-price">250 ج.م</div>
+          </div>
+          <div class="product-card" data-value="Prime(Normal) 1 Month" data-price="50" onclick="selectProduct(this, 'bundle')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/mgyLCqdS/1-ar-c9a3ebd6.jpg" class="product-img" alt="Prime 3">
+            <div class="product-name">برايم(عادي) شهر</div>
+            <div class="product-price">50 ج.م</div>
+          </div>
+          <div class="product-card" data-value="Prime(Normal) 3 Month" data-price="150" onclick="selectProduct(this, 'bundle')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/gcKKjXDY/3-ar-c9a3ebd6.jpg" class="product-img" alt="Prime 3">
+            <div class="product-name">برايم(عادي) 3 أشهر</div>
+            <div class="product-price">150 ج.م</div>
+          </div>
+          <div class="product-card" data-value="Prime(Normal) 6 Month" data-price="300" onclick="selectProduct(this, 'bundle')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/qMMx3Jb5/6-ar-02ac5793.jpg" class="product-img" alt="Prime 6">
+            <div class="product-name">برايم(عادي) 6 أشهر</div>
+            <div class="product-price">300 ج.م</div>
+          </div>
+          <div class="product-card" data-value="Prime(Normal) 12 Month" data-price="600" onclick="selectProduct(this, 'bundle')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/xTxyGwBn/12-ar-471c9625.jpg" class="product-img" alt="Prime 12">
+            <div class="product-name">برايم(عادي) 12 شهر</div>
+            <div class="product-price">600 ج.م</div>
+          </div>
+          <div class="product-card" data-value="Prime(Plus) 1 Month" data-price="500" onclick="selectProduct(this, 'bundle')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/QxjnVyTk/plus1-ar-272b8584.jpg" class="product-img" alt="Prime 6">
+            <div class="product-name">برايم (بلس) شهر</div>
+            <div class="product-price">500 ج.م</div>
+          </div>
+          <div class="product-card" data-value="Prime(Plus) 3 Month" data-price="1500" onclick="selectProduct(this, 'bundle')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/nhPdRVw9/plus3-ar-6742104b.jpg" class="product-img" alt="Prime 6">
+            <div class="product-name">برايم(بلس) 3 أشهر</div>
+            <div class="product-price">1500 ج.م</div>
+          </div>
+          <div class="product-card" data-value="Prime(Plus) 3 Month" data-price="3000" onclick="selectProduct(this, 'bundle')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/FRtTvWvN/plus6-ar-6dd77eb1.jpg" class="product-img" alt="Prime 6">
+            <div class="product-name">برايم(بلس) 6 أشهر</div>
+            <div class="product-price">3000 ج.م</div>
+          </div>
+          <div class="product-card" data-value="Prime(Plus) 12 Month" data-price="6000" onclick="selectProduct(this, 'bundle')">
+            <span class="selected-check"><i class="fas fa-check"></i></span>
+            <img src="https://i.postimg.cc/HxQBkwWh/plus12-ar-75ace814.jpg" class="product-img" alt="Prime 6">
+            <div class="product-name">برايم(بلس) 12 أشهر</div>
+            <div class="product-price">6000 ج.م</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORM PANEL -->
+    <div class="form-panel">
+      <div class="form-card">
+        <h3><i class="fas fa-shopping-bag"></i> &nbsp;تفاصيل الطلب</h3>
+
+        <div class="selected-info" id="selectedInfo">
+          <i class="fas fa-check-circle"></i>
+          <span id="selectedInfoText">تم اختيار المنتج</span>
+        </div>
+
+        <form id="orderForm">
+          <div class="field">
+            <label>الاسم داخل اللعبة</label>
+            <input type="text" id="name" placeholder="اسمك في اللعبة" required>
+          </div>
+          <div class="field">
+            <label>ID اللاعب</label>
+            <input type="text" id="playerId" placeholder="Player ID" required>
+          </div>
+          <div class="field">
+            <label>البريد الإلكتروني</label>
+            <input type="email" id="email" placeholder="للتواصل عند الحاجة" required>
+          </div>
+          <div class="field">
+            <label>كود الخصم (اختياري)</label>
+            <div class="coupon-row">
+              <input type="text" id="couponCode" placeholder="أدخل الكود">
+              <button type="button" class="coupon-apply-btn" id="applyCouponBtn" onclick="applyCoupon()">
+                تطبيق
+              </button>
+            </div>
+            <div class="coupon-msg" id="couponMessage"></div>
+          </div>
+
+          <div class="total-display">
+            <span class="total-label">الإجمالي</span>
+            <span class="total-amount" id="totalDisplay">0 ج.م</span>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submitBtn">
+            إرسال الطلب &nbsp;<i class="fas fa-arrow-left"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- CONTACT SECTION (Hidden by default, expands on click) -->
+  <div class="contact-section container">
+    <div class="section-header">
+      <h2>تواصل معنا</h2>
+    </div>
+    
+    <details class="contact-details">
+      <summary><i class="fas fa-headset"></i> مركز الدعم والمساعدة</summary>
+      <div class="contact-inner">
+        <div class="contact-tabs">
+          <button class="contact-tab-btn active" onclick="switchContactTab('inquiry', this)">
+            <i class="fas fa-question-circle"></i> استفسار
+          </button>
+          <button class="contact-tab-btn" onclick="switchContactTab('suggestion', this)">
+            <i class="fas fa-lightbulb"></i> اقتراح
+          </button>
+        </div>
+
+        <!-- Inquiry -->
+        <div class="contact-form-wrap active" id="contact-inquiry">
+          <div class="contact-form-card">
+            <form id="contactForm">
+              <div class="field">
+                <label>الاسم</label>
+                <input type="text" id="contactName" placeholder="اسمك" required>
+              </div>
+              <div class="field">
+                <label>البريد الإلكتروني</label>
+                <input type="email" id="contactEmail" placeholder="بريدك الإلكتروني" required>
+              </div>
+              <div class="field">
+                <label>الرسالة</label>
+                <textarea id="contactMessage" rows="4" placeholder="اكتب استفسارك..." required style="resize:none;"></textarea>
+              </div>
+              <button type="submit" class="contact-submit-btn">
+                <i class="fas fa-paper-plane"></i> إرسال
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Suggestion -->
+        <div class="contact-form-wrap" id="contact-suggestion">
+          <div class="contact-form-card">
+            <form id="suggestionFormContent">
+              <div class="field">
+                <label>الاسم</label>
+                <input type="text" id="suggestionName" placeholder="اسمك" required>
+              </div>
+              <div class="field">
+                <label>رقم الهاتف أو البريد</label>
+                <input type="text" id="suggestionContact" placeholder="للتواصل معك" required>
+              </div>
+              <div class="field">
+                <label>الاقتراح</label>
+                <textarea id="suggestionMessage" rows="4" placeholder="اكتب اقتراحك..." required style="resize:none;"></textarea>
+              </div>
+              <button type="submit" class="contact-submit-btn">
+                <i class="fas fa-lightbulb"></i> إرسال
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- POLICIES -->
+  <div class="policies-section">
+    <div class="section-header">
+      <h2>السياسات</h2>
+    </div>
+
+    <details class="policy-block">
+      <summary class="policy-summary"><i class="fas fa-info-circle"></i> معلومات عن المتجر</summary>
+      <div class="policy-body">
+        <p>في <strong>JOHN STORE</strong> نوفر أفضل تجربة لشحن UC ببجي عبر فودافون كاش. نضمن تنفيذ الطلبات بشكل فوري وآمن، مع دعم فني متوفر. لا حاجة لتسجيل الدخول — فقط قدّم ID اللاعب.</p>
+        <h3>لماذا JOHN STORE؟</h3>
+        <ul>
+          <li>سرعة تنفيذ خلال دقائق</li>
+          <li>دفع آمن وسهل</li>
+          <li>دعم مباشر عبر واتساب</li>
+          <li>ضمان استلام الشدات 100%</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="policy-block">
+      <summary class="policy-summary"><i class="fas fa-shield-alt"></i> سياسة الخصوصية</summary>
+      <div class="policy-body">
+        <p><strong>آخر تحديث:</strong> 12 أغسطس 2025</p>
+        <p>نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية.</p>
+        <h3>البيانات التي نجمعها:</h3>
+        <ul>
+          <li>اسم الاكونت ومعرف اللاعب</li>
+          <li>رقم الهاتف أو البريد الإلكتروني</li>
+          <li>بيانات الدفع اللازمة لإتمام الشراء</li>
+        </ul>
+        <h3>حماية البيانات:</h3>
+        <p>نحافظ على بياناتك بسرية تامة ولا نشاركها مع أي طرف ثالث.</p>
+      </div>
+    </details>
+
+    <details class="policy-block">
+      <summary class="policy-summary"><i class="fas fa-undo"></i> سياسة الاسترجاع</summary>
+      <div class="policy-body">
+        <p>بمجرد إتمام عملية الشحن بنجاح لا يمكن استرجاع المبلغ، إلا في:</p>
+        <h3>حالات الاسترجاع:</h3>
+        <ul>
+          <li>فشل عملية الشحن خلال 48 ساعة</li>
+          <li>حدوث خطأ فني من طرفنا</li>
+        </ul>
+        <h3>حالات غير مؤهلة:</h3>
+        <ul>
+          <li>إدخال Player ID خاطئ من قبل العميل</li>
+          <li>مشكلات داخل اللعبة أو حظر الحساب</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">JOHN STORE</div>
+    <div class="footer-links">
+      <a href="https://wa.me/201274445091"><i class="fab fa-whatsapp"></i> JOHN</a>
+      <a href="#"><i class="fab fa-telegram"></i> Telegram</a>
+      <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
+    </div>
+    <div class="footer-copy">© 2026 JOHN STORE — جميع الحقوق محفوظة</div>
+  </footer>
+
+  <!-- TOAST CONTAINER -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    // ── State ──
+    let selectedUC = null;
+    let selectedBundle = null;
+    let appliedCoupon = null;
+    let currentOrderId = null;
+
+    // ── Tab Switcher for Products ──
+    function switchTab(tab, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + tab).classList.add('active');
+      clearSelection();
+    }
+
+    // ── Tab Switcher for Contact inside details ──
+    function switchContactTab(tab, btn) {
+      document.querySelectorAll('.contact-tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.contact-form-wrap').forEach(f => f.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('contact-' + tab).classList.add('active');
+    }
+
+    // ── Product Selection ──
+    function selectProduct(card, type) {
+      if (type === 'uc') {
+        document.querySelectorAll('#ucOptions .product-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        selectedUC = card;
+        selectedBundle = null;
+      } else {
+        document.querySelectorAll('#bundleOptions .product-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        selectedBundle = card;
+        selectedUC = null;
+      }
+      clearCoupon();
+      updateTotal();
+      updateSelectedInfo();
+    }
+
+    function clearSelection() {
+      selectedUC = null;
+      selectedBundle = null;
+      document.querySelectorAll('.product-card').forEach(c => c.classList.remove('selected'));
+      clearCoupon();
+      updateTotal();
+      updateSelectedInfo();
+    }
+
+    function updateSelectedInfo() {
+      const info = document.getElementById('selectedInfo');
+      const txt = document.getElementById('selectedInfoText');
+      const sel = selectedUC || selectedBundle;
+      if (sel) {
+        txt.textContent = sel.querySelector('.product-name').textContent + ' — ' + sel.querySelector('.product-price').textContent;
+        info.classList.add('show');
+      } else {
+        info.classList.remove('show');
+      }
+    }
+
+    // ── Total ──
+    function getBaseTotal() {
+      const sel = selectedUC || selectedBundle;
+      return sel ? parseInt(sel.dataset.price) : 0;
+    }
+
+    function updateTotal() {
+      const total = appliedCoupon ? parseFloat(appliedCoupon.newTotal) : getBaseTotal();
+      document.getElementById('totalDisplay').textContent = (total || 0) + ' ج.م';
+    }
+
+    // ── Coupon ──
+    function clearCoupon() {
+      appliedCoupon = null;
+      document.getElementById('couponCode').value = '';
+      document.getElementById('couponMessage').textContent = '';
+      document.getElementById('couponMessage').className = 'coupon-msg';
+    }
+
+    async function applyCoupon() {
+      const code = document.getElementById('couponCode').value.trim();
+      const msgEl = document.getElementById('couponMessage');
+      if (!code) { showToast('خطأ', 'أدخل كود الخصم أولاً', 'error'); return; }
+      const originalAmount = getBaseTotal();
+      if (!originalAmount) { showToast('خطأ', 'اختر منتجاً أولاً', 'error'); return; }
+
+      const btn = document.getElementById('applyCouponBtn');
+      btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>';
+      try {
+        const res = await fetch('/api/verify-coupon', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code, originalAmount })
+        });
+        const result = await res.json();
+        if (result.success) {
+          appliedCoupon = result;
+          msgEl.textContent = `✔ خصم ${result.discountPercent}% — وفرت ${result.discount} ج.م`;
+          msgEl.className = 'coupon-msg success';
+          updateTotal();
+        } else {
+          appliedCoupon = null;
+          msgEl.textContent = '✘ ' + (result.message || 'كود غير صالح');
+          msgEl.className = 'coupon-msg error';
+          updateTotal();
+        }
+      } catch {
+        msgEl.textContent = '✘ حدث خطأ، حاول مرة أخرى';
+        msgEl.className = 'coupon-msg error';
+      } finally {
+        btn.disabled = false; btn.textContent = 'تطبيق';
+      }
+    }
+
+    // ── Order Submit ──
+    document.getElementById('orderForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (!selectedUC && !selectedBundle) {
+        showToast('خطأ', 'اختر منتجاً أولاً', 'error'); return;
+      }
+
+      const name = document.getElementById('name').value.trim();
+      const playerId = document.getElementById('playerId').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const totalAmount = String(appliedCoupon ? parseFloat(appliedCoupon.newTotal) : getBaseTotal());
+
+      const orderData = {
+        name, playerId, email,
+        ucAmount: selectedUC ? selectedUC.dataset.value : '',
+        bundle: selectedBundle ? selectedBundle.dataset.value : '',
+        totalAmount,
+        couponCode: appliedCoupon ? appliedCoupon.couponCode : null,
+        discountAmount: appliedCoupon ? appliedCoupon.discount : null
+      };
+
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> جاري الإرسال...';
+
+      try {
+        const response = await fetch('/api/order', {
+          method: 'POST', credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderData)
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.message || 'خطأ في الخادم');
+        if (result.success) {
+          currentOrderId = result.id;
+          showToast('تم بنجاح', 'جاري التوجيه لصفحة الدفع...', 'success');
+          setTimeout(() => {
+            window.location.href = `pay.html?orderId=${encodeURIComponent(currentOrderId)}`;
+          }, 1500);
+        } else {
+          throw new Error(result.message || 'خطأ غير معروف');
+        }
+      } catch (err) {
+        showToast('خطأ', err.message || 'فشل إرسال الطلب', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'إرسال الطلب &nbsp;<i class="fas fa-arrow-left"></i>';
+      }
+    });
+
+    // ── Contact Forms ──
+    document.getElementById('contactForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector('button');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> جاري الإرسال...';
+      try {
+        const res = await fetch('/api/inquiry', {
+          method: 'POST', credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: document.getElementById('contactName').value,
+            email: document.getElementById('contactEmail').value,
+            message: document.getElementById('contactMessage').value
+          })
+        });
+        const result = await res.json();
+        if (result.success) {
+          showToast('تم الإرسال', 'سيتم التواصل معك قريباً', 'success');
+          e.target.reset();
+        } else throw new Error(result.message);
+      } catch (err) {
+        showToast('خطأ', err.message || 'فشل الإرسال', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال';
+      }
+    });
+
+    document.getElementById('suggestionFormContent').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector('button');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> جاري الإرسال...';
+      try {
+        const res = await fetch('/api/suggestion', {
+          method: 'POST', credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: document.getElementById('suggestionName').value,
+            contact: document.getElementById('suggestionContact').value,
+            message: document.getElementById('suggestionMessage').value
+          })
+        });
+        const result = await res.json();
+        if (result.success) {
+          showToast('شكراً!', 'تم استلام اقتراحك بنجاح', 'success');
+          e.target.reset();
+        } else throw new Error(result.message);
+      } catch (err) {
+        showToast('خطأ', err.message || 'فشل الإرسال', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-lightbulb"></i> إرسال';
+      }
+    });
+
+    // ── Toast System ──
+    function showToast(title, msg, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `
+        <div class="toast-icon"><i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i></div>
+        <div class="toast-text">
+          <div class="toast-title">${title}</div>
+          <div class="toast-msg">${msg}</div>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => { if (toast.parentElement) toast.remove(); }, 5000);
+    }
+
+    // Prevent dev tools
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', e => {
+      if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J'].includes(e.key)) || (e.ctrlKey && e.key === 'U')) {
+        e.preventDefault();
+      }
+    });
+  </script>
+</body>
+</html>
