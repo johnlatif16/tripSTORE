@@ -49,6 +49,40 @@
       overflow-x: hidden;
     }
 
+    /* ── Announcement Bar ── */
+    .announcement-bar {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: linear-gradient(90deg, #c47d0e, #f5a623, #ffd166, #f5a623, #c47d0e);
+      background-size: 200% 100%;
+      animation: barGlow 4s linear infinite;
+      color: #000;
+      text-align: center;
+      padding: 12px 20px;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.5px;
+      border-bottom: 2px solid rgba(0,0,0,0.2);
+      box-shadow: 0 4px 20px rgba(245,166,35,0.4);
+    }
+
+    @keyframes barGlow {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+
+    .announcement-bar i {
+      margin-left: 8px;
+      font-size: 1.1rem;
+      animation: pulseIcon 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulseIcon {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
     /* ── Noise Texture ── */
     body::before {
       content: '';
@@ -79,7 +113,7 @@
 
     /* ── HEADER ── */
     header {
-      position: sticky; top: 0; z-index: 100;
+      position: sticky; top: 45px; z-index: 100;
       background: rgba(8,10,16,0.9);
       backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
@@ -394,7 +428,7 @@
     .form-panel {
       order: 2;
       position: sticky;
-      top: 80px;
+      top: 120px;
       height: fit-content;
     }
 
@@ -803,10 +837,19 @@
       .header-inner { padding: 10px 16px; }
       .logo-text { font-size: 0.85rem; }
       .form-panel { position: relative; top: 0; }
+      .announcement-bar { font-size: 0.85rem; padding: 10px 14px; }
+      header { top: 38px; }
     }
   </style>
 </head>
 <body>
+
+  <!-- ANNOUNCEMENT BAR (ALWAYS VISIBLE) -->
+  <div class="announcement-bar">
+    <i class="fas fa-bullhorn"></i>
+    تم وقف الشحن لزيادة الاسعار وشكرا
+    <i class="fas fa-bullhorn"></i>
+  </div>
 
   <!-- HEADER -->
   <header>
